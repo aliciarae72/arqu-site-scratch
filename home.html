@@ -1,0 +1,412 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arqu home</title>
+<meta name="description" content="arqu home page mockup, v2.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Lato:wght@400;700&family=Saira:wght@300&display=swap">
+<style>
+:root{
+  --bg:#fbfaf7; --band:#f2efe9; --surface:#ffffff;
+  --ink:#221f20; --ink-2:#56514f; --ink-3:#8d8785;
+  --line:#e7e2db; --line-2:#d5cec5;
+  --purple:#8c82fa; --purple-deep:#5e54c8; --tint:#f3f1ff; --tint-2:#e6e2ff;
+  --font-display:"Jost","Futura","Avenir Next",system-ui,sans-serif;
+  --font-sans:"Lato",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --font-logo:"Saira","Jost",system-ui,sans-serif;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --gutter:clamp(16px,4vw,56px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+::selection{background:var(--tint-2)}
+:focus-visible{outline:2px solid var(--purple-deep);outline-offset:3px}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:var(--gutter)}
+h1,h2,h3{font-family:var(--font-display);font-weight:300;letter-spacing:-.02em;margin:0;text-wrap:balance}
+p{margin:0}
+.eyebrow{font-family:var(--font-sans);font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-deep)}
+
+.flag{font-size:11px;letter-spacing:.14em;text-transform:uppercase;text-align:center;color:var(--ink-3);border-bottom:1px solid var(--line);padding-block:7px}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:saturate(1.2) blur(8px);-webkit-backdrop-filter:saturate(1.2) blur(8px)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:72px}
+.mark{font-family:var(--font-logo);font-weight:300;font-size:32px;line-height:1;color:var(--purple);text-decoration:none;letter-spacing:.01em}
+.nav{display:flex;align-items:center;gap:30px}
+.nav a{font-size:14px;color:var(--ink-2);text-decoration:none}
+.nav a:hover{color:var(--ink)}
+
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-sans);font-weight:700;font-size:14px;letter-spacing:.02em;padding:14px 22px;border-radius:12px;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background .2s var(--ease),border-color .2s var(--ease),transform .12s var(--ease)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--purple-deep);color:#fff}
+.btn-primary:hover{background:#4f45b8}
+.btn-quiet{background:transparent;color:var(--ink);border-color:var(--line-2)}
+.btn-quiet:hover{border-color:var(--ink-3);background:var(--surface)}
+.nav a.btn{padding:10px 16px;font-size:13px;color:#fff}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:clamp(32px,6vw,96px);align-items:center;padding-block:clamp(72px,11vw,150px) clamp(64px,9vw,120px)}
+.hero h1{font-size:clamp(50px,7.6vw,108px);line-height:.98;letter-spacing:-.035em;margin:22px 0 30px}
+.hero h1 em{font-style:normal;color:var(--purple-deep)}
+.hero .lead{font-size:clamp(17px,1.5vw,19px);color:var(--ink-2);max-width:48ch}
+.hero .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:38px}
+
+.motif{position:relative;aspect-ratio:1/1;width:100%;max-width:340px;justify-self:end}
+.motif .beyond{position:absolute;inset:18% 0 0 18%;background:linear-gradient(160deg,var(--tint-2),var(--tint));border-radius:32px;transform-origin:0 0;animation:grow 1.1s .2s var(--ease) both}
+.motif .ask{position:absolute;inset:0 38% 38% 0;border:1.5px dashed var(--ink-3);border-radius:22px}
+.motif .lbl{position:absolute;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.motif .l1{left:14px;top:12px}
+.motif .l2{right:18px;bottom:16px;color:var(--purple-deep)}
+@keyframes grow{from{transform:scale(.62)}to{transform:scale(1)}}
+
+
+/* ways to work with us */
+.ways{padding-block:clamp(80px,11vw,140px)}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px 40px;flex-wrap:wrap;margin-bottom:40px}
+.sec-head h2{font-size:clamp(38px,5vw,64px);line-height:1.02;margin-top:14px}
+.sec-head .hint{color:var(--ink-3);font-size:15px}
+
+.way-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(12px,2vw,24px)}
+.or{font-family:var(--font-display);font-size:18px;color:var(--ink-3)}
+.way{appearance:none;font:inherit;color:inherit;text-align:left;cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:28px;aspect-ratio:1/1;max-height:410px;width:100%;padding:clamp(24px,3vw,38px);display:flex;flex-direction:column;justify-content:space-between;gap:20px;position:relative;transition:border-color .25s var(--ease),background .25s var(--ease),opacity .25s var(--ease),transform .25s var(--ease),box-shadow .25s var(--ease)}
+.way:hover{border-color:var(--line-2);box-shadow:0 18px 40px -24px rgba(34,31,32,.25)}
+.way.on{background:var(--tint);border-color:var(--purple)}
+.way.dim{opacity:.55}
+.way.dim:hover{opacity:.85}
+.way-top{display:flex;justify-content:space-between;align-items:start;gap:16px}
+.way-kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
+.way-title{display:block;font-family:var(--font-display);font-weight:300;font-size:clamp(36px,4.2vw,56px);line-height:1;letter-spacing:-.03em;margin-bottom:12px}
+.way-desc{display:block;color:var(--ink-2);max-width:32ch}
+.way-cta{display:inline-flex;align-items:center;gap:10px;margin-top:18px;font-weight:700;font-size:14px;color:var(--purple-deep)}
+.plus{position:relative;width:26px;height:26px;border-radius:50%;border:1px solid currentColor;flex:none}
+.plus::before,.plus::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:1.5px;background:currentColor;transform:translate(-50%,-50%);transition:transform .25s var(--ease)}
+.plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+.way.on .plus::after{transform:translate(-50%,-50%) rotate(0deg)}
+
+/* tile art: many small markets / one book */
+.art{width:92px;height:92px;flex:none;position:relative}
+.art-market i{position:absolute;width:18px;height:18px;border-radius:6px;background:var(--tint-2);border:1px solid var(--purple)}
+.art-market i:nth-child(1){left:0;top:8px}.art-market i:nth-child(2){left:32px;top:0}.art-market i:nth-child(3){left:66px;top:14px}
+.art-market i:nth-child(4){left:12px;top:44px}.art-market i:nth-child(5){left:48px;top:38px;background:var(--purple)}.art-market i:nth-child(6){left:72px;top:62px}
+.art-market i:nth-child(7){left:28px;top:72px}
+.art-prog i{position:absolute;left:10px;right:10px;height:14px;border-radius:5px;background:var(--tint-2);border:1px solid var(--purple)}
+.art-prog i:nth-child(1){top:14px}.art-prog i:nth-child(2){top:32px}.art-prog i:nth-child(3){top:50px}
+.art-prog i:nth-child(4){top:68px;background:var(--purple)}
+
+/* flows */
+.flows{position:relative}
+.flow{padding-top:0}
+.wire{display:block;width:100%;height:56px;overflow:visible}
+.wire{animation:fade .45s var(--ease) both}
+.wire path{fill:none;stroke:var(--purple);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.reveal{animation:rise .55s var(--ease) both;animation-delay:calc(var(--i,0) * 110ms + 250ms)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.node{background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:26px 26px 24px;position:relative}
+.node .dot{display:block;width:12px;height:12px;border-radius:4px;background:var(--purple);margin-bottom:18px}
+.node h3{font-size:clamp(24px,2.4vw,30px);line-height:1.1;font-weight:400;letter-spacing:-.02em;margin-bottom:10px}
+.node p{color:var(--ink-2);font-size:15px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.chip{font-size:13px;font-weight:700;color:var(--purple-deep);background:var(--tint);border:1px solid var(--tint-2);border-radius:999px;padding:6px 12px}
+
+.branches{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,24px)}
+
+.chain{max-width:620px;margin-inline:auto;display:grid}
+.link{width:1.5px;height:40px;background:var(--purple);margin-inline:auto;position:relative}
+.link::after{content:"";position:absolute;left:50%;bottom:-1px;width:7px;height:7px;border-right:1.5px solid var(--purple);border-bottom:1.5px solid var(--purple);transform:translateX(-50%) rotate(45deg)}
+.step-no{position:absolute;top:24px;right:26px;font-family:var(--font-display);font-size:14px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+
+.how{margin-top:clamp(40px,5vw,56px);border-top:1px solid var(--line);padding-top:28px}
+.how-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:22px}
+.how-head h3{font-size:24px;font-weight:400}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,40px);list-style:none;margin:0;padding:0}
+.steps li b{display:block;font-family:var(--font-display);font-weight:300;font-size:34px;line-height:1;color:var(--line-2);margin-bottom:10px;font-variant-numeric:tabular-nums}
+.steps li strong{display:block;font-family:var(--font-display);font-weight:400;font-size:19px;margin-bottom:4px}
+.steps li span{color:var(--ink-2);font-size:15px}
+.result{margin-top:24px;text-align:center;color:var(--ink-2)}
+.result strong{color:var(--ink);font-weight:700}
+.go{display:inline-flex;align-items:center;gap:8px;margin-top:26px;font-weight:700;font-size:15px;color:var(--purple-deep);text-decoration:none;border-bottom:1px solid var(--tint-2);padding-bottom:2px}
+.go:hover{border-color:var(--purple-deep)}
+.center{text-align:center}
+
+/* closing + footer */
+.band{background:var(--band)}
+.close{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end;padding-block:clamp(64px,9vw,112px)}
+.close h2{font-size:clamp(38px,5vw,64px);line-height:1.02;margin-top:14px}
+.close p{color:var(--ink-2);margin-top:14px;max-width:46ch}
+footer .wrap{display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:24px 48px;padding-block:44px 52px}
+footer .mark{font-size:26px}
+footer small{display:block;font-size:13px;color:var(--ink-3);margin-top:10px}
+.f-links{display:flex;flex-wrap:wrap;gap:10px 28px}
+.f-links a{font-size:14px;color:var(--ink-2);text-decoration:none}
+.f-links a:hover{color:var(--ink)}
+
+@media (max-width:860px){
+  .nav a:not(.btn){display:none}
+  .hero{grid-template-columns:1fr}
+  .motif{justify-self:start;max-width:220px}
+  .way-grid{grid-template-columns:1fr}
+  .or{text-align:center}
+  .way{aspect-ratio:auto;min-height:260px}
+  .branches,.steps{grid-template-columns:1fr}
+  .branches .node + .node{margin-top:0}
+  .close{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .motif .beyond,.reveal{animation:none}
+  .wire{animation:none}
+}
+</style>
+</head>
+<body>
+
+<div class="flag">Mockup · home v2 · scratch, not live</div>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="#top" aria-label="arqu home">arqu</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="#ways">Ways to work with us</a>
+      <a href="#top">About</a>
+      <a href="#careers">Careers</a>
+      <a class="btn btn-primary" href="#contact">Get in touch</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <div class="wrap">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <p class="eyebrow">Specialty insurance</p>
+        <h1 id="hero-title">Innovate beyond <em>the ask.</em></h1>
+        <p class="lead">We are wholesale brokers and technologists. Your ask is where we start. Our AI, data, and human expertise deliver results beyond it.</p>
+        <div class="cta">
+          <a class="btn btn-primary" href="#ways">Ways to work with us</a>
+          <a class="btn btn-quiet" href="#contact">Get in touch</a>
+        </div>
+      </div>
+      <div class="motif" aria-hidden="true">
+        <span class="beyond"></span>
+        <span class="ask"></span>
+        <span class="lbl l1">The ask</span>
+        <span class="lbl l2">What we bring</span>
+      </div>
+    </section>
+
+  </div>
+
+  <section id="ways" class="ways" aria-labelledby="ways-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">Two ways in</p>
+          <h2 id="ways-title">Ways to work with us</h2>
+        </div>
+        <p class="hint">Choose one to see how it works.</p>
+      </div>
+
+      <div class="way-grid">
+        <button class="way" type="button" id="way-market" data-way="market" aria-expanded="false" aria-controls="flow-market">
+          <span class="way-top">
+            <span class="way-kicker">One risk at a time</span>
+            <span class="art art-market" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
+          </span>
+          <span>
+            <span class="way-title">Open market</span>
+            <span class="way-desc">See how AI and data unlock better solutions with our nearly 100 capacity partners.</span>
+            <span class="way-cta"><span class="plus" aria-hidden="true"></span>Explore</span>
+          </span>
+        </button>
+
+        <span class="or" aria-hidden="true">or</span>
+
+        <button class="way" type="button" id="way-programs" data-way="programs" aria-expanded="false" aria-controls="flow-programs">
+          <span class="way-top">
+            <span class="way-kicker">A whole book at once</span>
+            <span class="art art-prog" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+          </span>
+          <span>
+            <span class="way-title">Programs</span>
+            <span class="way-desc">See how we build custom capacity for your book and find the economies of scale inside it.</span>
+            <span class="way-cta"><span class="plus" aria-hidden="true"></span>Explore</span>
+          </span>
+        </button>
+      </div>
+
+      <div class="flows" id="flows">
+        <div class="flow" id="flow-market" role="region" aria-labelledby="way-market" hidden>
+          <svg class="wire" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 56"><path vector-effect="non-scaling-stroke" d=""/></svg>
+          <div class="branches">
+            <div class="node reveal" style="--i:0" data-anchor>
+              <span class="dot"></span>
+              <h3>Construction</h3>
+              <p>New builds, renovations, modular projects, and the contractors behind them.</p>
+              <div class="chips"><span class="chip">Builder's risk</span><span class="chip">Casualty</span></div>
+            </div>
+            <div class="node reveal" style="--i:1" data-anchor>
+              <span class="dot"></span>
+              <h3>Real estate</h3>
+              <p>Habitational buildings, condo and HOA associations, and commercial property.</p>
+              <div class="chips"><span class="chip">Property</span><span class="chip">Casualty</span></div>
+            </div>
+            <div class="node reveal" style="--i:2" data-anchor>
+              <span class="dot"></span>
+              <h3>Energy &amp; environmental</h3>
+              <p>Energy projects, oil and gas contractors, and site environmental exposures.</p>
+              <div class="chips"><span class="chip">Property</span><span class="chip">Casualty</span></div>
+            </div>
+          </div>
+          <div class="how reveal" style="--i:3">
+            <div class="how-head"><h3>How it works</h3><span class="eyebrow">For retailers</span></div>
+            <ol class="steps">
+              <li><b>01</b><strong>Send us the submission</strong><span>SOVs, loss runs, and schedules, in whatever shape they arrive.</span></li>
+              <li><b>02</b><strong>We tell the risk story</strong><span>Our data engine builds a submission an underwriter can read in 93 seconds or less.</span></li>
+              <li><b>03</b><strong>We take it to market</strong><span>Quotes from the right capacity partners, side by side. You keep the client, on a standard wholesale commission.</span></li>
+            </ol>
+            <a class="go" href="#contact">Start an open market submission &rarr;</a>
+          </div>
+        </div>
+
+        <div class="flow" id="flow-programs" role="region" aria-labelledby="way-programs" hidden>
+          <svg class="wire" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 56"><path vector-effect="non-scaling-stroke" d=""/></svg>
+          <div class="chain">
+            <div class="node reveal" style="--i:0" data-anchor>
+              <span class="step-no">01</span>
+              <span class="dot"></span>
+              <h3>Book roll</h3>
+              <p>We identify economies of scale in your current book. Priced as one book, the spread of risk works in your favor.</p>
+            </div>
+            <div class="link reveal" style="--i:1" aria-hidden="true"></div>
+            <div class="node reveal" style="--i:2">
+              <span class="step-no">02</span>
+              <span class="dot"></span>
+              <h3>Custom capacity</h3>
+              <p>We build custom capacity for the program, including fronted solutions. Carriers underwrite the book at once and agree a rate for every location.</p>
+            </div>
+            <div class="link reveal" style="--i:3" aria-hidden="true"></div>
+            <div class="node reveal" style="--i:4">
+              <span class="step-no">03</span>
+              <span class="dot"></span>
+              <h3>Policy administration</h3>
+              <p>We run the program. Each insured gets its own policy and its own limit, and quotes come straight from the agreed rates.</p>
+            </div>
+            <p class="result reveal" style="--i:5"><strong>The result:</strong> a program you can market as your own.</p>
+            <div class="center reveal" style="--i:5"><a class="go" href="#contact">Talk to us about a program &rarr;</a></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="band" aria-labelledby="close-title">
+    <div class="wrap close">
+      <div>
+        <p class="eyebrow">Get in touch</p>
+        <h2 id="close-title">Tell us about the risk.</h2>
+        <p>A broker, not a form, gets back to you.</p>
+      </div>
+      <a class="btn btn-primary" href="mailto:hello@arqu.com">Get in touch</a>
+    </div>
+  </section>
+</main>
+
+<footer id="careers">
+  <div class="wrap">
+    <div>
+      <a class="mark" href="#top">arqu</a>
+      <small>Innovate beyond the ask.</small>
+    </div>
+    <nav class="f-links" aria-label="Footer">
+      <a href="#top">About us</a>
+      <a href="#careers">Careers</a>
+      <a href="#contact">Contact us</a>
+      <a href="#top">Privacy policy</a>
+      <a href="#top">Terms of service</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function () {
+  var tiles = Array.prototype.slice.call(document.querySelectorAll('.way'));
+  var flows = document.getElementById('flows');
+  var grid = document.querySelector('.way-grid');
+  var narrow = window.matchMedia('(max-width: 860px)');
+  var current = null;
+
+  function place() {
+    var tile = current && document.getElementById('way-' + current);
+    if (narrow.matches && tile) tile.insertAdjacentElement('afterend', flows);
+    else grid.insertAdjacentElement('afterend', flows);
+  }
+
+  function wire() {
+    if (!current) return;
+    var flow = document.getElementById('flow-' + current);
+    var svg = flow.querySelector('.wire');
+    var box = svg.getBoundingClientRect();
+    if (!box.width) return;
+    var tile = document.getElementById('way-' + current).getBoundingClientRect();
+    var x0 = (tile.left + tile.width / 2 - box.left) / box.width * 100;
+    var anchors = Array.prototype.slice.call(flow.querySelectorAll('[data-anchor]'));
+    var firstTop = Math.min.apply(null, anchors.map(function (a) { return a.getBoundingClientRect().top; }));
+    var d = 'M' + x0.toFixed(2) + ' 0 V26';
+    anchors.forEach(function (a) {
+      var r = a.getBoundingClientRect();
+      if (Math.abs(r.top - firstTop) > 2) return;
+      var x = (r.left + r.width / 2 - box.left) / box.width * 100;
+      if (Math.abs(x - x0) < 1.5) x = x0;
+      d += ' M' + x0.toFixed(2) + ' 26 H' + x.toFixed(2) + ' V56';
+    });
+    svg.querySelector('path').setAttribute('d', d);
+  }
+
+  function open(key, scroll) {
+    current = current === key ? null : key;
+    tiles.forEach(function (t) {
+      var on = t.dataset.way === current;
+      t.classList.toggle('on', on);
+      t.classList.toggle('dim', !!current && !on);
+      t.setAttribute('aria-expanded', on ? 'true' : 'false');
+    });
+    document.querySelectorAll('.flow').forEach(function (f) {
+      var show = f.id === 'flow-' + current;
+      f.hidden = !show;
+      if (show) {
+        f.querySelectorAll('.reveal, .wire').forEach(function (el) {
+          el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
+        });
+      }
+    });
+    place();
+    wire();
+    if (current && scroll) {
+      var target = document.getElementById('flow-' + current);
+      var top = target.getBoundingClientRect().top;
+      if (top > window.innerHeight * 0.7) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+
+  tiles.forEach(function (t) { t.addEventListener('click', function () { open(t.dataset.way, true); }); });
+  window.addEventListener('resize', function () { place(); wire(); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(wire);
+
+  var start = new URLSearchParams(location.search).get('open');
+  if (start === 'market' || start === 'programs') open(start, false);
+})();
+</script>
+
+<script id="arqu-edit-layer" src="arqu-edit-layer.js"
+        data-selector="h1, h2, .lead, .eyebrow, .hint, .way-kicker, .way-title, .way-desc, .node h3, .node p, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
+        data-key="arqu-copy-home-v2"
+        data-what="the arqu homepage mockup"></script>
+</body>
+</html>

@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arqu — website work in progress</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400&family=Lato:wght@400;700&display=swap">
+<style>
+:root{--bg:#fbfaf7;--ink:#221f20;--ink-2:#56514f;--ink-3:#8d8785;--line:#e7e2db;--line-2:#d5cec5;
+--purple:#8c82fa;--purple-deep:#5e54c8;--tint:#f3f1ff;--tint-2:#e6e2ff;--surface:#fff;
+--ease:cubic-bezier(.22,1,.36,1)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Lato,system-ui,sans-serif;line-height:1.55}
+.wrap{max-width:820px;margin-inline:auto;padding:clamp(48px,9vw,110px) clamp(20px,5vw,40px)}
+h1{font-family:Jost,system-ui,sans-serif;font-weight:300;font-size:clamp(34px,5.4vw,56px);line-height:1.02;letter-spacing:-.03em;margin:10px 0 16px}
+.eyebrow{font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-deep);margin:0}
+.lead{color:var(--ink-2);max-width:54ch;margin:0}
+.cards{display:grid;gap:16px;margin-top:40px}
+a.card{display:block;text-decoration:none;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:22px;padding:26px 28px;transition:border-color .25s var(--ease),box-shadow .25s var(--ease),transform .25s var(--ease)}
+a.card:hover{border-color:var(--purple);box-shadow:0 18px 40px -26px rgba(34,31,32,.3);transform:translateY(-2px)}
+a.card h2{font-family:Jost,system-ui,sans-serif;font-weight:300;font-size:clamp(26px,3.4vw,34px);line-height:1.05;letter-spacing:-.025em;margin:0 0 8px}
+a.card p{margin:0;color:var(--ink-2);font-size:15px}
+a.card .tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep);background:var(--tint);border:1px solid var(--tint-2);border-radius:999px;padding:5px 11px;margin-bottom:14px}
+.note{margin-top:38px;border-top:1px solid var(--line);padding-top:22px;color:var(--ink-3);font-size:14px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Work in progress</p>
+  <h1>Two pages, two different jobs.</h1>
+  <p class="lead">Both open on any phone or laptop. Nothing here is the live site.</p>
+
+  <div class="cards">
+    <a class="card" href="home.html">
+      <span class="tag">Edit the copy</span>
+      <h2>Homepage mockup</h2>
+      <p>Chi's home page design. Hit “Edit copy” at the top right, click any headline or paragraph, and type. Your wording stays after a refresh, and “Copy changes” gives you a was/now list to hand back.</p>
+    </a>
+    <a class="card" href="motion-samples.html">
+      <span class="tag">Just look</span>
+      <h2>Motion samples</h2>
+      <p>Eleven movement studies, including the ellipsis-into-line in both directions. Scrub any of them. Nothing on this page is editable — it's a reference reel.</p>
+    </a>
+  </div>
+
+  <p class="note">Edits live in your own browser only, so two people editing see two different versions. Say the word and we add a shared one.</p>
+</div>
+</body>
+</html>
