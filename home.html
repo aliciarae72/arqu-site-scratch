@@ -64,6 +64,15 @@ p{margin:0}
 .motif .l2{right:18px;bottom:16px;color:var(--purple-deep)}
 @keyframes grow{from{transform:scale(.62)}to{transform:scale(1)}}
 
+/* values */
+.values{padding-block:clamp(56px,8vw,96px) 0}
+.values .sec-head{margin-bottom:34px}
+.val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(24px,3vw,40px)}
+.val{border-top:1.5px solid var(--ink);padding-top:22px}
+.val h3{font-size:clamp(24px,2.4vw,30px);font-weight:400;line-height:1.1;margin-bottom:12px}
+.val p{color:var(--ink-2);font-size:16px;max-width:38ch}
+.val .tag{display:inline-block;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin-top:16px}
+
 
 /* ways to work with us */
 .ways{padding-block:clamp(80px,11vw,140px)}
@@ -113,6 +122,10 @@ p{margin:0}
 .node h3{font-size:clamp(24px,2.4vw,30px);line-height:1.1;font-weight:400;letter-spacing:-.02em;margin-bottom:10px}
 .node p{color:var(--ink-2);font-size:15px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.wins{list-style:none;margin:18px 0 0;padding:16px 0 0;border-top:1px solid var(--line);display:grid;gap:10px}
+.wins li{display:grid;grid-template-columns:150px 1fr;gap:12px;font-size:15px;color:var(--ink-2)}
+.wins b{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--purple-deep);font-weight:700;padding-top:3px}
+@media (max-width:600px){.wins li{grid-template-columns:1fr;gap:2px}}
 .chip{font-size:13px;font-weight:700;color:var(--purple-deep);background:var(--tint);border:1px solid var(--tint-2);border-radius:999px;padding:6px 12px}
 
 .branches{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(16px,2vw,24px)}
@@ -154,7 +167,7 @@ footer small{display:block;font-size:13px;color:var(--ink-3);margin-top:10px}
   .way-grid{grid-template-columns:1fr}
   .or{text-align:center}
   .way{aspect-ratio:auto;min-height:260px}
-  .branches,.steps{grid-template-columns:1fr}
+  .branches,.steps,.val-grid{grid-template-columns:1fr}
   .branches .node + .node{margin-top:0}
   .close{grid-template-columns:1fr}
 }
@@ -167,14 +180,14 @@ footer small{display:block;font-size:13px;color:var(--ink-3);margin-top:10px}
 </head>
 <body>
 
-<div class="flag">Mockup · home v2 · scratch, not live</div>
+<div class="flag">Mockup · home v3 · scratch, not live</div>
 
 <header class="top">
   <div class="wrap">
     <a class="mark" href="#top" aria-label="arqu home">arqu</a>
     <nav class="nav" aria-label="Primary">
       <a href="#ways">Ways to work with us</a>
-      <a href="#top">About</a>
+      <a href="#values">Our values</a>
       <a href="#careers">Careers</a>
       <a class="btn btn-primary" href="#contact">Get in touch</a>
     </nav>
@@ -187,7 +200,7 @@ footer small{display:block;font-size:13px;color:var(--ink-3);margin-top:10px}
       <div>
         <p class="eyebrow">Specialty insurance</p>
         <h1 id="hero-title">Innovate beyond <em>the ask.</em></h1>
-        <p class="lead">We are wholesale brokers and technologists. Your ask is where we start. Our AI, data, and human expertise deliver results beyond it.</p>
+        <p class="lead">We are wholesale brokers and technologists.<br>Your ask is where we start. It is not where we finish.</p>
         <div class="cta">
           <a class="btn btn-primary" href="#ways">Ways to work with us</a>
           <a class="btn btn-quiet" href="#contact">Get in touch</a>
@@ -203,6 +216,31 @@ footer small{display:block;font-size:13px;color:var(--ink-3);margin-top:10px}
 
   </div>
 
+  <section id="values" class="values" aria-labelledby="values-title">
+    <div class="wrap">
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">How we do business</p>
+          <h2 id="values-title">Our values</h2>
+        </div>
+      </div>
+      <div class="val-grid">
+        <div class="val">
+          <h3>Service is our product</h3>
+          <p>Everything we build exists to make your success our success.</p>
+        </div>
+        <div class="val">
+          <h3>Human touch at AI speed</h3>
+          <p>AI clears the desk so our brokers spend more time with retailers and underwriters to drive the best results. Everything we build exists to strengthen the people behind it.</p>
+        </div>
+        <div class="val">
+          <h3>Innovate beyond the ask</h3>
+          <p>AI today, the next thing tomorrow. We leverage the best technology to push ourselves to deliver better.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="ways" class="ways" aria-labelledby="ways-title">
     <div class="wrap">
       <div class="sec-head">
@@ -210,7 +248,6 @@ footer small{display:block;font-size:13px;color:var(--ink-3);margin-top:10px}
           <p class="eyebrow">Two ways in</p>
           <h2 id="ways-title">Ways to work with us</h2>
         </div>
-        <p class="hint">Choose one to see how it works.</p>
       </div>
 
       <div class="way-grid">
@@ -282,24 +319,27 @@ footer small{display:block;font-size:13px;color:var(--ink-3);margin-top:10px}
               <span class="step-no">01</span>
               <span class="dot"></span>
               <h3>Book roll</h3>
-              <p>We identify economies of scale in your current book. Priced as one book, the spread of risk works in your favor.</p>
+              <p>We package your book into one programmatic placement. Priced as one book, the spread of risk works in everyone's favor.</p>
+              <ul class="wins">
+                <li><b>Insureds</b><span>Lower, more competitive price than the open market gives one risk at a time.</span></li>
+                <li><b>Retailers</b><span>Less admin and more time to win new business. We have consolidated nearly 100 markets into one.</span></li>
+                <li><b>Capacity providers</b><span>One book to underwrite instead of hundreds of one-off submissions.</span></li>
+              </ul>
             </div>
             <div class="link reveal" style="--i:1" aria-hidden="true"></div>
             <div class="node reveal" style="--i:2">
               <span class="step-no">02</span>
               <span class="dot"></span>
-              <h3>Custom capacity</h3>
-              <p>We build custom capacity for the program, including fronted solutions. Carriers underwrite the book at once and agree a rate for every location.</p>
+              <h3>Custom capacity and administration</h3>
+              <p>We source capacity for the program, including fronted solutions, and we administer it. Importantly, we let capacity providers do what they do best — underwrite — and we do what we do best — distribute.</p>
+              <ul class="wins">
+                <li><b>Insureds</b><span>Not your traditional layered and shared program. Each insured gets their own policy and their own limit.</span></li>
+                <li><b>Retailers</b><span>Quotes come straight from the agreed rates, so binding takes minutes, not weeks.</span></li>
+                <li><b>Capacity providers</b><span>We do whatever lifting is required of us. Quoting, binding, policy issuance, invoicing: we have built the tools to make deploying capacity easy.</span></li>
+              </ul>
             </div>
-            <div class="link reveal" style="--i:3" aria-hidden="true"></div>
-            <div class="node reveal" style="--i:4">
-              <span class="step-no">03</span>
-              <span class="dot"></span>
-              <h3>Policy administration</h3>
-              <p>We run the program. Each insured gets its own policy and its own limit, and quotes come straight from the agreed rates.</p>
-            </div>
-            <p class="result reveal" style="--i:5"><strong>The result:</strong> a program you can market as your own.</p>
-            <div class="center reveal" style="--i:5"><a class="go" href="#contact">Talk to us about a program &rarr;</a></div>
+            <p class="result reveal" style="--i:3"><strong>The result:</strong> a program you can market as your own.</p>
+            <div class="center reveal" style="--i:3"><a class="go" href="#contact">Talk to us about a program &rarr;</a></div>
           </div>
         </div>
       </div>
@@ -325,7 +365,7 @@ footer small{display:block;font-size:13px;color:var(--ink-3);margin-top:10px}
       <small>Innovate beyond the ask.</small>
     </div>
     <nav class="f-links" aria-label="Footer">
-      <a href="#top">About us</a>
+      <a href="#values">Our values</a>
       <a href="#careers">Careers</a>
       <a href="#contact">Contact us</a>
       <a href="#top">Privacy policy</a>
@@ -405,8 +445,8 @@ footer small{display:block;font-size:13px;color:var(--ink-3);margin-top:10px}
 </script>
 
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
-        data-selector="h1, h2, .lead, .eyebrow, .hint, .way-kicker, .way-title, .way-desc, .node h3, .node p, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
-        data-key="arqu-copy-home-v2"
+        data-selector="h1, h2, .lead, .eyebrow, .hint, .val h3, .val p, .way-kicker, .way-title, .way-desc, .node h3, .node p, .wins b, .wins span, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
+        data-key="arqu-copy-home-v3"
         data-what="the arqu homepage mockup"></script>
 </body>
 </html>
