@@ -336,6 +336,45 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   [data-rise]{opacity:1!important;transform:none!important;transition:none}
   .sdot i,.sdot b,.spine-ln::after{transition:none}
 }
+
+/* ---- risk narrative visuals (Open market) ---- */
+.rn{border-top:1px solid var(--line);padding-top:30px;margin-top:8px}
+.rn-head{max-width:62ch;margin-bottom:30px}
+.rn-head h3{font-size:clamp(23px,2.4vw,29px);line-height:1.1;font-weight:400;font-style:italic;letter-spacing:-.02em;margin:8px 0 10px}
+.rn-lede{color:var(--ink-2);font-size:16px}
+.rn-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,44px)}
+.rn-card{border-top:1px solid var(--line-2);padding-top:18px;min-width:0}
+.rn-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px}
+.rn-kicker,.rn-note{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
+.rn-kicker{color:var(--purple-deep)}
+.rn-note{color:var(--ink-3)}
+.rn-perils,.rn-years{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:24px}
+.rn-peril,.rn-year{background:transparent;border:0;border-bottom:1px solid var(--line-2);border-radius:0;padding:0 0 5px;cursor:pointer;
+  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
+  transition:color .25s var(--ease),border-color .25s var(--ease)}
+.rn-peril:hover,.rn-year:hover{color:var(--ink-2);border-bottom-color:var(--ink-3)}
+.rn-peril.is-on,.rn-year.is-on{color:var(--purple-deep);border-bottom-color:var(--purple-deep)}
+.rn-meter-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
+.rn-band{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
+.rn-score b{font-family:var(--font-display,inherit);font-size:clamp(30px,3.6vw,42px);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--ink)}
+.rn-score i{font-family:var(--font-mono);font-style:normal;font-size:10px;letter-spacing:.12em;color:var(--ink-3);margin-left:4px}
+.rn-track{height:2px;background:var(--line-2);position:relative;overflow:hidden}
+.rn-fill{position:absolute;inset:0 auto 0 0;width:calc(var(--v,0) * 1%);background:var(--purple-deep);
+  transition:width .6s var(--ease)}
+.rn-ticks{display:flex;justify-content:space-between;margin-top:6px}
+.rn-ticks i{width:1px;height:5px;background:var(--line-2)}
+.rn-read{color:var(--ink-2);font-size:15px;margin-top:16px;min-height:4.5em}
+.rn-bars{display:flex;align-items:flex-end;gap:10px;height:86px;margin-bottom:20px}
+.rn-bar{flex:1;background:var(--line-2);position:relative;height:calc(var(--h,4) * 1%);min-height:2px;
+  transition:height .6s var(--ease),background-color .25s var(--ease)}
+.rn-bar.is-on{background:var(--purple-deep)}
+.rn-figs{display:flex;gap:clamp(24px,4vw,48px);margin-bottom:4px}
+.rn-fig{display:flex;flex-direction:column;gap:4px}
+.rn-fig b{font-size:clamp(22px,2.4vw,28px);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--ink)}
+.rn-fig i{font-family:var(--font-mono);font-style:normal;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rn-foot{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:26px}
+@media (max-width:820px){.rn-grid{grid-template-columns:1fr}.rn-read{min-height:0}}
+@media (prefers-reduced-motion:reduce){.rn-fill,.rn-bar{transition:none}}
 </style>
 </head>
 <body>
@@ -478,7 +517,63 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
               <div class="chips"><span class="chip">Property</span><span class="chip">Casualty</span></div>
             </div>
           </div>
-          <div class="how reveal" style="--i:3">
+          <div class="rn reveal" style="--i:3" data-rn>
+            <div class="rn-head">
+              <p class="eyebrow">Inside the submission</p>
+              <h3>What an underwriter sees in 93 seconds</h3>
+              <p class="rn-lede">Every submission we send out carries the same two reads: how the site scores peril by peril, and what the loss history actually did. Both are built from the documents you already sent us.</p>
+            </div>
+
+            <div class="rn-grid">
+              <div class="rn-card">
+                <div class="rn-card-head">
+                  <span class="rn-kicker">Risk profile</span>
+                  <span class="rn-note" data-rn-note>Pick a peril</span>
+                </div>
+                <div class="rn-perils" role="tablist" aria-label="Perils">
+                  <button class="rn-peril is-on" type="button" role="tab" aria-selected="true" data-peril="wildfire" data-score="72" data-band="Elevated" data-read="Site sits inside a moderate-to-high burn corridor. Defensible space and a documented fuel-clearance program move this materially.">Wildfire</button>
+                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="flood" data-score="24" data-band="Low" data-read="Outside the 500-year floodplain. Nearest watercourse is well below grade, so the exposure is surface water, not riverine.">Flood</button>
+                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="wind" data-score="48" data-band="Moderate" data-read="Inland wind only. Roof age and deck attachment are the two attributes that swing this score either way.">Wind</button>
+                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="quake" data-score="61" data-band="Elevated" data-read="Within a known seismic zone. Construction class and year built carry most of the weight here.">Seismic</button>
+                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="crime" data-score="18" data-band="Low" data-read="Secured, fenced, and monitored site. Theft of materials is the live exposure during build phases.">Crime</button>
+                </div>
+                <div class="rn-meter">
+                  <div class="rn-meter-top">
+                    <span class="rn-band" data-rn-band>Elevated</span>
+                    <span class="rn-score"><b data-rn-score>72</b><i>/100</i></span>
+                  </div>
+                  <div class="rn-track"><span class="rn-fill" data-rn-fill style="--v:72"></span></div>
+                  <div class="rn-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+                  <p class="rn-read" data-rn-read>Site sits inside a moderate-to-high burn corridor. Defensible space and a documented fuel-clearance program move this materially.</p>
+                </div>
+              </div>
+
+              <div class="rn-card">
+                <div class="rn-card-head">
+                  <span class="rn-kicker">Loss history</span>
+                  <span class="rn-note">Five years, incurred</span>
+                </div>
+                <div class="rn-years" data-rn-years>
+                  <button class="rn-year" type="button" data-year="2021" data-incurred="0" data-claims="0" data-note="Clean year. No reported claims.">2021</button>
+                  <button class="rn-year" type="button" data-year="2022" data-incurred="48000" data-claims="2" data-note="Two small water-damage claims, both closed.">2022</button>
+                  <button class="rn-year" type="button" data-year="2023" data-incurred="212000" data-claims="3" data-note="One equipment loss drives the year. Reserves closed out at 78 percent of the original figure.">2023</button>
+                  <button class="rn-year is-on" type="button" data-year="2024" data-incurred="96000" data-claims="1" data-note="Single subcontractor liability claim, still open at reserve.">2024</button>
+                  <button class="rn-year" type="button" data-year="2025" data-incurred="12000" data-claims="1" data-note="Minor property claim. Loss ratio back inside target.">2025</button>
+                </div>
+                <div class="rn-bars" aria-hidden="true" data-rn-bars></div>
+                <div class="rn-year-out">
+                  <div class="rn-figs">
+                    <span class="rn-fig"><b data-rn-incurred>$96,000</b><i>Incurred</i></span>
+                    <span class="rn-fig"><b data-rn-claims>1</b><i>Claims</i></span>
+                  </div>
+                  <p class="rn-read" data-rn-year-note>Single subcontractor liability claim, still open at reserve.</p>
+                </div>
+              </div>
+            </div>
+            <p class="rn-foot">Figures shown are representative of the format, not any one account.</p>
+          </div>
+
+          <div class="how reveal" style="--i:4">
             <div class="how-head"><h3>How it works</h3><span class="eyebrow">For retailers</span></div>
             <ol class="steps">
               <li><b>01</b><strong>Send us the submission</strong><span>SOVs, loss runs, and schedules, in whatever shape they arrive.</span></li>
@@ -867,6 +962,65 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 })();
 </script>
 
+<script>
+/* risk-narrative visuals in the Open market flow */
+(function(){
+  var rn = document.querySelector('[data-rn]');
+  if (!rn) return;
+
+  /* --- peril meter --- */
+  var perils = Array.prototype.slice.call(rn.querySelectorAll('.rn-peril'));
+  var fill   = rn.querySelector('[data-rn-fill]');
+  var scoreE = rn.querySelector('[data-rn-score]');
+  var bandE  = rn.querySelector('[data-rn-band]');
+  var readE  = rn.querySelector('[data-rn-read]');
+  var noteE  = rn.querySelector('[data-rn-note]');
+
+  function selectPeril(btn){
+    perils.forEach(function(b){
+      var on = b === btn;
+      b.classList.toggle('is-on', on);
+      b.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    var v = btn.getAttribute('data-score');
+    fill.style.setProperty('--v', v);
+    scoreE.textContent = v;
+    bandE.textContent = btn.getAttribute('data-band');
+    readE.textContent = btn.getAttribute('data-read');
+    noteE.textContent = btn.textContent;
+  }
+  perils.forEach(function(b){ b.addEventListener('click', function(){ selectPeril(b); }); });
+
+  /* --- loss history --- */
+  var years  = Array.prototype.slice.call(rn.querySelectorAll('.rn-year'));
+  var barWrap= rn.querySelector('[data-rn-bars]');
+  var incE   = rn.querySelector('[data-rn-incurred]');
+  var clmE   = rn.querySelector('[data-rn-claims]');
+  var ynoteE = rn.querySelector('[data-rn-year-note]');
+  var money  = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD', maximumFractionDigits:0});
+
+  var peak = years.reduce(function(m,b){ return Math.max(m, +b.getAttribute('data-incurred')); }, 0) || 1;
+  var bars = years.map(function(b){
+    var bar = document.createElement('span');
+    bar.className = 'rn-bar';
+    /* floor at 4% so a clean year still reads as a bar, not a gap */
+    bar.style.setProperty('--h', Math.max(4, Math.round(+b.getAttribute('data-incurred') / peak * 100)));
+    barWrap.appendChild(bar);
+    return bar;
+  });
+
+  function selectYear(btn){
+    var i = years.indexOf(btn);
+    years.forEach(function(b,n){ b.classList.toggle('is-on', n === i); });
+    bars.forEach(function(b,n){ b.classList.toggle('is-on', n === i); });
+    incE.textContent = money.format(+btn.getAttribute('data-incurred'));
+    clmE.textContent = btn.getAttribute('data-claims');
+    ynoteE.textContent = btn.getAttribute('data-note');
+  }
+  years.forEach(function(b){ b.addEventListener('click', function(){ selectYear(b); }); });
+  selectYear(years.filter(function(b){ return b.classList.contains('is-on'); })[0] || years[0]);
+})();
+</script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
         data-selector="h1, h2, .lead, .eyebrow, .hint, .val h3, .val p, .way-kicker, .way-title, .way-desc, .node h3, .node p, .wins b, .wins span, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
         data-key="arqu-copy-home-v3"
