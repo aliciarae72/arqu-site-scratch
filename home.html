@@ -355,14 +355,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 .rn-peril:hover,.rn-year:hover{color:var(--ink-2);border-bottom-color:var(--ink-3)}
 .rn-peril.is-on,.rn-year.is-on{color:var(--purple-deep);border-bottom-color:var(--purple-deep)}
 .rn-meter-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
-.rn-band{font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2)}
-.rn-score b{font-family:var(--font-display,inherit);font-size:clamp(30px,3.6vw,42px);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--ink)}
-.rn-score i{font-family:var(--font-mono);font-style:normal;font-size:10px;letter-spacing:.12em;color:var(--ink-3);margin-left:4px}
-.rn-track{height:2px;background:var(--line-2);position:relative;overflow:hidden}
-.rn-fill{position:absolute;inset:0 auto 0 0;width:calc(var(--v,0) * 1%);background:var(--purple-deep);
-  transition:width .6s var(--ease)}
-.rn-ticks{display:flex;justify-content:space-between;margin-top:6px}
-.rn-ticks i{width:1px;height:5px;background:var(--line-2)}
+.rn-band{font-family:var(--font-display,inherit);font-size:clamp(18px,2vw,22px);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--ink)}
 .rn-read{color:var(--ink-2);font-size:15px;margin-top:16px;min-height:4.5em}
 .rn-bars{display:flex;align-items:flex-end;gap:10px;height:86px;margin-bottom:20px}
 .rn-bar{flex:1;background:var(--line-2);position:relative;height:calc(var(--h,4) * 1%);min-height:2px;
@@ -381,14 +374,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   background:var(--purple-deep);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
 .rn-peril:hover::after,.rn-year:hover::after,.rn-peril.is-on::after,.rn-year.is-on::after{transform:scaleX(1)}
 .rn-peril:focus-visible,.rn-year:focus-visible{outline:1px solid var(--purple-deep);outline-offset:4px}
-.rn-track{transition:height .3s var(--ease)}
-.rn-card:hover .rn-track{height:4px}
-.rn-fill::after{content:'';position:absolute;right:0;top:50%;width:6px;height:6px;margin:-3px -3px 0 0;
-  background:var(--purple-deep);transform:rotate(45deg) scale(0);transition:transform .4s var(--ease)}
-.rn-card:hover .rn-fill::after{transform:rotate(45deg) scale(1)}
-.rn-fill.is-preview{opacity:.45}
-.rn-ticks i{transition:background-color .4s var(--ease),height .4s var(--ease)}
-.rn-ticks i.is-past{background:var(--purple-deep);height:9px}
 .rn-read,.rn-band,.rn-note{transition:opacity .22s var(--ease)}
 .rn-swap{opacity:0}
 .rn-bar{cursor:pointer}
@@ -403,8 +388,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 .rn-bars{overflow:visible}
 @media (max-width:820px){.rn-grid{grid-template-columns:1fr}.rn-read{min-height:0}}
 @media (prefers-reduced-motion:reduce){
-  .rn-fill,.rn-bar,.rn-track,.rn-card,.rn-ticks i,.rn-read,.rn-band,.rn-note,
-  .rn-peril::after,.rn-year::after,.rn-fill::after,.rn-bar::after{transition:none}
+  .rn-bar,.rn-card,.rn-read,.rn-band,.rn-note,
+  .rn-peril::after,.rn-year::after,.rn-bar::after{transition:none}
   .rn-swap{opacity:1}
 }
 </style>
@@ -553,7 +538,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
             <div class="rn-head">
               <p class="eyebrow">Inside the submission</p>
               <h3>What an underwriter sees in 93 seconds</h3>
-              <p class="rn-lede">Every submission we send out carries the same two reads: how the site scores peril by peril, and what the loss history actually did. Both are built from the documents you already sent us.</p>
+              <p class="rn-lede">Every submission we send out carries the same two reads: how each peril classifies for the site, and what the loss history actually did. Both are built from the documents you already sent us.</p>
             </div>
 
             <div class="rn-grid">
@@ -562,21 +547,21 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
                   <span class="rn-kicker">Risk profile</span>
                   <span class="rn-note" data-rn-note>Pick a peril</span>
                 </div>
+                <!-- Wildfire and Seismic are grounded in a real (anonymized) submission's risk
+                     narrative: named hazard class + the distance/date evidence beside it, never
+                     a synthesized 0-100 score. Flood/Wind/Crime stay representative of the format. -->
                 <div class="rn-perils" role="tablist" aria-label="Perils">
-                  <button class="rn-peril is-on" type="button" role="tab" aria-selected="true" data-peril="wildfire" data-score="72" data-band="Elevated" data-read="Site sits inside a moderate-to-high burn corridor. Defensible space and a documented fuel-clearance program move this materially.">Wildfire</button>
-                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="flood" data-score="24" data-band="Low" data-read="Outside the 500-year floodplain. Nearest watercourse is well below grade, so the exposure is surface water, not riverine.">Flood</button>
-                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="wind" data-score="48" data-band="Moderate" data-read="Inland wind only. Roof age and deck attachment are the two attributes that swing this score either way.">Wind</button>
-                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="quake" data-score="61" data-band="Elevated" data-read="Within a known seismic zone. Construction class and year built carry most of the weight here.">Seismic</button>
-                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="crime" data-score="18" data-band="Low" data-read="Secured, fenced, and monitored site. Theft of materials is the live exposure during build phases.">Crime</button>
+                  <button class="rn-peril is-on" type="button" role="tab" aria-selected="true" data-peril="wildfire" data-band="Moderately Low &middot; Lowest Difficulty (0&ndash;10)" data-read="Burn probability rates Moderately Low, and the site is very defensible: suppression difficulty rates Lowest Difficulty (0&ndash;10). The closest historical fire &mdash; 2019, McKay Butte &mdash; stopped roughly 2.5 miles out.">Wildfire</button>
+                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="flood" data-band="Low" data-read="Outside the 500-year floodplain. Nearest watercourse is well below grade, so the exposure is surface water, not riverine.">Flood</button>
+                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="wind" data-band="Moderate" data-read="Inland wind only. Roof age and deck attachment are the two attributes that matter most here.">Wind</button>
+                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="quake" data-band="M2.43 max &middot; M1.42 mean" data-read="Over 20+ years of records, the largest nearby seismic event measured M2.43 against a mean of M1.42 &mdash; background seismicity, not an active-fault concern.">Seismic</button>
+                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="crime" data-band="Low" data-read="Secured, fenced, and monitored site. Theft of materials is the live exposure during build phases.">Crime</button>
                 </div>
                 <div class="rn-meter">
                   <div class="rn-meter-top">
-                    <span class="rn-band" data-rn-band>Elevated</span>
-                    <span class="rn-score"><b data-rn-score>72</b><i>/100</i></span>
+                    <span class="rn-band" data-rn-band>Moderately Low &middot; Lowest Difficulty (0&ndash;10)</span>
                   </div>
-                  <div class="rn-track"><span class="rn-fill" data-rn-fill style="--v:72"></span></div>
-                  <div class="rn-ticks" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
-                  <p class="rn-read" data-rn-read>Site sits inside a moderate-to-high burn corridor. Defensible space and a documented fuel-clearance program move this materially.</p>
+                  <p class="rn-read" data-rn-read>Burn probability rates Moderately Low, and the site is very defensible: suppression difficulty rates Lowest Difficulty (0&ndash;10). The closest historical fire &mdash; 2019, McKay Butte &mdash; stopped roughly 2.5 miles out.</p>
                 </div>
               </div>
 
@@ -602,7 +587,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
                 </div>
               </div>
             </div>
-            <p class="rn-foot">Figures shown are representative of the format, not any one account.</p>
+            <p class="rn-foot">Wildfire and seismic reads are drawn from an actual submission's risk narrative, anonymized. Flood, wind, crime, and the loss history are representative of the format, not any one account.</p>
           </div>
 
           <div class="how reveal" style="--i:4">
@@ -1000,15 +985,12 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   var rn = document.querySelector('[data-rn]');
   if (!rn) return;
 
-  /* --- peril meter --- */
+  /* --- peril reads: named hazard class + evidence, never a synthesized score --- */
   var perils = Array.prototype.slice.call(rn.querySelectorAll('.rn-peril'));
-  var fill   = rn.querySelector('[data-rn-fill]');
-  var scoreE = rn.querySelector('[data-rn-score]');
   var bandE  = rn.querySelector('[data-rn-band]');
   var readE  = rn.querySelector('[data-rn-read]');
   var noteE  = rn.querySelector('[data-rn-note]');
 
-  var ticks  = Array.prototype.slice.call(rn.querySelectorAll('.rn-ticks i'));
   var calm   = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   /* Swap text on a short fade so a changed read registers as a change. */
@@ -1019,7 +1001,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   }
 
   /* Count a number up rather than snapping it. fmt turns the raw value into
-     display text, so the same tween drives the /100 score and the dollars. */
+     display text — the loss-history dollar figure is the only thing left that ticks. */
   function countTo(el, from, to, fmt){
     if (calm.matches || from === to) { el.textContent = fmt(to); return; }
     var t0 = 0, dur = 520;
@@ -1034,49 +1016,20 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     requestAnimationFrame(step);
   }
 
-  function litTicks(v){
-    ticks.forEach(function(t,i){ t.classList.toggle('is-past', v >= i * 25); });
-  }
-
-  var liveScore = +perils.filter(function(b){ return b.classList.contains('is-on'); })[0]
-                    .getAttribute('data-score');
-
   function selectPeril(btn){
     perils.forEach(function(b){
       var on = b === btn;
       b.classList.toggle('is-on', on);
       b.setAttribute('aria-selected', on ? 'true' : 'false');
     });
-    var v = +btn.getAttribute('data-score');
-    fill.classList.remove('is-preview');
-    fill.style.setProperty('--v', v);
-    countTo(scoreE, liveScore, v, String);
-    litTicks(v);
-    liveScore = v;
     swap(bandE, btn.getAttribute('data-band'));
     swap(readE, btn.getAttribute('data-read'));
     swap(noteE, btn.textContent);
   }
 
-  /* Hover previews a peril on the meter without committing to it; leaving the
-     tab puts the selected one back. Pointer only — the click path is the
-     commit, and it is what the keyboard uses. */
   perils.forEach(function(b){
     b.addEventListener('click', function(){ selectPeril(b); });
-    b.addEventListener('mouseenter', function(){
-      if (b.classList.contains('is-on')) return;
-      var v = +b.getAttribute('data-score');
-      fill.classList.add('is-preview');
-      fill.style.setProperty('--v', v);
-      litTicks(v);
-    });
-    b.addEventListener('mouseleave', function(){
-      fill.classList.remove('is-preview');
-      fill.style.setProperty('--v', liveScore);
-      litTicks(liveScore);
-    });
   });
-  litTicks(liveScore);
 
   /* --- loss history --- */
   var years  = Array.prototype.slice.call(rn.querySelectorAll('.rn-year'));
