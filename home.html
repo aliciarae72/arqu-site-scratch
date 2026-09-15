@@ -547,15 +547,13 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
                   <span class="rn-kicker">Risk profile</span>
                   <span class="rn-note" data-rn-note>Pick a peril</span>
                 </div>
-                <!-- Wildfire and Seismic are grounded in a real (anonymized) submission's risk
-                     narrative: named hazard class + the distance/date evidence beside it, never
-                     a synthesized 0-100 score. Flood/Wind/Crime stay representative of the format. -->
+                <!-- Wildfire and Seismic are the two perils the risk-narrative export actually
+                     supports. Both read as a named hazard class plus the distance/date evidence
+                     beside it, grounded in a real (anonymized) submission — never a synthesized
+                     0-100 score. Do not add other perils here without a real data source. -->
                 <div class="rn-perils" role="tablist" aria-label="Perils">
                   <button class="rn-peril is-on" type="button" role="tab" aria-selected="true" data-peril="wildfire" data-band="Moderately Low &middot; Lowest Difficulty (0&ndash;10)" data-read="Burn probability rates Moderately Low, and the site is very defensible: suppression difficulty rates Lowest Difficulty (0&ndash;10). The closest historical fire &mdash; 2019, McKay Butte &mdash; stopped roughly 2.5 miles out.">Wildfire</button>
-                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="flood" data-band="Low" data-read="Outside the 500-year floodplain. Nearest watercourse is well below grade, so the exposure is surface water, not riverine.">Flood</button>
-                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="wind" data-band="Moderate" data-read="Inland wind only. Roof age and deck attachment are the two attributes that matter most here.">Wind</button>
                   <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="quake" data-band="M2.43 max &middot; M1.42 mean" data-read="Over 20+ years of records, the largest nearby seismic event measured M2.43 against a mean of M1.42 &mdash; background seismicity, not an active-fault concern.">Seismic</button>
-                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="crime" data-band="Low" data-read="Secured, fenced, and monitored site. Theft of materials is the live exposure during build phases.">Crime</button>
                 </div>
                 <div class="rn-meter">
                   <div class="rn-meter-top">
@@ -587,7 +585,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
                 </div>
               </div>
             </div>
-            <p class="rn-foot">Wildfire and seismic reads are drawn from an actual submission's risk narrative, anonymized. Flood, wind, crime, and the loss history are representative of the format, not any one account.</p>
+            <p class="rn-foot">Wildfire and seismic reads are drawn from an actual submission's risk narrative, anonymized. Loss history is representative of the format, not any one account.</p>
           </div>
 
           <div class="how reveal" style="--i:4">
