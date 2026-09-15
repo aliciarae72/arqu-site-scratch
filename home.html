@@ -277,11 +277,75 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
    and that left the rule stuck at zero width in every render I could
    verify. A mark that is definitely there beats one that might ink in. */
 .sec-head-run{margin-bottom:20px}
+
+/* ══ INTERACTION LAYER — added 2026-09-15 on Alicia's work order ══════════════
+   Scroll spine (ported from the scroll study), the human-centered globe, and
+   scroll-linked reveals. Everything here is ADDITIVE: it introduces no element
+   matching the edit layer's data-selector, because that layer keys saved copy
+   by NUMERIC DOM INDEX (arqu-edit-layer.js:82, `saved[i]`). One new matching
+   node anywhere above the footer would paste Chi's edits onto the wrong
+   elements. That is why the globe section uses .g-* divs, not h2/.lead/.eyebrow.
+   Lives at the END of the stylesheet on purpose — source order decides ties. */
+
+/* ── the spine: three dots, then a line that keeps going ───────────────────── */
+.spine{position:fixed;left:max(16px,calc(var(--gutter) * .40));top:50%;transform:translateY(-50%);
+  z-index:60;display:none;pointer-events:none}
+@media (min-width:1080px){.spine{display:block}}
+.spine-ln{position:absolute;left:50%;top:-18px;bottom:-18px;width:1px;background:var(--line-2);
+  transform:translateX(-50%)}
+.spine-ln::after{content:"";position:absolute;left:0;top:0;width:1px;background:var(--purple-deep);
+  height:var(--spine-p,0%);transition:height .16s linear}
+.sdots{position:relative;display:flex;flex-direction:column;align-items:center;pointer-events:auto}
+.sdot{appearance:none;border:0;background:transparent;padding:0;margin:0;cursor:pointer;position:relative;
+  width:24px;height:var(--dot-gap,22px);display:flex;align-items:center;justify-content:center}
+.sdot i{display:block;width:7px;height:7px;border-radius:50%;background:var(--line-2);
+  transition:background .3s var(--ease),transform .3s var(--ease)}
+.sdot.past i{background:var(--purple-deep);opacity:.42}
+.sdot[aria-current="true"] i{background:var(--purple-deep);opacity:1;transform:scale(1.85)}
+.sdot b{position:absolute;left:calc(100% + 13px);white-space:nowrap;
+  font:600 10px/1 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  opacity:0;transform:translateX(-4px);pointer-events:none;
+  transition:opacity .25s var(--ease),transform .25s var(--ease)}
+.sdot:hover b,.sdot:focus-visible b,.sdot[aria-current="true"] b{opacity:1;transform:none}
+.sdot[aria-current="true"] b{color:var(--purple-deep)}
+.sdot:focus-visible{outline:1px solid var(--purple-deep);outline-offset:2px}
+
+/* ── the human-centered globe ──────────────────────────────────────────────── */
+.globe-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
+.globe-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
+.g-kicker{font:600 11px/1 var(--font-mono);letter-spacing:.17em;text-transform:uppercase;
+  color:var(--purple-deep);margin-bottom:14px}
+.g-title{font-family:var(--font-display);font-weight:400;font-size:clamp(28px,4.4vw,46px);
+  line-height:1.06;letter-spacing:-.02em;color:var(--ink);max-width:18ch}
+.globe-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:clamp(24px,5vw,64px);align-items:center}
+@media (max-width:860px){.globe-row{grid-template-columns:1fr}}
+.globe-stage{position:relative;aspect-ratio:1/1;max-height:min(58vh,540px);margin-inline:auto;width:100%}
+.globe-stage canvas{display:block;width:100%;height:100%}
+.g-say{color:var(--ink-2);font-size:clamp(15px,1.5vw,17px);line-height:1.62;max-width:46ch}
+.g-say + .g-say{margin-top:15px}
+.g-note{margin-top:20px;font:600 10px/1.5 var(--font-mono);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3)}
+
+/* ── scroll-linked reveals. Applied by JS, so a no-JS page stays fully visible ── */
+[data-rise]{opacity:0;transform:translateY(16px);
+  transition:opacity .72s var(--ease),transform .72s var(--ease)}
+[data-rise].seen{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  [data-rise]{opacity:1!important;transform:none!important;transition:none}
+  .sdot i,.sdot b,.spine-ln::after{transition:none}
+}
 </style>
 </head>
 <body>
 
 <div class="flag">Mockup · home v3 · scratch, not live</div>
+
+<nav class="spine" id="spine" aria-label="Sections">
+  <div class="spine-ln" aria-hidden="true"></div>
+  <div class="sdots" id="dots"></div>
+</nav>
 
 <header class="top">
   <div class="wrap">
@@ -459,6 +523,27 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     </div>
   </section>
 
+  <section id="human" class="globe-sec" aria-labelledby="globe-title">
+    <div class="wrap">
+      <svg class="run sec-head-run" viewBox="0 0 1200 10" preserveAspectRatio="none" aria-hidden="true">
+        <circle class="run-dot" cx="3" cy="5" r="2.6"/><circle class="run-dot" cx="19" cy="5" r="2.6"/><circle class="run-dot" cx="35" cy="5" r="2.6"/>
+        <path class="run-ln" d="M51 5 H1200"/>
+      </svg>
+      <div class="g-head">
+        <div class="g-kicker">Human-centered</div>
+        <div class="g-title" id="globe-title" role="heading" aria-level="2">A person stays at the centre of it.</div>
+      </div>
+      <div class="globe-row">
+        <div class="globe-stage"><canvas id="c-globe"></canvas></div>
+        <div>
+          <div class="g-say">Every point is something in motion &mdash; a submission, a carrier, a risk being worked. Scroll and it turns. Move your cursor and it tilts toward you.</div>
+          <div class="g-say">The figure in the middle never leaves. The technology orbits a person, not the other way round.</div>
+          <div class="g-note">Drawn by the browser &mdash; no 3D library</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section id="contact" class="band" aria-labelledby="close-title">
     <div class="wrap close">
       <div>
@@ -558,6 +643,227 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 
   var start = new URLSearchParams(location.search).get('open');
   if (start === 'market' || start === 'programs') open(start, false);
+})();
+</script>
+
+<script>
+/* ══ INTERACTION LAYER — spine navigation, the human-centered globe, reveals ══
+   Added 2026-09-15. Scroll position is the clock: nothing here autoplays, so
+   scrolling back rewinds it. Adds NO element matching the edit layer's
+   data-selector — see the CSS note for why that is load-bearing. */
+(function () {
+  var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ── 1. the spine. Three dots at the motif's own spacing, then the rest
+        spread out — the ellipsis resolves, then the line takes over. ──────── */
+  var SECTIONS = [
+    ['top',     'Start'],
+    ['values',  'Values'],
+    ['ways',    'Ways to work'],
+    ['human',   'Human-centered'],
+    ['contact', 'Get in touch'],
+    ['careers', 'Careers']
+  ].map(function (p) { return { el: document.getElementById(p[0]), id: p[0], label: p[1] }; })
+   .filter(function (p) { return p.el; });
+
+  var spine = document.getElementById('spine');
+  var dotsEl = document.getElementById('dots');
+  var DOTS = [];
+
+  if (dotsEl && SECTIONS.length) {
+    SECTIONS.forEach(function (sec, i) {
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'sdot';
+      b.setAttribute('aria-label', sec.label);
+      /* the first three sit at the motif's own spacing, then the rest spread out */
+      b.style.setProperty('--dot-gap', (i < 3 ? 22 : 34) + 'px');
+      b.innerHTML = '<i></i><b></b>';
+      b.querySelector('b').textContent = sec.label;
+      b.addEventListener('click', function () {
+        sec.el.scrollIntoView({ behavior: RM ? 'auto' : 'smooth', block: 'start' });
+      });
+      dotsEl.appendChild(b);
+      DOTS.push(b);
+    });
+  }
+
+  var active = -1;
+  function spineTick() {
+    if (!DOTS.length) return;
+    var mid = window.scrollY + window.innerHeight * 0.42;
+    var cur = 0;
+    for (var i = 0; i < SECTIONS.length; i++) {
+      if (SECTIONS[i].el.getBoundingClientRect().top + window.scrollY <= mid) cur = i;
+    }
+    if (cur !== active) {
+      active = cur;
+      DOTS.forEach(function (d, i) {
+        d.setAttribute('aria-current', i === cur ? 'true' : 'false');
+        d.classList.toggle('past', i < cur);
+      });
+    }
+    var doc = document.documentElement;
+    var span = doc.scrollHeight - window.innerHeight;
+    var p = span > 0 ? Math.min(1, Math.max(0, window.scrollY / span)) : 0;
+    if (spine) spine.style.setProperty('--spine-p', (p * 100).toFixed(2) + '%');
+  }
+
+  /* ── 2. the globe. 340 points on a sphere, projected by hand, with a person
+        held at the centre. Back-hemisphere points draw behind the figure,
+        front-hemisphere points draw over it. ─────────────────────────────── */
+  var TAU = Math.PI * 2;
+  var NP = 340, PTS = [];
+  (function () {
+    /* Fibonacci sphere — even coverage without clumping at the poles */
+    var ga = Math.PI * (3 - Math.sqrt(5));
+    for (var i = 0; i < NP; i++) {
+      var y = 1 - (i / (NP - 1)) * 2;
+      var r = Math.sqrt(Math.max(0, 1 - y * y));
+      var th = ga * i;
+      PTS.push([Math.cos(th) * r, y, Math.sin(th) * r]);
+    }
+  })();
+
+  var cv = document.getElementById('c-globe');
+  var POINTER = { x: -9999, y: -9999, on: false };
+  var gT = 0, raf = 0;
+
+  function figure(ctx, cx, cy, R) {
+    /* head + shoulders, the same glyph the scroll study uses for "a person decides" */
+    var headR = R * 0.155, headY = cy - R * 0.20;
+    ctx.beginPath();
+    ctx.arc(cx, cy - R * 0.02, R * 0.60, 0, TAU);
+    ctx.fillStyle = 'rgba(251,250,247,.80)';
+    ctx.fill();
+
+    ctx.fillStyle = '#5e54c8';
+    ctx.beginPath();
+    ctx.arc(cx, headY, headR, 0, TAU);
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx, headY + headR * 2.25, headR * 1.78, Math.PI, 0);
+    ctx.fill();
+  }
+
+  function drawGlobe() {
+    if (!cv) return;
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    var box = cv.getBoundingClientRect();
+    var w = Math.round(box.width), h = Math.round(box.height);
+    /* Layout may not be settled on first call; retry rather than give up —
+       returning silently here left the canvas at its 300x150 default. */
+    if (!w || !h) { setTimeout(globeTick, 120); return; }
+    if (cv.width !== (w * dpr | 0) || cv.height !== (h * dpr | 0)) {
+      cv.width = w * dpr | 0; cv.height = h * dpr | 0;
+    }
+    var ctx = cv.getContext('2d');
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, w, h);
+
+    var cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.40, F = 2.6;
+    var px = POINTER.on ? POINTER.x : cx, py = POINTER.on ? POINTER.y : cy;
+    var ay = gT * TAU + (px / w - 0.5) * 1.2;
+    var ax = 0.34 + (py / h - 0.5) * 0.7;
+    var ca = Math.cos(ay), sa = Math.sin(ay), cb = Math.cos(ax), sb = Math.sin(ax);
+
+    var back = [], front = [], i;
+    for (i = 0; i < NP; i++) {
+      var x = PTS[i][0], y = PTS[i][1], z = PTS[i][2];
+      var x1 = x * ca - z * sa, z1 = x * sa + z * ca;
+      var y1 = y * cb - z1 * sb, z2 = y * sb + z1 * cb;
+      var sc = F / (F - z2);
+      (z2 < 0 ? back : front).push([cx + x1 * R * sc, cy + y1 * R * sc, z2, sc, i]);
+    }
+    back.sort(function (a, b) { return a[2] - b[2]; });
+    front.sort(function (a, b) { return a[2] - b[2]; });
+
+    function paint(list, dim) {
+      for (var k = 0; k < list.length; k++) {
+        var o = list[k], dep = (o[2] + 1) / 2;
+        ctx.beginPath();
+        ctx.arc(o[0], o[1], Math.max(0.7, 1.0 + 2.2 * dep * o[3] * 0.6), 0, TAU);
+        ctx.fillStyle = (o[4] % 7 === 0)
+          ? 'rgba(94,84,200,' + ((0.22 + 0.62 * dep) * dim).toFixed(3) + ')'
+          : 'rgba(34,31,32,' + ((0.10 + 0.40 * dep) * dim).toFixed(3) + ')';
+        ctx.fill();
+      }
+    }
+
+    paint(back, 0.55);
+    figure(ctx, cx, cy, R);
+    paint(front, 1);
+  }
+
+  function request() {
+    if (raf) return;
+    raf = requestAnimationFrame(function () { raf = 0; drawGlobe(); });
+  }
+
+  if (cv) {
+    var stage = cv.parentNode;
+    stage.addEventListener('pointermove', function (e) {
+      var r = cv.getBoundingClientRect();
+      POINTER.x = e.clientX - r.left; POINTER.y = e.clientY - r.top; POINTER.on = true;
+      request();
+    }, { passive: true });
+    stage.addEventListener('pointerleave', function () { POINTER.on = false; request(); }, { passive: true });
+  }
+
+  function globeTick() {
+    if (!cv) return;
+    var sec = document.getElementById('human');
+    var r = sec.getBoundingClientRect();
+    var span = r.height + window.innerHeight;
+    /* 0 as the section enters the viewport, 1 as it leaves — scroll IS the clock */
+    var p = span > 0 ? (window.innerHeight - r.top) / span : 0;
+    gT = Math.min(1, Math.max(0, p));
+    request();
+  }
+
+  /* ── 3. reveals. JS applies the attribute, so with JS off nothing is hidden. ── */
+  var RISE = '.hero > div, .motif, .val, .way, .node, .steps li, .wins, .close > div, ' +
+             '.g-head, .globe-stage, .g-say, .g-note';
+  function reveals() {
+    var els = Array.prototype.slice.call(document.querySelectorAll(RISE));
+    if (!els.length) return;
+    if (RM || !('IntersectionObserver' in window)) {
+      els.forEach(function (el) { el.classList.add('seen'); });
+      return;
+    }
+    els.forEach(function (el, i) {
+      el.setAttribute('data-rise', '');
+      el.style.transitionDelay = ((i % 5) * 70) + 'ms';
+    });
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add('seen'); io.unobserve(en.target); }
+      });
+    }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
+    els.forEach(function (el) { io.observe(el); });
+    /* Failsafe: if the observer never fires (headless, odd viewport, a
+       browser that lies about intersection) the page must not stay blank. */
+    setTimeout(function () {
+      els.forEach(function (el) { el.classList.add('seen'); });
+    }, 2200);
+  }
+
+  /* ── wiring. One passive scroll listener drives both the spine and the globe. ── */
+  var queued = false;
+  function onScroll() {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(function () { queued = false; spineTick(); globeTick(); });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', function () { spineTick(); globeTick(); }, { passive: true });
+
+  window.addEventListener('load', function () { spineTick(); globeTick(); });
+  if ('ResizeObserver' in window && cv) new ResizeObserver(request).observe(cv.parentNode);
+
+  reveals();
+  spineTick();
+  globeTick();
 })();
 </script>
 
