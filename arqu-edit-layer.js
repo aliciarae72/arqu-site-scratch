@@ -2,9 +2,28 @@
  *   <script id="arqu-edit-layer" src="arqu-edit-layer.js"
  *           data-selector="h1, h2, p.lede"  (optional — what is editable)
  *           data-key="arqu-copy-home"       (optional — localStorage bucket)
+ *           data-migrate-nodes="61"         (optional — see MIGRATION below)
  *           data-what="the arqu homepage"></script>
  * Injects its own CSS. Edits persist in the browser; "Copy changes" produces a
  * was/now list to hand a Claude. Lifted off the motion-samples page 2026-09-14.
+ *
+ * MIGRATION, 2026-09-15 — saved copy is keyed by CONTENT, not by DOM position.
+ * The original store was `{ "<index into querySelectorAll(SEL)>": html }`, so
+ * adding one matching element anywhere above the footer shifted every index
+ * after it and pasted saved copy onto the wrong elements. Keys are now derived
+ * from each element's ORIGINAL text, so a new section adds new keys and leaves
+ * every existing one where it was.
+ *
+ * The old index store is READ ONCE to build the new one and is then left alone
+ * forever — never written, never cleared. It is the rollback, and for edits
+ * that live only in somebody's browser it is the only backup there is.
+ *
+ * The one-time index -> key mapping is only correct if the page still has the
+ * same nodes in the same order it had when those edits were typed. Set
+ * data-migrate-nodes to the node count at that time and the migration refuses
+ * to run if the page has drifted, falling back to the old index behaviour and
+ * saying so. Refusing is right: a mis-mapped migration silently rewrites copy
+ * onto the wrong elements, and nothing else holds a copy of it.
  */
 (function(){
   var st = document.createElement('style');
@@ -16,10 +35,50 @@
   var SEL = (ME && ME.getAttribute('data-selector')) ||
             'h1, h2, h3, p, .eyebrow, .lede, .meta, .sub, li';
   var KEY = (ME && ME.getAttribute('data-key')) || ('arqu-copy-' + location.pathname);
+  var KEY2 = KEY + ':bykey';
   var WHAT = (ME && ME.getAttribute('data-what')) || 'this page';
-  var nodes = [], orig = [], saved = {}, editing = false;
+  var nodes = [], orig = [], keys = [], saved = {}, editing = false;
+  // false only if the migration refused; then we read and write the old index
+  // store exactly as before, so a drifted page loses nothing.
+  var byKey = true;
 
-  try { saved = JSON.parse(localStorage.getItem(KEY) || '{}') || {}; } catch(e){ saved = {}; }
+  function readStore(k){
+    try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e){ return null; }
+  }
+
+  // Key off the element's ORIGINAL words, not its position. Same text in two
+  // places gets a ~1, ~2 suffix in document order — a tie-break that only has
+  // to be stable, not meaningful.
+  function keyFor(el, html){
+    var explicit = el.getAttribute('data-edit-key');
+    if (explicit) return explicit;
+    var d = document.createElement('div'); d.innerHTML = html;
+    var txt = (d.textContent || '').replace(/\s+/g,' ').trim().slice(0, 160);
+    var h = 5381;
+    for (var j=0;j<txt.length;j++) h = (((h * 33) ^ txt.charCodeAt(j)) >>> 0);
+    return el.tagName.toLowerCase() + '-' + h.toString(36) + '-' + txt.length;
+  }
+
+  // Runs once per browser. Returns false if it cannot prove the mapping.
+  function migrate(){
+    var v2 = readStore(KEY2);
+    if (v2 && typeof v2 === 'object'){ saved = v2; return true; }
+
+    var v1 = readStore(KEY) || {};
+    var idx = Object.keys(v1);
+    if (idx.length){
+      var expect = ME && ME.getAttribute('data-migrate-nodes');
+      if (expect && +expect !== nodes.length) return false;
+      for (var j=0;j<idx.length;j++){
+        if (!/^[0-9]+$/.test(idx[j]) || +idx[j] >= nodes.length) return false;
+      }
+    }
+    var out = {};
+    for (var k=0;k<idx.length;k++) out[keys[+idx[k]]] = v1[idx[k]];
+    try { localStorage.setItem(KEY2, JSON.stringify(out)); } catch(e){ return false; }
+    saved = out;
+    return true;
+  }
 
   function whereOf(el){
     var p = el.closest('section, header, footer, article');
@@ -31,7 +90,7 @@
     return 'page header';
   }
   function persist(){
-    try { localStorage.setItem(KEY, JSON.stringify(saved)); }
+    try { localStorage.setItem(byKey ? KEY2 : KEY, JSON.stringify(saved)); }
     catch(e){ toast("Couldn't save that edit — the browser is out of room for this page."); }
   }
   function changedList(){
@@ -76,13 +135,34 @@
 
   function build(){
     nodes = Array.prototype.slice.call(document.querySelectorAll(SEL));
+
+    // Pass one captures the original wording and the key it implies. It has to
+    // finish before anything is applied, because the migration maps old indexes
+    // onto this whole key list.
+    var seen = {};
     nodes.forEach(function(el, i){
-      el.setAttribute('data-ed', i);
       orig[i] = el.innerHTML;
-      if (saved[i] != null) el.innerHTML = saved[i];
+      var base = keyFor(el, orig[i]);
+      var n = seen[base] = (seen[base] == null ? 0 : seen[base] + 1);
+      keys[i] = n ? base + '~' + n : base;
+    });
+
+    byKey = migrate();
+    if (!byKey){
+      saved = readStore(KEY) || {};
+      setTimeout(function(){
+        toast('This page has changed since these edits were saved, so they are still tied to their old positions. Tell Alicia before editing.');
+      }, 700);
+    }
+
+    nodes.forEach(function(el, i){
+      var slot = byKey ? keys[i] : i;
+      el.setAttribute('data-ed', i);
+      el.setAttribute('data-edit-slot', slot);
+      if (saved[slot] != null) el.innerHTML = saved[slot];
       el.addEventListener('input', function(){
-        if (el.innerHTML.trim() === orig[i].trim()) delete saved[i];
-        else saved[i] = el.innerHTML;
+        if (el.innerHTML.trim() === orig[i].trim()) delete saved[slot];
+        else saved[slot] = el.innerHTML;
         persist(); paint();
       });
       el.addEventListener('paste', function(ev){
