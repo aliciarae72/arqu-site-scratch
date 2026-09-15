@@ -102,6 +102,7 @@ p{margin:0}
 @keyframes ink{to{stroke-dashoffset:0}}
 .sec-head-run{margin-bottom:20px}
 
+
 .way-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(12px,2vw,28px)}
 .or{font-family:var(--font-display);font-style:italic;font-size:19px;color:var(--ink-3)}
 .way{appearance:none;font:inherit;color:inherit;text-align:left;cursor:pointer;background:transparent;border:0;border-top:1px solid var(--ink);border-radius:0;aspect-ratio:auto;max-height:none;width:100%;padding:26px 0 30px;display:flex;flex-direction:column;justify-content:space-between;gap:22px;position:relative;transition:background .25s var(--ease),opacity .25s var(--ease),border-color .25s var(--ease)}
@@ -201,6 +202,81 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   .run-ln{animation:none;stroke-dashoffset:0}
   .wire{animation:none}
 }
+
+/* ── the mark, taken INTO the page ──────────────────────────
+   Four copies of the same full-width run at the top of each
+   block is stamping the mark, not using it. Chi's layout is
+   already built on hairline rules, and the mark IS a hairline
+   with dots on it — so every rule that means something gets
+   its own, painted on a ::before over the border-top the
+   element already has. No markup moves: her copy, structure
+   and class names stay byte-identical and the edit layer
+   still lands on the same elements.
+   --mk-n = how many dots. --mk-bg = the paper it interrupts. */
+.val,.way,.how,.steps li,.wins{--mk-n:3;--mk-bg:var(--bg);position:relative}
+.val::before,.way::before,.how::before,.steps li::before,.wins::before{
+  content:"";position:absolute;z-index:1;box-sizing:border-box;
+  left:0;top:-3.6px;height:6.2px;
+  width:calc(var(--mk-n) * 16px + 14px);padding-right:14px;
+  background-image:
+    radial-gradient(circle 2.6px at 2.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%),
+    linear-gradient(var(--mk-bg),var(--mk-bg));
+  background-size:16px 100%,100% 100%;
+  background-repeat:repeat-x,no-repeat;
+  background-position:0 50%,0 0;
+  /* the dots clip to the content box, so exactly --mk-n of them
+     render and the padding becomes the gap before the rule. */
+  background-origin:content-box,border-box;
+  background-clip:content-box,border-box;
+}
+/* the way buttons change paper on hover and when open, so the
+   gap the mark cuts has to change with them. Same source order
+   as the background rules above, so "open" still beats "hover". */
+.way:hover{--mk-bg:var(--surface)}
+.way.on{--mk-bg:var(--tint)}
+/* the steps COUNT: one dot, two, three. The mark walks you
+   through the process instead of repeating above it. */
+.steps li:nth-child(1){--mk-n:1}
+.steps li:nth-child(2){--mk-n:2}
+.steps li:nth-child(3){--mk-n:3}
+/* the node's single dot was already half the motif — make it
+   the whole one. Three dots, same rhythm as every other mark. */
+.node .dot{width:38px;height:5.2px;border-radius:0;background:
+  radial-gradient(circle 2.6px at 2.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%) 0 50%/16px 100% repeat-x}
+/* the closing band mirrors: the rule runs in from the left and
+   lands on the dots, so the page ends on the mark instead of
+   opening with it a fourth time. */
+.band .run{transform:scaleX(-1)}
+/* no mark on the footer: the band's bottom border and the
+   footer's top border already stack into a double hairline
+   there, and the mirrored band mark two lines above is the
+   closing beat. A second one just reads as a smudge. */
+
+/* ── the four full-width runs, repainted in CSS ─────────────
+   They were inline SVG with preserveAspectRatio="none", so the
+   1200-unit viewBox squashed the x axis on any narrow screen:
+   the dots collapsed into ellipses and bunched up. Painting
+   them the same way as every other mark makes the geometry
+   width-independent and leaves ONE mark implementation instead
+   of two. The <svg> stays put as the box — only its innards
+   are hidden — so nothing in the DOM moves. */
+.run{box-sizing:border-box;height:6.2px;margin:0 0 26px;padding-left:62px;overflow:hidden;
+  background-image:
+    radial-gradient(circle 2.6px at 2.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%),
+    radial-gradient(circle 2.6px at 18.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%),
+    radial-gradient(circle 2.6px at 34.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%),
+    linear-gradient(var(--purple-deep),var(--purple-deep));
+  background-repeat:no-repeat;
+  background-position:0 50%,0 50%,0 50%,0 50%;
+  background-origin:padding-box,padding-box,padding-box,content-box;
+  background-clip:padding-box,padding-box,padding-box,content-box;
+  background-size:100% 100%,100% 100%,100% 100%,100% 1.25px}
+.run>*{display:none}
+/* deliberately NOT animated. The old SVG inked its rule in via
+   stroke-dashoffset; the CSS equivalent is animating background-size,
+   and that left the rule stuck at zero width in every render I could
+   verify. A mark that is definitely there beats one that might ink in. */
+.sec-head-run{margin-bottom:20px}
 </style>
 </head>
 <body>
