@@ -1,0 +1,536 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arqu — scroll study</title>
+<meta name="description" content="Single-page scroll study. The ellipsis-into-line is the navigation.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&family=Lato:wght@400;700&family=Saira:wght@300&display=swap">
+<style>
+:root{
+  --bg:#fbfaf7; --band:#f2efe9; --surface:#ffffff;
+  --ink:#221f20; --ink-2:#56514f; --ink-3:#8d8785;
+  --line:#e7e2db; --line-2:#d5cec5;
+  --purple:#8c82fa; --purple-deep:#5e54c8; --tint:#f3f1ff; --tint-2:#e6e2ff;
+  --font-display:"Jost","Futura","Avenir Next",system-ui,sans-serif;
+  --font-sans:"Lato",-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  --font-logo:"Saira","Jost",system-ui,sans-serif;
+  --brand-ease:cubic-bezier(.2,.7,.2,1);
+  --gutter:clamp(16px,4vw,56px);
+  --rail:clamp(56px,7vw,104px);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:16px;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--font-display);font-weight:300;letter-spacing:-.025em;margin:0;text-wrap:balance}
+p{margin:0}
+::selection{background:var(--tint-2)}
+:focus-visible{outline:2px solid var(--purple-deep);outline-offset:4px}
+.eyebrow{font-weight:700;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-deep)}
+
+/* ── the flag ───────────────────────────────────────────────── */
+.flag{position:fixed;top:0;left:0;right:0;z-index:40;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);padding:7px var(--gutter);display:flex;justify-content:space-between;gap:16px}
+.flag a{color:var(--ink-3);text-decoration:none;border-bottom:1px solid var(--line-2)}
+.flag a:hover{color:var(--purple-deep)}
+.mark{font-family:var(--font-logo);font-weight:300;font-size:15px;color:var(--purple);letter-spacing:.02em;text-transform:none}
+
+/* ── THE MOTIF AS NAVIGATION ────────────────────────────────── */
+/* One instance on the page. It is the spine, not a divider. */
+.spine{position:fixed;left:0;top:0;bottom:0;width:var(--rail);z-index:30;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;pointer-events:none}
+.spine svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.spine .trunk{stroke:var(--line-2);stroke-width:1.25;fill:none}
+.spine .drawn{stroke:var(--purple-deep);stroke-width:1.75;fill:none;stroke-linecap:round}
+.dots{position:relative;display:flex;flex-direction:column;align-items:center;pointer-events:auto}
+.dot{appearance:none;border:0;background:transparent;padding:0;margin:0;cursor:pointer;position:relative;
+  width:34px;height:var(--dot-gap,34px);display:grid;place-items:center}
+.dot i{display:block;width:7px;height:7px;border-radius:50%;background:var(--line-2);
+  transition:background .34s var(--brand-ease),transform .34s var(--brand-ease)}
+.dot[aria-current="true"] i{background:var(--purple-deep);transform:scale(1.85)}
+.dot.past i{background:var(--purple)}
+.dot b{position:absolute;left:calc(100% + 12px);white-space:nowrap;font-size:11px;font-weight:700;
+  letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);opacity:0;transform:translateX(-5px);
+  transition:opacity .28s var(--brand-ease),transform .28s var(--brand-ease);pointer-events:none}
+.dot:hover b,.dot:focus-visible b,.dot[aria-current="true"] b{opacity:1;transform:none}
+.dot[aria-current="true"] b{color:var(--purple-deep)}
+@media (max-width:760px){
+  .spine{top:auto;bottom:0;left:0;right:0;width:auto;height:var(--rail);flex-direction:row}
+  .dots{flex-direction:row}
+  .dot{width:var(--dot-gap,34px);height:34px}
+  .dot b{left:50%;bottom:calc(100% + 10px);transform:translateX(-50%) translateY(4px)}
+  .dot:hover b,.dot:focus-visible b,.dot[aria-current="true"] b{transform:translateX(-50%)}
+}
+
+/* ── sections ───────────────────────────────────────────────── */
+main{padding-left:var(--rail)}
+@media (max-width:760px){main{padding-left:0;padding-bottom:var(--rail)}}
+section{min-height:100svh;display:grid;align-content:center;gap:28px;
+  padding:clamp(80px,12vh,140px) clamp(20px,6vw,90px);position:relative;scroll-margin-top:0}
+section.band{background:var(--band)}
+section.dark{background:#17161c;color:#f4f2ef}
+section.dark .eyebrow{color:var(--purple)}
+section.dark h2{color:#fff}
+section.dark .say{color:#b9b4b0}
+.inner{max-width:1080px;width:100%;margin-inline:auto;display:grid;gap:26px}
+h1{font-size:clamp(46px,7.2vw,104px);line-height:.96;letter-spacing:-.035em}
+h1 em{font-style:normal;color:var(--purple-deep)}
+h2{font-size:clamp(32px,4.6vw,62px);line-height:1.02}
+.say{font-size:clamp(17px,1.5vw,20px);color:var(--ink-2);max-width:54ch}
+.stage{width:100%;aspect-ratio:16/7;background:var(--surface);border:1px solid var(--line);border-radius:18px;overflow:hidden}
+section.band .stage{background:#fff}
+section.dark .stage{background:#1e1d24;border-color:#2e2c36}
+canvas{display:block;width:100%;height:100%}
+.meta{display:flex;flex-wrap:wrap;gap:8px 26px;font-size:12.5px;color:var(--ink-3)}
+.meta code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:12px;color:var(--ink-2)}
+
+/* scroll-linked reveal: opacity/translate bound to progress, not to a timer */
+.rise{opacity:0;transform:translateY(18px);transition:opacity .7s var(--brand-ease),transform .7s var(--brand-ease)}
+section.seen .rise{opacity:1;transform:none}
+section.seen .rise:nth-child(2){transition-delay:.08s}
+section.seen .rise:nth-child(3){transition-delay:.16s}
+section.seen .rise:nth-child(4){transition-delay:.24s}
+
+.readout{position:fixed;right:14px;bottom:14px;z-index:35;font-size:11px;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--ink-3);background:color-mix(in srgb,var(--bg) 86%,transparent);
+  border:1px solid var(--line);border-radius:999px;padding:6px 12px;backdrop-filter:blur(6px);font-variant-numeric:tabular-nums}
+@media (max-width:760px){.readout{bottom:calc(var(--rail) + 12px)}}
+
+@media (prefers-reduced-motion:reduce){
+  .rise{opacity:1;transform:none;transition:none}
+  html{scroll-behavior:auto}
+  .dot i{transition:none}
+}
+html{scroll-behavior:smooth}
+</style>
+</head>
+<body>
+
+<div class="flag">
+  <span class="mark">arqu</span>
+  <span>Scroll study — the ellipsis is the navigation</span>
+  <span><a href="./index.html">All prototypes</a></span>
+</div>
+
+<!-- THE MOTIF. Once on the page. Three dots, then a line that keeps going. -->
+<nav class="spine" aria-label="Sections">
+  <svg id="spineSvg" aria-hidden="true" preserveAspectRatio="none">
+    <path class="trunk" id="trunkPath"></path>
+    <path class="drawn" id="drawnPath"></path>
+  </svg>
+  <div class="dots" id="dots"></div>
+</nav>
+
+<div class="readout" id="readout">00 — arrives</div>
+
+<main>
+
+<section id="s-open" data-label="Open">
+  <div class="inner">
+    <p class="eyebrow rise">A scroll study</p>
+    <h1 class="rise">Three dots,<br>then a line<br>that <em>doesn't stop</em>.</h1>
+    <p class="say rise">The ellipsis is the request as it arrives: finite, punctuated, closed. The line is what we do with it. On this page it is also how you move — the dots on the left are the navigation, and the line draws itself as you scroll.</p>
+    <div class="stage rise"><canvas id="c-open"></canvas></div>
+    <div class="meta rise"><span>Scroll, or click a dot.</span><span><code>t</code> comes from scroll position, not from a clock.</span></div>
+  </div>
+</section>
+
+<section id="s-arrives" class="band" data-label="Arrives">
+  <div class="inner">
+    <p class="eyebrow rise">01 — It arrives</p>
+    <h2 class="rise">A submission lands as three things and a mess.</h2>
+    <p class="say rise">Email, attachments, a schedule of values someone built in a spreadsheet in 2019. Scroll and watch it come in — the pace is yours, which is the point. Nothing here plays on its own.</p>
+    <div class="stage rise"><canvas id="c-arrives"></canvas></div>
+  </div>
+</section>
+
+<section id="s-market" data-label="Market">
+  <div class="inner">
+    <p class="eyebrow rise">02 — The open market</p>
+    <h2 class="rise">Every carrier who could write it, at once.</h2>
+    <p class="say rise">Not a shortlist someone remembered. Scroll forward and the market fans out; scroll back and it collapses to the one you'd have called anyway.</p>
+    <div class="stage rise"><canvas id="c-market"></canvas></div>
+  </div>
+</section>
+
+<section id="s-tower" class="band" data-label="Tower">
+  <div class="inner">
+    <p class="eyebrow rise">03 — The program</p>
+    <h2 class="rise">Layers stack while you're reading this.</h2>
+    <p class="say rise">Primary, first excess, second. The tower builds in step with the scroll, so you can hold it half-built and look at it — which is the state it's actually in most of the time.</p>
+    <div class="stage rise"><canvas id="c-tower"></canvas></div>
+  </div>
+</section>
+
+<section id="s-human" class="dark" data-label="Human">
+  <div class="inner">
+    <p class="eyebrow rise">04 — Human in the loop</p>
+    <h2 class="rise">The part that used to get dropped.</h2>
+    <p class="say rise">A hand comes in over the machine's work and marks the one thing it got wrong. Drawn at the speed a person draws, with a fixed wobble — the same every time, so it never reads as a glitch.</p>
+    <div class="stage rise"><canvas id="c-human"></canvas></div>
+  </div>
+</section>
+
+<section id="s-line" data-label="Line">
+  <div class="inner">
+    <p class="eyebrow rise">05</p>
+    <h2 class="rise">And then it keeps going.</h2>
+    <p class="say rise">The line doesn't terminate. It runs off the right edge and off the bottom of the spine, past anything this page can show you.</p>
+    <div class="stage rise"><canvas id="c-line"></canvas></div>
+    <div class="meta rise"><span><code>prefers-reduced-motion</code> honored throughout.</span><span>Every draw is a pure function of <code>t</code>.</span></div>
+  </div>
+</section>
+
+</main>
+
+<script>
+(function(){
+'use strict';
+
+var REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* Brand easing, solved rather than approximated: cubic-bezier(.2,.7,.2,1). */
+function bez(p1x,p1y,p2x,p2y){
+  function A(a,b){return 1-3*b+3*a}
+  function B(a,b){return 3*b-6*a}
+  function C(a){return 3*a}
+  function calc(t,a,b){return ((A(a,b)*t+B(a,b))*t+C(a))*t}
+  function slope(t,a,b){return 3*A(a,b)*t*t+2*B(a,b)*t+C(a)}
+  return function(x){
+    if(x<=0)return 0; if(x>=1)return 1;
+    var t=x;
+    for(var i=0;i<6;i++){
+      var d=slope(t,p1x,p2x); if(d===0)break;
+      t-=(calc(t,p1x,p2x)-x)/d;
+    }
+    return calc(t,p1y,p2y);
+  };
+}
+var brandEase = bez(.2,.7,.2,1);
+
+/* Deterministic hash. Never Math.random() — random wobble reads as a bug. */
+function rnd(i,seed){var x=Math.sin((i+1)*12.9898+(seed||0)*78.233)*43758.5453;return x-Math.floor(x);}
+function clamp(v,a,b){return v<a?a:(v>b?b:v)}
+function sub(t,a,b){return clamp((t-a)/(b-a),0,1)}
+
+/* ── the spine: dots + the line that keeps going ─────────────── */
+var SECTIONS = [].slice.call(document.querySelectorAll('main section'));
+var dotsEl = document.getElementById('dots');
+var vertical = !window.matchMedia('(max-width:760px)').matches;
+
+SECTIONS.forEach(function(sec,i){
+  var b = document.createElement('button');
+  b.className = 'dot';
+  b.type = 'button';
+  b.setAttribute('aria-current','false');
+  b.setAttribute('aria-label','Go to section ' + (i+1) + ': ' + sec.dataset.label);
+  /* Geometry from brand.css: the first three sit at the motif's own spacing,
+     then the rest spread out — the dots resolve, then the line takes over. */
+  b.style.setProperty('--dot-gap', (i < 3 ? 22 : 34) + 'px');
+  b.innerHTML = '<i></i><b>' + sec.dataset.label + '</b>';
+  b.addEventListener('click', function(){
+    sec.scrollIntoView({behavior: REDUCED ? 'auto' : 'smooth', block:'start'});
+  });
+  dotsEl.appendChild(b);
+});
+var DOTS = [].slice.call(dotsEl.children);
+
+var svg = document.getElementById('spineSvg');
+var trunk = document.getElementById('trunkPath');
+var drawn = document.getElementById('drawnPath');
+
+function layoutSpine(){
+  vertical = !window.matchMedia('(max-width:760px)').matches;
+  var r = svg.getBoundingClientRect();
+  if(!r.width || !r.height) return;
+  svg.setAttribute('viewBox','0 0 ' + r.width + ' ' + r.height);
+  var box = dotsEl.getBoundingClientRect();
+  var d;
+  if(vertical){
+    var x = box.left - r.left + box.width/2;
+    /* From the last dot, the line runs down and off the bottom edge. */
+    d = 'M' + x + ' ' + (box.bottom - r.top - 8) + ' L' + x + ' ' + (r.height + 40);
+    trunk.setAttribute('d','M' + x + ' ' + (box.top - r.top) + ' L' + x + ' ' + (r.height + 40));
+  }else{
+    var y = box.top - r.top + box.height/2;
+    d = 'M' + (box.right - r.left - 8) + ' ' + y + ' L' + (r.width + 40) + ' ' + y;
+    trunk.setAttribute('d','M' + (box.left - r.left) + ' ' + y + ' L' + (r.width + 40) + ' ' + y);
+  }
+  drawn.setAttribute('d', d);
+  var len = drawn.getTotalLength();
+  drawn.style.strokeDasharray = len;
+  drawn.dataset.len = len;
+  paintSpine(lastProgress);
+}
+
+var lastProgress = 0;
+function paintSpine(p){
+  var len = parseFloat(drawn.dataset.len || 0);
+  /* The line resolves on the brand curve, exactly as .elr does in CSS —
+     except the clock here is the scroll bar. */
+  drawn.style.strokeDashoffset = len * (1 - brandEase(p));
+}
+
+/* ── scroll state ────────────────────────────────────────────── */
+var readout = document.getElementById('readout');
+var players = [];
+
+function sectionProgress(sec){
+  var r = sec.getBoundingClientRect();
+  var vh = window.innerHeight || 1;
+  /* 0 when the section's top hits the bottom of the viewport,
+     1 when its bottom hits the top. Pure function of position. */
+  return clamp((vh - r.top) / (vh + r.height), 0, 1);
+}
+
+function onScroll(){
+  var doc = document.documentElement;
+  var max = doc.scrollHeight - window.innerHeight;
+  lastProgress = max > 0 ? clamp(window.scrollY / max, 0, 1) : 0;
+  paintSpine(lastProgress);
+
+  var active = 0, mid = window.innerHeight * 0.45;
+  SECTIONS.forEach(function(sec,i){
+    var r = sec.getBoundingClientRect();
+    if(r.top <= mid) active = i;
+    if(r.top < window.innerHeight * 0.85 && r.bottom > 0) sec.classList.add('seen');
+  });
+  DOTS.forEach(function(d,i){
+    d.setAttribute('aria-current', i === active ? 'true' : 'false');
+    d.classList.toggle('past', i < active);
+  });
+  readout.textContent = ('0' + active).slice(-2) + ' — ' + SECTIONS[active].dataset.label;
+
+  players.forEach(function(p){ p.tick(); });
+}
+
+/* ── canvas players. draw(ctx,t,w,h) is pure in t. ───────────── */
+function Player(id, sectionId, draw){
+  var cv = document.getElementById(id);
+  if(!cv) return;
+  var sec = document.getElementById(sectionId);
+  var ctx = cv.getContext('2d');
+  var w = 0, h = 0, lastT = -1;
+
+  function size(){
+    var r = cv.getBoundingClientRect();
+    var dpr = Math.min(window.devicePixelRatio || 1, 2);
+    w = r.width; h = r.height;
+    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    lastT = -1;
+  }
+  function tick(){
+    var r = cv.getBoundingClientRect();
+    if(r.bottom < -200 || r.top > window.innerHeight + 200) return;
+    /* Section progress remapped: the middle 70% of the pass does the work,
+       so the drawing completes while the section is still on screen. */
+    var t = REDUCED ? 1 : clamp((sectionProgress(sec) - 0.15) / 0.55, 0, 1);
+    if(Math.abs(t - lastT) < 0.002) return;
+    lastT = t;
+    ctx.clearRect(0,0,w,h);
+    draw(ctx, t, w, h);
+  }
+  players.push({size:size, tick:tick});
+  size();
+}
+
+var INK='#221f20', INK2='#56514f', INK3='#8d8785', LINE='#e7e2db', PUR='#5e54c8', PUR2='#8c82fa', TINT='#f3f1ff';
+
+/* 00 — the motif itself, drawn at scroll pace */
+Player('c-open','s-open',function(ctx,t,w,h){
+  var cy = h/2, r = Math.max(3, h*0.022), gap = r*8;
+  var x0 = w*0.16;
+  var stag = [0, .18/1.6, .36/1.6];
+  for(var i=0;i<3;i++){
+    var dt = sub(t, stag[i], stag[i]+0.22);
+    if(dt<=0) continue;
+    var e = brandEase(dt);
+    ctx.globalAlpha = e;
+    ctx.fillStyle = PUR;
+    ctx.beginPath(); ctx.arc(x0 + i*gap, cy, r*e, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  var lt = sub(t, .34, 1);
+  if(lt>0){
+    var start = x0 + 2*gap + gap*0.7;
+    var end = start + (w - start + 60) * brandEase(lt);
+    ctx.strokeStyle = PUR; ctx.lineWidth = Math.max(1.5, h*0.008); ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(start, cy); ctx.lineTo(end, cy); ctx.stroke();
+  }
+});
+
+/* 01 — the submission arriving: mail, attachments, rows */
+Player('c-arrives','s-arrives',function(ctx,t,w,h){
+  var pad = w*0.07, cardW = w*0.26, cardH = h*0.30, cy = h*0.5;
+  var labels = ['Email', 'Attachments', 'Schedule of values'];
+  for(var i=0;i<3;i++){
+    var dt = sub(t, i*0.16, i*0.16 + 0.40);
+    if(dt<=0) continue;
+    var e = brandEase(dt);
+    var tx = pad + i*(cardW + w*0.035);
+    var ty = cy - cardH/2 + (1-e)*h*0.16;
+    ctx.globalAlpha = e;
+    ctx.fillStyle = '#fff'; ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(tx, ty, cardW, cardH, 10); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = PUR; ctx.fillRect(tx+14, ty+15, cardW*0.22*e, 3);
+    ctx.fillStyle = INK3;
+    for(var k=0;k<3;k++){
+      var rw = cardW*(0.62 - k*0.13)*e;
+      ctx.globalAlpha = e*(0.5 - k*0.1);
+      ctx.fillRect(tx+14, ty+32+k*11, rw, 2.5);
+    }
+    ctx.globalAlpha = e;
+    ctx.font = '600 10px Lato, sans-serif';
+    ctx.fillStyle = INK2;
+    ctx.fillText(labels[i], tx+14, ty+cardH-13);
+  }
+  ctx.globalAlpha = 1;
+  /* the line arrives underneath and gathers them */
+  var lt = sub(t, .55, 1);
+  if(lt>0){
+    ctx.strokeStyle = PUR; ctx.lineWidth = 1.75; ctx.lineCap='round';
+    var y = cy + cardH/2 + h*0.12;
+    ctx.beginPath(); ctx.moveTo(pad, y); ctx.lineTo(pad + (w-pad*0.6-pad)*brandEase(lt), y); ctx.stroke();
+  }
+});
+
+/* 02 — open market fanning out */
+Player('c-market','s-market',function(ctx,t,w,h){
+  var ox = w*0.14, oy = h*0.5, N = 14;
+  var e = brandEase(t);
+  ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+  for(var i=0;i<N;i++){
+    var dt = sub(t, i*0.035, i*0.035+0.45);
+    if(dt<=0) continue;
+    var ee = brandEase(dt);
+    var spread = (i/(N-1) - 0.5) * h*0.72 * ee;
+    var tx = ox + (w*0.70) * ee;
+    var ty = oy + spread;
+    ctx.globalAlpha = 0.30 + 0.45*ee;
+    ctx.strokeStyle = i===4 ? PUR2 : LINE;
+    ctx.beginPath();
+    ctx.moveTo(ox, oy);
+    ctx.bezierCurveTo(ox + w*0.26, oy, tx - w*0.22, ty, tx, ty);
+    ctx.stroke();
+    ctx.globalAlpha = ee;
+    ctx.fillStyle = i===4 ? PUR : '#cdc8c0';
+    ctx.beginPath(); ctx.arc(tx, ty, i===4 ? 5 : 3.2, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = INK; ctx.beginPath(); ctx.arc(ox, oy, 6, 0, Math.PI*2); ctx.fill();
+  ctx.font = '700 10px Lato, sans-serif'; ctx.fillStyle = INK3;
+  ctx.fillText('THE RISK', ox - 22, oy + h*0.16);
+  if(t > .72){
+    ctx.globalAlpha = sub(t,.72,1);
+    ctx.fillStyle = PUR; ctx.font = '700 10px Lato, sans-serif';
+    ctx.fillText('THE ONE YOU’D HAVE CALLED', ox + w*0.70 - 60, oy + (4/(N-1)-0.5)*h*0.72 - 14);
+    ctx.globalAlpha = 1;
+  }
+});
+
+/* 03 — the tower building */
+Player('c-tower','s-tower',function(ctx,t,w,h){
+  var bx = w*0.30, bw = w*0.40, base = h*0.86, layers = 4;
+  var lh = (base - h*0.14) / layers;
+  var names = ['Primary', '1st excess', '2nd excess', 'Cat layer'];
+  for(var i=0;i<layers;i++){
+    var dt = sub(t, i*0.20, i*0.20+0.40);
+    if(dt<=0) continue;
+    var e = brandEase(dt);
+    var y = base - (i+1)*lh;
+    var drop = (1-e) * h*0.22;
+    ctx.globalAlpha = e;
+    ctx.fillStyle = i===0 ? TINT : '#fff';
+    ctx.strokeStyle = i===0 ? PUR2 : LINE; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.roundRect(bx, y - drop, bw, lh-8, 7); ctx.fill(); ctx.stroke();
+    ctx.font = '600 11px Lato, sans-serif'; ctx.fillStyle = INK2;
+    ctx.fillText(names[i], bx + 14, y - drop + lh*0.55);
+    ctx.fillStyle = INK3; ctx.font = '11px Lato, sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText('$' + (5 * Math.pow(2,i)) + 'M', bx + bw - 14, y - drop + lh*0.55);
+    ctx.textAlign = 'left';
+  }
+  ctx.globalAlpha = 1;
+  ctx.strokeStyle = LINE; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(w*0.14, base+2); ctx.lineTo(w*0.86, base+2); ctx.stroke();
+});
+
+/* 04 — the hand comes in over the machine's work */
+Player('c-human','s-human',function(ctx,t,w,h){
+  var rows = 6, top = h*0.18, rh = (h*0.64)/rows, x = w*0.16, rw = w*0.52;
+  for(var i=0;i<rows;i++){
+    var dt = sub(t, i*0.05, i*0.05+0.30);
+    var e = brandEase(dt);
+    ctx.globalAlpha = 0.20 + 0.45*e;
+    ctx.fillStyle = '#7a7684';
+    ctx.fillRect(x, top + i*rh, rw*(0.55 + rnd(i,3)*0.4)*e, 4);
+  }
+  ctx.globalAlpha = 1;
+  /* the correction: an ellipse drawn by hand around row 3, fixed wobble */
+  var ht = sub(t, .42, .92);
+  if(ht>0){
+    var e = brandEase(ht);
+    var cx = x + rw*0.34, cy = top + 3*rh + 2, rx = rw*0.30, ry = rh*0.85;
+    ctx.strokeStyle = PUR2; ctx.lineWidth = 2; ctx.lineCap='round';
+    ctx.beginPath();
+    var steps = 90, span = Math.PI*2.18*e;
+    for(var s=0;s<=steps*e;s++){
+      var a = -0.6 + (s/steps)*Math.PI*2.18;
+      if(a > -0.6 + span) break;
+      var wob = 1 + (rnd(s,7)-0.5)*0.055;
+      var px = cx + Math.cos(a)*rx*wob, py = cy + Math.sin(a)*ry*wob;
+      s===0 ? ctx.moveTo(px,py) : ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+  var nt = sub(t, .80, 1);
+  if(nt>0){
+    ctx.globalAlpha = brandEase(nt);
+    ctx.fillStyle = '#b9b4b0'; ctx.font = '600 11px Lato, sans-serif';
+    ctx.fillText('“TIV is stale — use the 2026 SOV”', x + rw*0.70, top + 3*rh + 6);
+    ctx.globalAlpha = 1;
+  }
+});
+
+/* 05 — and it keeps going */
+Player('c-line','s-line',function(ctx,t,w,h){
+  var cy = h/2, r = Math.max(3,h*0.02), gap = r*8, x0 = w*0.10;
+  for(var i=0;i<3;i++){
+    var dt = sub(t, i*0.07, i*0.07+0.20);
+    if(dt<=0)continue;
+    var e = brandEase(dt);
+    ctx.globalAlpha = e; ctx.fillStyle = PUR;
+    ctx.beginPath(); ctx.arc(x0+i*gap, cy, r, 0, Math.PI*2); ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+  var lt = sub(t,.26,1);
+  if(lt>0){
+    var start = x0 + 2*gap + gap*0.7;
+    ctx.strokeStyle = PUR; ctx.lineWidth = Math.max(1.5,h*0.007); ctx.lineCap='round';
+    ctx.beginPath(); ctx.moveTo(start, cy);
+    ctx.lineTo(start + (w-start+120)*brandEase(lt), cy); ctx.stroke();
+  }
+});
+
+/* ── wiring ─────────────────────────────────────────────────── */
+var queued = false;
+function request(){
+  if(queued) return; queued = true;
+  requestAnimationFrame(function(){ queued = false; onScroll(); });
+}
+window.addEventListener('scroll', request, {passive:true});
+window.addEventListener('resize', function(){
+  players.forEach(function(p){p.size();});
+  layoutSpine(); request();
+});
+layoutSpine();
+onScroll();
+/* Fonts land after first paint and change the dot box; re-measure once. */
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(function(){ layoutSpine(); });
+})();
+</script>
+</body>
+</html>
