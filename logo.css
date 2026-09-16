@@ -24,19 +24,23 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-mono)
   grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr))}
 
 .attempt{display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-width:0;
-  border:1px solid var(--line);border-radius:28px;padding:clamp(28px,4vw,48px) clamp(20px,3.5vw,40px) 22px}
+  border:1px solid transparent;border-radius:28px;padding:clamp(28px,4vw,48px) clamp(20px,3.5vw,40px) 22px;
+  background:var(--card);color:var(--label)}
+.on-paper{--card:var(--bg);--mark:var(--purple-deep);--label:var(--ink-2);border-color:var(--line)}
+.on-deep{--card:var(--purple-deep);--mark:var(--bg);--label:var(--tint)}
+.on-tint{--card:var(--tint);--mark:var(--ink);--label:var(--ink-2)}
+.on-ink{--card:var(--ink);--mark:var(--purple);--label:var(--line)}
+.on-band{--card:var(--band);--mark:var(--purple-deep);--label:var(--ink-2)}
+.on-surface{--card:var(--surface);--mark:var(--ink);--accent:var(--purple);--label:var(--ink-2);border-color:var(--line)}
 
 .stage{display:grid;place-items:center;min-height:clamp(170px,30vw,260px)}
 
-.word{margin:0;font-size:clamp(84px,14vw,156px);line-height:1;color:var(--ink);white-space:nowrap}
-.word-geometric{font-family:"Outfit",sans-serif;font-weight:500;letter-spacing:-.055em}
-.word-humanist{font-family:"Nunito",sans-serif;font-weight:800;letter-spacing:-.03em}
-.word-purple{font-family:"Comfortaa",sans-serif;font-weight:700;letter-spacing:-.01em;color:var(--purple)}
+/* The inline script turns each .spine centerline into a filled .ink outline and
+   fits the viewBox to the result, so height alone sizes the mark. */
+.mark{display:block;height:clamp(92px,13vw,146px);width:auto;max-width:100%}
+.mark .spine{fill:none;stroke:none}
+.mark .ink{fill:var(--mark)}
+.mark .ink.accent{fill:var(--accent,var(--mark))}
 
-/* Drawn marks are stroked centerlines, so round caps and joins give every
-   terminal the same soft end and the weight stays even around each curve. */
-.mark{display:block;width:clamp(200px,40vw,360px);height:auto;color:var(--ink)}
-.mark path{fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
-
-.label{margin:0;font-size:12px;line-height:1.5;color:var(--ink-2)}
-.label b{font-weight:400;color:var(--ink)}
+.label{margin:0;font-size:12px;line-height:1.5}
+.label b{font-weight:400}
