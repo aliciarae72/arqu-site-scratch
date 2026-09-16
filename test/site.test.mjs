@@ -19,8 +19,21 @@ function scriptTags(html) {
   return [...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"[^>]*>/g)].map((m) => ({ tag: m[0], src: m[1] }));
 }
 
+function stylesheetHrefs(html) {
+  return [...html.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"[^>]*>/g)].map((m) => m[1]);
+}
+
 test('serves at least the home page', () => {
   assert.ok(PAGES.includes('home.html'));
+});
+
+test('home.html links its split stylesheets and scripts, in load order', () => {
+  const html = readFileSync(join(ROOT, 'home.html'), 'utf8');
+  assert.deepEqual(stylesheetHrefs(html).filter((h) => h.startsWith('home')), ['home.css', 'home-layers.css']);
+  assert.deepEqual(scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')), [
+    'home-flows.js', 'home-interaction.js', 'home-risk-narrative.js', 'home-card-art.js',
+    'roughjs', 'home-hand.js', 'home-handshake.js', 'home-ambient.js', 'arqu-edit-layer.js'
+  ]);
 });
 
 for (const page of PAGES) {
@@ -32,10 +45,20 @@ for (const page of PAGES) {
     });
   });
 
-  test(`${page}: every local script file exists`, () => {
+  test(`${page}: every local stylesheet exists`, () => {
+    stylesheetHrefs(html)
+      .filter((href) => !/^https?:/.test(href))
+      .forEach((href) => assert.ok(existsSync(join(ROOT, href)), `${page} links missing ${href}`));
+  });
+
+  test(`${page}: every local script file exists and parses`, () => {
     scriptTags(html)
       .filter((s) => !/^https?:/.test(s.src))
-      .forEach((s) => assert.ok(existsSync(join(ROOT, s.src)), `${page} loads missing ${s.src}`));
+      .forEach((s) => {
+        const file = join(ROOT, s.src);
+        assert.ok(existsSync(file), `${page} loads missing ${s.src}`);
+        assert.doesNotThrow(() => new vm.Script(readFileSync(file, 'utf8'), { filename: s.src }));
+      });
   });
 }
 
