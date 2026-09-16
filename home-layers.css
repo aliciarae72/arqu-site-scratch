@@ -1,0 +1,42 @@
+/* ══ INTERACTION LAYER — added 2026-09-15 on Alicia's work order ══════════════
+   Scroll spine (ported from the scroll study), the human-centered section, and
+   scroll-linked reveals. Everything here is ADDITIVE: it introduces no element
+   matching the edit layer's data-selector, because that layer keys saved copy
+   by NUMERIC DOM INDEX (arqu-edit-layer.js:82, `saved[i]`). One new matching
+   node anywhere above the footer would paste Chi's edits onto the wrong
+   elements. That is why the human section uses .g-* divs, not h2/.lead/.eyebrow.
+   Linked after home.css on purpose — source order decides ties. */
+
+/* ── the human-centered section: the handshake ─────────────────────────────── */
+.globe-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
+.globe-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
+.g-kicker{font:600 11px/1 var(--font-mono);letter-spacing:.17em;text-transform:uppercase;
+  color:var(--purple-deep);margin-bottom:14px}
+.g-title{font-family:var(--font-display);font-weight:400;font-size:clamp(28px,4.4vw,46px);
+  line-height:1.06;letter-spacing:-.02em;color:var(--ink);max-width:18ch}
+.globe-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:clamp(24px,5vw,64px);align-items:center}
+@media (max-width:860px){.globe-row{grid-template-columns:1fr}}
+.globe-stage{position:relative;aspect-ratio:16/15;max-height:min(64vh,560px);margin-inline:auto;width:100%}
+.hs{display:block;width:100%;height:100%;overflow:visible;cursor:grab}
+.hs .fig{fill:var(--ink)}
+.hs .lbl{font-family:var(--font-hand);font-size:30px;fill:var(--ink-2);opacity:0;transition:opacity .6s var(--ease)}
+.hs .lbl.us{fill:var(--purple-deep)}
+.hs.drawn .lbl{opacity:1}
+.hs .odot{opacity:0;transition:opacity .8s var(--ease)}
+.hs.orbiting .odot{opacity:1}
+.g-say{color:var(--ink-2);font-size:clamp(15px,1.5vw,17px);line-height:1.62;max-width:46ch}
+.g-say + .g-say{margin-top:15px}
+.g-note{margin-top:20px;font:600 10px/1.5 var(--font-mono);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3)}
+
+/* ── scroll-linked reveals. Applied by JS, so a no-JS page stays fully visible ── */
+[data-rise]{opacity:0;transform:translateY(16px);
+  transition:opacity .72s var(--ease),transform .72s var(--ease)}
+[data-rise].seen{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  [data-rise]{opacity:1!important;transform:none!important;transition:none}
+  .sdot i,.sdot b,.spine-ln::after{transition:none}
+}
+

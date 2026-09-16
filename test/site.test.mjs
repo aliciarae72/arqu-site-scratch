@@ -23,7 +23,7 @@ function scriptTags(html) {
 }
 
 function stylesheetHrefs(html) {
-  return [...html.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"/g)].map((m) => m[1]);
+  return [...html.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"[^>]*>/g)].map((m) => m[1]);
 }
 
 function assertLocalFilesExist(page, refs) {
@@ -38,6 +38,18 @@ test('serves at least the home page', () => {
   assert.ok(PAGES.includes('home.html'));
 });
 
+test('home.html links its split stylesheets and scripts, in load order', () => {
+  const html = readFileSync(join(ROOT, 'home.html'), 'utf8');
+  assert.deepEqual(stylesheetHrefs(html).filter((h) => h.startsWith('home')), [
+    'home.css', 'home-layers.css', 'home-spine.css', 'home-hand.css', 'home-risk-narrative.css', 'home-lines.css'
+  ]);
+  assert.deepEqual(scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')), [
+    'home-flows.js', 'home-interaction.js', 'home-risk-narrative.js', 'home-card-art.js',
+    'roughjs', 'home-hand.js', 'home-handshake.js', 'home-ambient.js',
+    'home-lines.js', 'hail-grid.js', 'home-hail-map.js', 'home-hail-map-ui.js', 'arqu-edit-layer.js'
+  ]);
+});
+
 for (const page of PAGES) {
   const html = readFileSync(join(ROOT, page), 'utf8');
 
@@ -47,11 +59,12 @@ for (const page of PAGES) {
     });
   });
 
-  test(`${page}: every local script file exists`, () => {
-    assertLocalFilesExist(
-      page,
-      scriptTags(html).map((s) => s.src),
-    );
+  test(`${page}: every local script file exists and parses`, () => {
+    const local = scriptTags(html).map((s) => s.src).filter((src) => !/^https?:/.test(src));
+    assertLocalFilesExist(page, local);
+    local.forEach((src) => {
+      assert.doesNotThrow(() => new vm.Script(readFileSync(join(ROOT, src), 'utf8'), { filename: src }));
+    });
   });
 
   test(`${page}: every local stylesheet exists`, () => {
@@ -71,12 +84,14 @@ test('home.html: the casualty material rides the open-market carousel, and the p
   assert.ok(HOME.indexOf('<div class="branches">') < HOME.indexOf('<div class="rn reveal"'));
   assert.ok(HOME.indexOf('<div class="rn reveal"') < HOME.indexOf('<div class="how reveal"'));
   assert.ok(!HOME.includes('<section id="lines"'), 'the standalone #lines section is gone');
-  assert.ok(!/\['lines',/.test(HOME), 'the spine no longer points at a section that does not exist');
+  const interaction = readFileSync(join(ROOT, 'home-interaction.js'), 'utf8');
+  assert.match(interaction, /\['ways',/, 'the spine list is read from the file that holds it');
+  assert.ok(!/\['lines',/.test(interaction), 'the spine no longer points at a section that does not exist');
   // The slides and pagination she asked to keep still carry it.
   assert.equal((LINES.match(/class="rn-slide[ "]/g) || []).length, 2);
   assert.equal((LINES.match(/class="rn-pip"/g) || []).length, 2);
   // the chart fills on .seen, which the page's own reveal pass adds
-  assert.match(HOME, /var RISE = [^;]*\.dots-chart/s);
+  assert.match(interaction, /var RISE = [^;]*\.dots-chart/s);
 });
 
 // Under the edit layer's DOM-index fallback (when its one-time migration refuses), one
@@ -200,7 +215,8 @@ test('home.html: the map takes a pointer and a keyboard, and ships the grid it a
 // The carousel must not claim input a slide's own control has taken: arrows that something
 // inside already answered, and touches that start on a control which owns its gestures.
 test('home.html: the carousel yields the keys and touches its slides have claimed', () => {
-  const carousel = HOME.slice(HOME.indexOf("show.addEventListener('keydown'"), HOME.indexOf('go(0);'));
+  const script = readFileSync(join(ROOT, 'home-risk-narrative.js'), 'utf8');
+  const carousel = script.slice(script.indexOf("show.addEventListener('keydown'"), script.indexOf('go(0);'));
   assert.match(carousel, /if \(e\.defaultPrevented\) return;/, 'the carousel pages on a handled key');
   assert.match(
     carousel,
