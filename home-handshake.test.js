@@ -20,9 +20,18 @@ test('the handshake draws itself on, then the ring and labels arrive', async (t)
       drawn: svg.classList.contains('drawn'),
       orbiting: svg.classList.contains('orbiting'),
       labels: [...svg.querySelectorAll('text.lbl')].map((n) => n.textContent),
+      // one shaft and one head for each label's arrow
+      arrowStrokes: svg.lastElementChild.querySelectorAll('path').length,
     };
   });
-  assert.deepEqual(state, { figures: 12, masked: 0, drawn: true, orbiting: true, labels: ['you', 'your broker'] });
+  assert.deepEqual(state, {
+    figures: 12,
+    masked: 0,
+    drawn: true,
+    orbiting: true,
+    labels: ['you', 'your broker'],
+    arrowStrokes: 4,
+  });
   assert.deepEqual(errors, []);
 });
 
