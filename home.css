@@ -34,7 +34,8 @@ img{max-width:100%;display:block}
 .wrap{max-width:1180px;margin-inline:auto;padding-inline:var(--gutter)}
 h1,h2,h3{font-family:var(--font-display);font-weight:400;letter-spacing:-.024em;margin:0;text-wrap:balance}
 p{margin:0}
-.eyebrow{font-family:var(--font-mono);font-weight:400;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--ink-35,var(--ink-3))}
+/* section eyebrows are written by hand, in sentence case; Caveat runs small, so it sits at 22px to hold the weight the 10px mono label had */
+.eyebrow,.g-kicker{font-family:var(--font-hand);font-weight:500;font-size:22px;line-height:1.1;letter-spacing:0;color:var(--ink-3)}
 
 .flag{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;text-align:center;color:var(--bg);background:var(--ink);border-bottom:none;padding-block:10px}
 
@@ -153,14 +154,17 @@ main{overflow-x:clip}
 .node .dot{display:none}
 .node h3{font-size:clamp(23px,2.4vw,29px);line-height:1.1;font-weight:400;font-style:italic;letter-spacing:-.02em;margin-bottom:10px}
 .node p{color:var(--ink-2);font-size:16px}
-.chips{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:18px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .wins{list-style:none;margin:18px 0 0;padding:18px 0 0;display:grid;gap:12px}
 .wins li{display:grid;grid-template-columns:150px 1fr;gap:12px;font-size:16px;color:var(--ink-2)}
 .wins b{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep);font-weight:400;padding-top:5px}
 @media (max-width:600px){.wins li{grid-template-columns:1fr;gap:2px}}
-.chip{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);background:transparent;border:0;border-bottom:1px solid var(--line-2);border-radius:0;padding:0 0 4px}
+.chip{font-family:var(--font-mono);font-size:12px;line-height:1.3;letter-spacing:.01em;color:var(--ink-2);background:transparent;border:1px solid var(--line-2);border-radius:999px;padding:3px 11px 4px}
 
-.branches{display:grid;grid-template-columns:repeat(3,1fr);gap:0 clamp(28px,3vw,48px)}
+.branches{display:grid;grid-template-columns:repeat(3,1fr);gap:0 clamp(28px,3vw,48px);margin-top:clamp(28px,4vw,48px)}
+/* each market column is headed by a hand-drawn icon (home-sector-icons.js), not the dot-and-rule mark */
+.branches .node::before,.branches .node::after{content:none}
+.sector-icon{display:block;width:72px;height:60px;overflow:visible;margin:0 0 14px -3px}
 
 .chain{max-width:620px;margin-inline:auto;display:grid}
 .link{width:1px;height:40px;background:var(--purple-deep);margin-inline:auto;position:relative}
@@ -218,7 +222,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
    every section head, a dots-only stub on the market columns and mirrored on the
    closing band. Now it is one quiet mark: small dots in purple, a hairline in the
    paper's own line colour, always in that order. It sits on the rules that mean
-   something (values, market columns, program rows, the 1-2-3 steps) and bookends
+   something (values, program rows, the 1-2-3 steps) and bookends
    the page once at the hero and once at the close. No section head carries one.
    --mk-n = how many dots. The rule is painted after the dots, not under them, so
    nothing has to cut a hole in the paper and the ambient field shows through. */

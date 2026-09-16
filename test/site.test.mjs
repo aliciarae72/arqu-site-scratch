@@ -43,6 +43,8 @@ test('home.html links its split stylesheets and scripts, in load order', () => {
       'home-card-art.js',
       'roughjs',
       'home-hand.js',
+      'home-hand-marks.js',
+      'home-sector-icons.js',
       'home-handshake.js',
       'home-ambient.js',
       'arqu-edit-layer.js',
