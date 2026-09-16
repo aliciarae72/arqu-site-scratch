@@ -1,0 +1,37 @@
+/* Wordmark specimen sheet. Tokens are copied from home's :root on purpose:
+   home.css is mid-edit on another branch, and this page must not move with it. */
+:root{
+  --bg:#fbfaf7; --band:#f2efe9; --surface:#ffffff;
+  --ink:#221f20; --ink-2:#56514f;
+  --line:#e7e2db;
+  --purple:#8c82fa; --purple-deep:#5e54c8; --tint:#f3f1ff;
+  --font-mono:ui-monospace,"SF Mono","IBM Plex Mono",Menlo,"Courier New",monospace;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-mono);-webkit-font-smoothing:antialiased}
+::selection{background:var(--tint)}
+
+.sheet{max-width:1180px;margin-inline:auto;padding:clamp(28px,6vw,72px) clamp(16px,4vw,40px) clamp(48px,8vw,96px)}
+
+.sheet-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;
+  border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:clamp(24px,4vw,40px)}
+.sheet-head p{margin:0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2)}
+.sheet-head a{color:var(--ink-2);text-decoration:none;font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+.sheet-head a:hover{color:var(--purple-deep)}
+
+.attempts{list-style:none;margin:0;padding:0;display:grid;gap:clamp(14px,2vw,22px);
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr))}
+
+.attempt{display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-width:0;
+  border:1px solid var(--line);border-radius:28px;padding:clamp(28px,4vw,48px) clamp(20px,3.5vw,40px) 22px}
+
+.stage{display:grid;place-items:center;min-height:clamp(170px,30vw,260px)}
+
+.word{margin:0;font-size:clamp(84px,14vw,156px);line-height:1;color:var(--ink);white-space:nowrap}
+.word-geometric{font-family:"Outfit",sans-serif;font-weight:500;letter-spacing:-.055em}
+.word-humanist{font-family:"Nunito",sans-serif;font-weight:800;letter-spacing:-.03em}
+.word-purple{font-family:"Comfortaa",sans-serif;font-weight:700;letter-spacing:-.01em;color:var(--purple)}
+
+.label{margin:0;font-size:12px;line-height:1.5;color:var(--ink-2)}
+.label b{font-weight:400;color:var(--ink)}
