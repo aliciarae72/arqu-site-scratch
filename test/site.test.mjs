@@ -35,13 +35,26 @@ test('serves at least the home page', () => {
 
 test('home.html links its split stylesheets and scripts, in load order', () => {
   const html = readFileSync(join(ROOT, 'home.html'), 'utf8');
-  assert.deepEqual(stylesheetHrefs(html).filter((h) => h.startsWith('home')), [
-    'home.css', 'home-layers.css', 'home-spine.css', 'home-hand.css', 'home-risk-narrative.css', 'home-lines.css'
-  ]);
-  assert.deepEqual(scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')), [
-    'home-flows.js', 'home-interaction.js', 'home-risk-narrative.js', 'home-card-art.js',
-    'roughjs', 'home-hand.js', 'home-handshake.js', 'home-ambient.js', 'home-lines.js', 'arqu-edit-layer.js'
-  ]);
+  assert.deepEqual(
+    stylesheetHrefs(html).filter((h) => h.startsWith('home')),
+    ['home.css', 'home-layers.css', 'home-spine.css', 'home-hand.css', 'home-risk-narrative.css', 'home-lines.css'],
+  );
+  assert.deepEqual(
+    scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')),
+    [
+      'home-flows.js',
+      'home-interaction.js',
+      'home-risk-narrative-visuals.js',
+      'home-risk-narrative.js',
+      'home-card-art.js',
+      'roughjs',
+      'home-hand.js',
+      'home-handshake.js',
+      'home-ambient.js',
+      'home-lines.js',
+      'arqu-edit-layer.js',
+    ],
+  );
 });
 
 for (const page of PAGES) {
@@ -87,7 +100,7 @@ test('home.html: #lines sits between #ways and #human, and the page wires it up'
   // the spine list and the reveal pass live in the split interaction script
   const interaction = readFileSync(join(ROOT, 'home-interaction.js'), 'utf8');
   assert.match(interaction, /\['lines',\s+'Casualty & property'\]/);
-  assert.match(interaction, /var RISE = [^;]*\.dots-chart/s);
+  assert.match(interaction, /var RISE =[^;]*\.dots-chart/s);
 });
 
 // Under the edit layer's DOM-index fallback (when its one-time migration refuses), one
