@@ -1,0 +1,250 @@
+/* ============================================================
+   arqu home — VELLUM restyle, CHI'S PALETTE.
+   Chi's copy, structure AND colors untouched. What comes from
+   12 brand system/v2-routes/v2-vellum/brand.css is the DESIGN
+   ONLY: serif display, mono for labels, paper tooth, hairline
+   rules, no cards, no radius, no sans, wide gutters.
+   The vellum route's own colors are deliberately NOT used.
+   ============================================================ */
+:root{
+  /* Chi's palette, unchanged — the vellum route supplies type, rule and space, not color */
+  --bg:#fbfaf7; --band:#f2efe9; --surface:#ffffff;
+  --ink:#221f20; --ink-2:#56514f; --ink-3:#8d8785;
+  --line:#e7e2db; --line-2:#d5cec5;
+  --purple:#8c82fa; --purple-deep:#5e54c8; --tint:#f3f1ff; --tint-2:#e6e2ff;
+  --font-display:"Hoefler Text","Didot","Bodoni 72","Playfair Display","Palatino Linotype",Palatino,Georgia,serif;
+  --font-sans:"Hoefler Text","Didot","Bodoni 72","Palatino Linotype",Palatino,Georgia,serif;
+  --font-mono:ui-monospace,"SF Mono","IBM Plex Mono",Menlo,"Courier New",monospace;
+  --font-logo:"Hoefler Text","Didot","Bodoni 72",Palatino,Georgia,serif;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --gutter:clamp(24px,6vw,96px);
+  --font-hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+  --spring:cubic-bezier(.34,1.56,.64,1);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-sans);font-size:18px;line-height:1.66;-webkit-font-smoothing:antialiased}
+/* the vellum itself — a faint tooth over the whole sheet, never over content */
+body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.5;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='g'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix type='saturate' values='0'/></filter><rect width='180' height='180' filter='url(%23g)' opacity='.055'/></svg>")}
+body>*{position:relative;z-index:1}
+img{max-width:100%;display:block}
+::selection{background:var(--tint)}
+:focus-visible{outline:1px solid var(--purple-deep);outline-offset:3px}
+.wrap{max-width:1180px;margin-inline:auto;padding-inline:var(--gutter)}
+h1,h2,h3{font-family:var(--font-display);font-weight:400;letter-spacing:-.024em;margin:0;text-wrap:balance}
+p{margin:0}
+/* section eyebrows are written by hand, in sentence case; Caveat runs small, so it sits at 22px to hold the weight the 10px mono label had */
+.eyebrow,.g-kicker{font-family:var(--font-hand);font-weight:500;font-size:22px;line-height:1.1;letter-spacing:0;color:var(--ink-3)}
+
+.flag{font-family:var(--font-mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;text-align:center;color:var(--bg);background:var(--ink);border-bottom:none;padding-block:10px}
+
+/* header */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 94%,transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:78px}
+.mark{font-family:var(--font-logo);font-weight:400;font-size:34px;line-height:1;color:var(--ink);text-decoration:none;letter-spacing:-.03em}
+.nav{display:flex;align-items:center;gap:30px}
+.nav a{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);text-decoration:none}
+.nav a:hover{color:var(--purple-deep)}
+
+.btn{display:inline-flex;align-items:center;gap:10px;font-family:var(--font-mono);font-weight:400;font-size:11px;letter-spacing:.14em;text-transform:uppercase;padding:14px 30px;border-radius:0;text-decoration:none;border:1px solid transparent;cursor:pointer;transition:background .2s var(--ease),border-color .2s var(--ease),opacity .2s var(--ease)}
+.btn-primary{background:var(--purple-deep);color:var(--bg)}
+.btn-primary:hover{opacity:.9}
+.btn-quiet{background:transparent;color:var(--purple-deep);border-color:var(--purple-deep)}
+.btn-quiet:hover{background:var(--tint)}
+.nav a.btn{padding:11px 20px;font-size:10px;color:var(--bg)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:1.35fr .65fr;gap:clamp(32px,6vw,96px);align-items:center;padding-block:clamp(72px,11vw,150px) clamp(64px,9vw,120px)}
+.hero h1{font-size:clamp(48px,7.6vw,102px);line-height:.98;letter-spacing:-.03em;margin:26px 0 30px}
+.hero h1 em{font-style:italic;color:var(--purple-deep)}
+.hero .lead{font-size:19px;color:var(--ink-2);max-width:48ch}
+.hero .cta{display:flex;flex-wrap:wrap;gap:16px;margin-top:40px}
+
+/* hero motif: the ask is a small circle a person is holding up; what we
+   bring is the big one behind it, and it bleeds past the edge of the page. */
+main{overflow-x:clip}
+.motif{position:relative;aspect-ratio:1/1;width:100%;justify-self:end;--px:0;--py:0}
+.motif .beyond{position:absolute;left:34%;top:-34%;width:172%;aspect-ratio:1/1;
+  transform:translate(calc(var(--px) * 14px),calc(var(--py) * 10px));transition:transform .9s var(--ease)}
+.motif .beyond-in{position:absolute;inset:0;border-radius:50%;transform-origin:0 60%;animation:grow 1.3s .15s var(--ease) both;
+  background:radial-gradient(circle at 30% 42%,var(--tint) 0%,var(--tint-2) 100%)}
+.motif .beyond-in::before{content:"";position:absolute;inset:-7%;border-radius:50%;border:1px solid var(--purple);opacity:.35}
+.motif .ask{position:absolute;left:14%;top:40%;width:34%;aspect-ratio:1/1;border-radius:50%;background:var(--bg);
+  transform:translate(calc(var(--px) * -6px),calc(var(--py) * -5px));transition:transform .9s var(--ease);
+  animation:pop .7s .55s cubic-bezier(.34,1.56,.64,1) both}
+.motif svg.hand-motif{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.motif .lbl{position:absolute;font-family:var(--font-hand);font-size:clamp(22px,2vw,27px);line-height:1;color:var(--ink-2);
+  opacity:0;animation:fade .6s 1.9s var(--ease) forwards}
+.motif .l1{left:31%;top:79%;white-space:nowrap}
+.motif .l2{left:58%;top:10%;white-space:nowrap;color:var(--purple-deep);animation-delay:2.2s}
+@keyframes grow{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{opacity:1}}
+
+/* values */
+.values{padding-block:clamp(56px,8vw,96px) 0}
+.values .sec-head{margin-bottom:34px}
+.val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0 clamp(28px,4vw,56px)}
+.val{padding-top:24px}
+.val h3{font-size:clamp(24px,2.4vw,30px);font-weight:400;font-style:italic;line-height:1.1;margin-bottom:12px}
+.val p{color:var(--ink-2);font-size:17px;max-width:38ch}
+.val .tag{display:inline-block;font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-top:16px}
+
+/* ways to work with us */
+.ways{padding-block:clamp(80px,11vw,140px)}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px 40px;flex-wrap:wrap;margin-bottom:44px}
+.sec-head h2{font-size:clamp(34px,5vw,60px);line-height:1.02;margin-top:14px;max-width:20ch}
+.sec-head h2 em{font-style:italic;color:var(--purple-deep)}
+.sec-head .hint{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3)}
+
+
+
+/* both cards stretch to the row, so their edges line up at any copy length */
+.way-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:clamp(14px,2vw,28px)}
+.or{align-self:center;font-family:var(--font-display);font-style:italic;font-size:19px;color:var(--ink-3);padding:6px 4px}
+.way{appearance:none;font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%;
+  display:flex;flex-direction:column;justify-content:space-between;gap:26px;position:relative;isolation:isolate;overflow:hidden;
+  background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:clamp(22px,2.6vw,34px);
+  box-shadow:0 1px 2px rgba(34,31,32,.05),0 16px 36px -24px rgba(34,31,32,.30);
+  transition:transform .5s var(--spring),box-shadow .4s var(--ease),border-color .3s var(--ease),opacity .3s var(--ease)}
+/* a soft wash that follows the pointer inside the card */
+.way::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(360px circle at var(--mx,50%) var(--my,30%),rgba(140,130,250,.18),rgba(140,130,250,0) 70%);
+  opacity:0;transition:opacity .35s var(--ease)}
+.way:hover{transform:translateY(-6px);border-color:var(--purple);
+  box-shadow:0 2px 4px rgba(94,84,200,.08),0 34px 60px -32px rgba(94,84,200,.55)}
+.way:hover::after,.way.on::after{opacity:1}
+.way:active{transform:translateY(-2px) scale(.994)}
+.way.on{border-color:var(--purple-deep);box-shadow:0 0 0 1px var(--purple-deep),0 30px 60px -36px rgba(94,84,200,.5)}
+.way.dim{opacity:.62}
+.way.dim:hover{opacity:1}
+.way-title{transition:color .3s var(--ease)}
+.way:hover .way-title{color:var(--purple-deep)}
+.way-cta{transition:gap .35s var(--spring)}
+.way:hover .way-cta{gap:16px}
+.way .plus{transition:background .3s var(--ease),color .3s var(--ease),transform .5s var(--spring)}
+.way:hover .plus,.way.on .plus{background:var(--purple-deep);border-color:var(--purple-deep);color:var(--surface)}
+.way:hover .plus{transform:rotate(90deg)}
+.way-top{display:flex;justify-content:space-between;align-items:start;gap:16px}
+.way-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
+.way-title{display:block;font-family:var(--font-display);font-weight:400;font-size:clamp(34px,4.2vw,54px);line-height:1;letter-spacing:-.03em;margin-bottom:14px}
+.way-desc{display:block;color:var(--ink-2);max-width:32ch;font-size:17px}
+.way-cta{display:inline-flex;align-items:center;gap:10px;margin-top:20px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep)}
+.plus{position:relative;width:24px;height:24px;border-radius:50%;border:1px solid currentColor;flex:none}
+.plus::before,.plus::after{content:"";position:absolute;left:50%;top:50%;width:9px;height:1px;background:currentColor;transform:translate(-50%,-50%);transition:transform .25s var(--ease)}
+.plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+.way.on .plus::after{transform:translate(-50%,-50%) rotate(0deg)}
+
+/* tile art: one dot opening out to the market / many dots closing into one book */
+.art{display:block;height:clamp(120px,12vw,156px);border-radius:12px;background:var(--bg);border:1px solid var(--line);
+  transition:background .4s var(--ease),border-color .4s var(--ease)}
+.way:hover .art,.way.on .art{background:var(--tint);border-color:var(--tint-2)}
+.art canvas{display:block;width:100%;height:100%}
+
+/* flows */
+.flows{position:relative}
+.flow{padding-top:0}
+.wire{display:block;width:100%;height:56px;overflow:visible;animation:fade .45s var(--ease) both}
+.wire path{fill:none;stroke:var(--purple-deep);stroke-width:1;stroke-opacity:.55;stroke-linecap:round;stroke-linejoin:round}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.reveal{animation:rise .55s var(--ease) both;animation-delay:calc(var(--i,0) * 110ms + 250ms)}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+.node{background:transparent;border:0;border-radius:0;padding:26px 0 26px;position:relative}
+.node .dot{display:none}
+.node h3{font-size:clamp(23px,2.4vw,29px);line-height:1.1;font-weight:400;font-style:italic;letter-spacing:-.02em;margin-bottom:10px}
+.node p{color:var(--ink-2);font-size:16px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.wins{list-style:none;margin:18px 0 0;padding:18px 0 0;display:grid;gap:12px}
+.wins li{display:grid;grid-template-columns:150px 1fr;gap:12px;font-size:16px;color:var(--ink-2)}
+.wins b{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep);font-weight:400;padding-top:5px}
+@media (max-width:600px){.wins li{grid-template-columns:1fr;gap:2px}}
+.chip{font-family:var(--font-mono);font-size:12px;line-height:1.3;letter-spacing:.01em;color:var(--ink-2);background:transparent;border:1px solid var(--line-2);border-radius:999px;padding:3px 11px 4px}
+
+.branches{display:grid;grid-template-columns:repeat(3,1fr);gap:0 clamp(28px,3vw,48px);margin-top:clamp(28px,4vw,48px)}
+/* each market column is headed by a hand-drawn icon (home-sector-icons.js), not the dot-and-rule mark */
+.branches .node::before,.branches .node::after{content:none}
+.sector-icon{display:block;width:72px;height:60px;overflow:visible;margin:0 0 14px -3px}
+
+.chain{max-width:620px;margin-inline:auto;display:grid}
+.link{width:1px;height:40px;background:var(--purple-deep);margin-inline:auto;position:relative}
+.link::after{content:"";position:absolute;left:50%;bottom:-1px;width:6px;height:6px;border-right:1px solid var(--purple-deep);border-bottom:1px solid var(--purple-deep);transform:translateX(-50%) rotate(45deg)}
+.step-no{position:absolute;top:24px;right:0;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;color:var(--ink-3);font-variant-numeric:tabular-nums}
+
+.how{margin-top:clamp(40px,5vw,56px);padding-top:8px}
+.how-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:24px}
+.how-head h3{font-size:24px;font-weight:400;font-style:italic}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,44px);list-style:none;margin:0;padding:0}
+.steps li{padding-top:18px}
+.steps li b{display:block;font-family:var(--font-display);font-weight:400;font-size:38px;line-height:1;color:var(--line-2);margin-bottom:10px;font-variant-numeric:tabular-nums}
+.steps li strong{display:block;font-family:var(--font-display);font-weight:400;font-style:italic;font-size:20px;margin-bottom:4px}
+.steps li span{color:var(--ink-2);font-size:16px}
+.result{margin-top:28px;text-align:center;color:var(--ink-2)}
+.result strong{color:var(--ink);font-weight:400;font-style:italic}
+.go{display:inline-flex;align-items:center;gap:8px;margin-top:28px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep);text-decoration:none;border-bottom:1px solid var(--purple-deep);padding-bottom:3px}
+.go:hover{opacity:.7}
+.center{text-align:center}
+
+/* closing + footer */
+.band{background:var(--band);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.close{display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end;padding-block:clamp(64px,9vw,112px)}
+.close h2{font-size:clamp(34px,5vw,60px);line-height:1.02;margin-top:14px}
+.close h2 em{font-style:italic;color:var(--purple-deep)}
+.close p{color:var(--ink-2);margin-top:16px;max-width:46ch}
+footer{border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:24px 48px;padding-block:54px 80px}
+footer .mark{font-size:28px}
+footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3);margin-top:12px}
+.f-links{display:flex;flex-wrap:wrap;gap:10px 28px}
+.f-links a{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);text-decoration:none}
+.f-links a:hover{color:var(--purple-deep)}
+
+@media (max-width:860px){
+  .nav a:not(.btn){display:none}
+  .hero{grid-template-columns:1fr}
+  .motif{justify-self:start;max-width:340px;margin-top:24px}
+  .motif .beyond{top:-8%;width:140%}
+  .way-grid{grid-template-columns:1fr}
+  .or{text-align:center}
+  .way{min-height:0}
+  .branches,.steps,.val-grid{grid-template-columns:1fr}
+  .branches .node + .node{margin-top:0}
+  .close{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .motif .beyond,.reveal{animation:none}
+  .wire{animation:none}
+}
+
+/* ── THE MARK, one version everywhere: dots, a gap, then the rule ────────────
+   Rev 2026-09-16 from Alicia's stickies. It was a heavy full-width divider over
+   every section head, a dots-only stub on the market columns and mirrored on the
+   closing band. Now it is one quiet mark: small dots in purple, a hairline in the
+   paper's own line colour, always in that order. It sits on the rules that mean
+   something (values, program rows, the 1-2-3 steps) and bookends
+   the page once at the hero and once at the close. No section head carries one.
+   --mk-n = how many dots. The rule is painted after the dots, not under them, so
+   nothing has to cut a hole in the paper and the ambient field shows through. */
+.val,.node,.steps li,.wins{--mk-n:3;position:relative}
+.val::before,.node::before,.steps li::before,.wins::before,
+.val::after,.node::after,.steps li::after,.wins::after{content:"";position:absolute;pointer-events:none;left:0}
+.val::before,.node::before,.steps li::before,.wins::before{
+  top:-2.5px;height:5px;width:calc(var(--mk-n) * 10px);
+  background:radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 0 0/10px 100% repeat-x}
+.val::after,.node::after,.steps li::after,.wins::after{
+  top:0;height:1px;right:0;left:calc(var(--mk-n) * 10px + 6px);background:var(--line-2)}
+/* the steps COUNT: one dot, two, three */
+.steps li:nth-child(1){--mk-n:1}
+.steps li:nth-child(2){--mk-n:2}
+.steps li:nth-child(3){--mk-n:3}
+
+/* the two bookend marks (hero, closing band) — same geometry as above */
+.run{display:block;box-sizing:border-box;width:100%;height:5px;margin:0 0 26px;overflow:hidden;
+  background:
+    radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 0 0/10px 100% no-repeat,
+    radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 10px 0/10px 100% no-repeat,
+    radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 20px 0/10px 100% no-repeat,
+    linear-gradient(var(--line-2),var(--line-2)) 36px 50%/100% 1px no-repeat}
+.run>*{display:none}
+

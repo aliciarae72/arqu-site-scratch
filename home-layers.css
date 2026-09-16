@@ -1,0 +1,163 @@
+/* ══ INTERACTION LAYER — added 2026-09-15 on Alicia's work order ══════════════
+   Scroll spine (ported from the scroll study), the human-centered section, and
+   scroll-linked reveals. Everything here is ADDITIVE: it introduces no element
+   matching the edit layer's data-selector, because that layer keys saved copy
+   by NUMERIC DOM INDEX (arqu-edit-layer.js:82, `saved[i]`). One new matching
+   node anywhere above the footer would paste Chi's edits onto the wrong
+   elements. That is why the human section uses .g-* divs, not h2/.lead/.eyebrow.
+   Linked after home.css on purpose — source order decides ties. */
+
+/* ── the spine: a full-height rail. Each dot sits where its section sits on the
+   page, so the rail doubles as a map, and the ink fills down it as you scroll. ── */
+.spine{position:fixed;left:max(16px,calc(var(--gutter) * .40));top:var(--spine-top,112px);bottom:28px;width:24px;
+  z-index:60;display:none;pointer-events:none;transition:top .2s linear}
+@media (min-width:1080px){.spine{display:block}}
+.spine-ln{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line-2);transform:translateX(-50%)}
+.spine-ln::after{content:"";position:absolute;left:0;top:0;width:1px;background:var(--purple-deep);
+  height:var(--spine-p,0%);transition:height .16s linear}
+.sdots{position:absolute;inset:0;pointer-events:none}
+.sdot{appearance:none;border:0;background:transparent;padding:0;margin:0;cursor:pointer;position:absolute;left:0;
+  top:var(--y,0px);transform:translateY(-50%);width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  pointer-events:auto;transition:top .3s var(--ease)}
+.sdot i{display:block;width:7px;height:7px;border-radius:50%;background:var(--line-2);
+  transition:background .3s var(--ease),transform .3s var(--ease)}
+.sdot.past i{background:var(--purple-deep);opacity:.42}
+.sdot[aria-current="true"] i{background:var(--purple-deep);opacity:1;transform:scale(1.85)}
+.sdot b{position:absolute;left:calc(100% + 13px);white-space:nowrap;
+  font:600 10px/1 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
+  opacity:0;transform:translateX(-4px);pointer-events:none;
+  transition:opacity .25s var(--ease),transform .25s var(--ease)}
+.sdot:hover b,.sdot:focus-visible b,.sdot[aria-current="true"] b{opacity:1;transform:none}
+.sdot[aria-current="true"] b{color:var(--purple-deep)}
+.sdot:focus-visible{outline:1px solid var(--purple-deep);outline-offset:2px}
+
+/* ── the human-centered section: the handshake ─────────────────────────────── */
+.globe-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
+.globe-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
+.g-kicker{margin-bottom:14px}
+.g-title{font-family:var(--font-display);font-weight:400;font-size:clamp(28px,4.4vw,46px);
+  line-height:1.06;letter-spacing:-.02em;color:var(--ink);max-width:18ch}
+.globe-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
+  gap:clamp(24px,5vw,64px);align-items:center}
+@media (max-width:860px){.globe-row{grid-template-columns:1fr}}
+.globe-stage{position:relative;aspect-ratio:16/15;max-height:min(64vh,560px);margin-inline:auto;width:100%}
+.hs{display:block;width:100%;height:100%;overflow:visible;cursor:grab}
+.hs .fig{fill:var(--ink)}
+.hs .lbl{font-family:var(--font-hand);font-size:30px;fill:var(--ink-2);opacity:0;transition:opacity .6s var(--ease)}
+.hs .lbl.us{fill:var(--purple-deep)}
+.hs.drawn .lbl{opacity:1}
+.hs .odot{opacity:0;transition:opacity .8s var(--ease)}
+.hs.orbiting .odot{opacity:1}
+.g-say{color:var(--ink-2);font-size:clamp(15px,1.5vw,17px);line-height:1.62;max-width:46ch}
+.g-say + .g-say{margin-top:15px}
+.g-note{margin-top:20px;font:600 10px/1.5 var(--font-mono);letter-spacing:.13em;
+  text-transform:uppercase;color:var(--ink-3)}
+
+/* ── scroll-linked reveals. Applied by JS, so a no-JS page stays fully visible ── */
+[data-rise]{opacity:0;transform:translateY(16px);
+  transition:opacity .72s var(--ease),transform .72s var(--ease)}
+[data-rise].seen{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  [data-rise]{opacity:1!important;transform:none!important;transition:none}
+  .sdot i,.sdot b,.spine-ln::after{transition:none}
+}
+
+/* ---- risk narrative: a slideshow, one visual on the left, the read on the right ---- */
+.rn{padding-top:34px;margin-top:10px}
+.rn-head{max-width:62ch;margin-bottom:28px}
+.rn-head h3{font-size:clamp(23px,2.4vw,29px);line-height:1.1;font-weight:400;font-style:italic;letter-spacing:-.02em;margin:8px 0 10px}
+.rn-lede{color:var(--ink-2);font-size:16px}
+.rn-show{position:relative;outline:none}
+.rn-show:focus-visible{outline:1px solid var(--purple-deep);outline-offset:10px;border-radius:22px}
+.rn-slides{display:grid}
+.rn-slide{grid-area:1/1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(24px,4vw,60px);align-items:center;
+  opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility 0s .4s}
+.rn-slide.is-on{opacity:1;visibility:visible;transition:opacity .55s var(--ease) .06s,visibility 0s}
+.rn-vis{position:relative;aspect-ratio:4/3;background:var(--surface);border:1px solid var(--line-2);border-radius:18px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(34,31,32,.05),0 22px 44px -32px rgba(34,31,32,.35);
+  transform:translateX(-18px);transition:transform .8s var(--ease)}
+.rn-say{transform:translateX(18px);transition:transform .8s var(--ease)}
+.rn-slide.is-on .rn-vis,.rn-slide.is-on .rn-say{transform:none}
+.rn-vis svg{display:block;width:100%;height:100%;touch-action:pan-y;cursor:crosshair}
+.rn-vis text{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;fill:var(--ink-3);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+.rn-vis text.hand{font-family:var(--font-hand);font-size:19px;letter-spacing:0;fill:var(--ink-2)}
+.rn-vis .ring{fill:none;stroke:var(--line-2);stroke-width:1;transform-box:fill-box;transform-origin:center;transform:scale(.2);opacity:0;
+  transition:transform 1s var(--ease),opacity .6s var(--ease)}
+.rn-vis .grow{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);opacity:0;transition:transform .9s var(--spring),opacity .4s var(--ease)}
+.rn-vis.in .ring,.rn-vis.in .grow{transform:none;opacity:1}
+.rn-vis .site{fill:var(--purple-deep)}
+.rn-vis .pulse{fill:none;stroke:var(--purple-deep);transform-box:fill-box;transform-origin:center;animation:rnpulse 2.4s var(--ease) infinite}
+@keyframes rnpulse{from{transform:scale(1);opacity:.7}to{transform:scale(5);opacity:0}}
+.rn-vis .live{fill:none;stroke:var(--ink-3);stroke-dasharray:3 4;opacity:0;transition:opacity .25s}
+.rn-vis.probe .live{opacity:1}
+.rn-vis .reveal-late{opacity:0;transition:opacity .6s var(--ease) 1.2s}
+.rn-vis.in .reveal-late{opacity:1}
+.rn-live{position:absolute;left:16px;right:16px;bottom:12px;display:flex;justify-content:space-between;gap:12px;pointer-events:none;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.rn-live b{font-weight:400;color:var(--purple-deep)}
+.rn-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-deep)}
+.rn-title{font-family:var(--font-display);font-size:clamp(24px,2.5vw,33px);line-height:1.12;letter-spacing:-.02em;margin:14px 0}
+.rn-read{color:var(--ink-2);font-size:16px}
+.rn-facts{margin:22px 0 0}
+.rn-facts div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:10px 0;border-top:1px solid var(--line)}
+.rn-facts dt{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rn-facts dd{margin:0;font-style:italic;color:var(--ink);text-align:right;transition:opacity .22s var(--ease)}
+.rn-swap{opacity:0}
+/* loss history bars are the controls themselves */
+.rn-bars{position:absolute;inset:22px 22px 44px;display:flex;align-items:flex-end;gap:12px}
+.rn-bar{appearance:none;flex:1;height:100%;border:0;background:transparent;padding:0;cursor:pointer;position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch}
+.rn-bar i{display:block;border-radius:6px 6px 2px 2px;background:var(--line-2);height:0;min-height:3px;
+  transition:height .9s var(--spring),background .25s var(--ease)}
+.rn-vis.in .rn-bar i{height:calc(var(--h) * 1%)}
+.rn-bar:nth-child(2) i{transition-delay:.06s}.rn-bar:nth-child(3) i{transition-delay:.12s}
+.rn-bar:nth-child(4) i{transition-delay:.18s}.rn-bar:nth-child(5) i{transition-delay:.24s}
+.rn-bar:hover i{background:var(--ink-3)}
+.rn-bar[aria-pressed="true"] i{background:var(--purple-deep)}
+.rn-bar span{position:absolute;left:0;right:0;bottom:-26px;text-align:center;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;color:var(--ink-3)}
+.rn-bar[aria-pressed="true"] span{color:var(--purple-deep)}
+.rn-bar:focus-visible{outline:1px solid var(--purple-deep);outline-offset:4px;border-radius:6px}
+.rn-figs{display:flex;gap:clamp(24px,4vw,48px);margin:20px 0 6px}
+.rn-fig{display:flex;flex-direction:column;gap:4px}
+.rn-fig b{font-size:clamp(24px,2.4vw,30px);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--ink)}
+.rn-fig i{font-family:var(--font-mono);font-style:normal;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rn-nav{display:flex;align-items:center;gap:14px;margin-top:28px}
+.rn-arrow{appearance:none;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);
+  cursor:pointer;font:16px/1 var(--font-sans);transition:border-color .25s var(--ease),color .25s var(--ease),transform .4s var(--spring)}
+.rn-arrow:hover{border-color:var(--purple-deep);color:var(--purple-deep);transform:translateY(-2px)}
+.rn-pips{display:flex;align-items:center;gap:8px;padding:0 4px}
+.rn-pip{appearance:none;border:0;padding:0;width:7px;height:7px;border-radius:4px;background:var(--line-2);cursor:pointer;
+  transition:width .5s var(--spring),background .3s var(--ease)}
+.rn-pip:hover{background:var(--ink-3)}
+.rn-pip[aria-selected="true"]{width:36px;background:var(--purple-deep)}
+.rn-count{margin-left:auto;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rn-foot{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:22px}
+@media (max-width:820px){.rn-slide{grid-template-columns:1fr;align-items:start}.rn-vis,.rn-say{transform:none}.rn-live{flex-direction:column;gap:3px;bottom:10px}}
+@media (prefers-reduced-motion:reduce){
+  .rn-slide,.rn-vis,.rn-say,.rn-vis .ring,.rn-bar i,.rn-pip,.rn-facts dd{transition:none}
+  .rn-vis .pulse{animation:none}
+  .rn-swap{opacity:1}
+}
+
+/* ══ STICKIES LAYER — 2026-09-16 ═══════════════════════════════════════════════
+   The ambient field and the hand-drawn marks. Both are aria-hidden, never take
+   the pointer, and add no element the edit layer's data-selector matches. A mark
+   sits inside the element holding its words (home-hand-marks.js), so it moves
+   with them. */
+.ambient{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.hand-host{position:relative}
+.hand-mark{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;z-index:2;pointer-events:none}
+.hand-mark path,.hand-motif path,.sector-icon path{stroke-linecap:round;stroke-linejoin:round}
+
+/* ══ WASH — the Open market card's purple wash (.way::after), same colour and
+   falloff, carried to two more surfaces: the closing band and the ground under
+   the handshake. Unlike the card it is always faintly on, resting where the eye
+   already is, and it follows the pointer (home-hand.js sets --mx/--my). */
+.band[data-wash]{position:relative;isolation:isolate}
+.band[data-wash]::after,.globe-stage[data-wash]::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
+.band[data-wash]::after{
+  background:radial-gradient(560px circle at var(--mx,80%) var(--my,55%),rgba(140,130,250,.18),rgba(140,130,250,0) 70%)}
+.globe-stage[data-wash]{isolation:isolate}
+.globe-stage[data-wash]::before{
+  background:radial-gradient(380px circle at var(--mx,50%) var(--my,62%),rgba(140,130,250,.18),rgba(140,130,250,0) 70%);
+  -webkit-mask-image:radial-gradient(closest-side,#000 60%,transparent);mask-image:radial-gradient(closest-side,#000 60%,transparent)}
