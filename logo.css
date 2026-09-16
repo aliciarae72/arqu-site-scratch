@@ -1,44 +1,110 @@
-/* Wordmark specimen sheet. The palette is closed to these four tokens, copied
-   from home's :root so this page does not move with home.css edits. */
+/* Wordmark sheet, round five. The palette is closed to four colors; every other
+   value here is one of them or a transparency of one. */
 :root{
-  --bg:#fbfaf7; --ink:#221f20;
-  --purple:#8c82fa; --purple-deep:#5e54c8;
+  --paper:#fbfaf7; --ink:#221f20; --purple:#8c82fa; --deep:#5e54c8;
+  --page:var(--paper); --text:var(--ink); --hair:color-mix(in srgb,var(--ink) 20%,transparent);
+  --stage-ground:var(--paper); --stage-mark:var(--ink);
   --font-mono:ui-monospace,"SF Mono","IBM Plex Mono",Menlo,"Courier New",monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:var(--ink); --text:var(--paper); --hair:color-mix(in srgb,var(--paper) 24%,transparent);
+    --stage-ground:var(--ink); --stage-mark:var(--paper);
+  }
+}
+:root[data-theme="dark"]{
+  --page:var(--ink); --text:var(--paper); --hair:color-mix(in srgb,var(--paper) 24%,transparent);
+  --stage-ground:var(--ink); --stage-mark:var(--paper);
 }
 
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-mono);-webkit-font-smoothing:antialiased}
-::selection{background:var(--purple);color:var(--ink)}
+body{margin:0;background:var(--page);color:var(--text);font-family:var(--font-mono);-webkit-font-smoothing:antialiased}
+.glyph-defs{position:absolute}
 
 .sheet{max-width:1180px;margin-inline:auto;padding:clamp(28px,6vw,72px) clamp(16px,4vw,40px) clamp(48px,8vw,96px)}
-
 .sheet-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;
-  border-bottom:1px solid var(--ink);padding-bottom:18px;margin-bottom:clamp(24px,4vw,40px)}
-.sheet-head p,.sheet-head a{margin:0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);text-decoration:none}
-.sheet-head a:hover{color:var(--purple-deep)}
+  border-bottom:1px solid var(--text);padding-bottom:18px}
+.sheet-head p,.sheet-head a{margin:0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text);text-decoration:none}
+.sheet-head a:hover{text-decoration:underline;text-decoration-color:var(--purple)}
 
-/* Hairline grid: each cell's 1px ring fills the 1px gap, so an empty cell stays paper. */
-.attempts{list-style:none;margin:0;padding:1px;display:grid;gap:1px;
-  grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr))}
+.mark-set{margin-top:clamp(40px,6vw,64px)}
+.mark-set h2{margin:0;font-size:15px;font-weight:400}
+.mark-set h2 b{font-weight:700}
+.kept{margin:6px 0 0;font-size:12px;line-height:1.5}
+.mark-set h3{margin:28px 0 12px;font-size:11px;font-weight:400;letter-spacing:.16em;text-transform:uppercase}
 
-.attempt{display:flex;flex-direction:column;gap:10px;min-width:0;
-  padding:clamp(28px,4vw,48px) clamp(20px,3.5vw,40px) 22px;background:var(--card);color:var(--label);box-shadow:0 0 0 1px var(--ink)}
-.on-paper{--card:var(--bg);--mark:var(--ink);--label:var(--ink);--rule:var(--purple)}
-.on-paper-deep{--card:var(--bg);--mark:var(--purple-deep);--label:var(--ink);--rule:var(--purple)}
-.on-deep{--card:var(--purple-deep);--mark:var(--bg);--label:var(--bg);--rule:var(--bg)}
+/* Glyph outlines are font units: Fira Sans is 1000 per em, Manrope 2000. */
+.u-fira{--u:1px;--erode:url(#settle-fira)}
+.u-manrope{--u:2px;--erode:url(#settle-manrope)}
+.mark{display:block;width:100%;height:auto;overflow:visible}
+.glyph{fill:var(--mark)}
+.glyph.accent{fill:var(--accent,var(--mark))}
 
-.stage{display:grid;place-items:center;min-height:clamp(170px,30vw,260px);margin-bottom:12px}
+.swatches,.motions{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.swatches{grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+.motions{grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr))}
 
-.mark{display:block;height:clamp(88px,12vw,132px);width:auto;max-width:100%;fill:var(--mark);overflow:visible}
+.swatch{min-width:0}
+.swatch .ground{display:grid;place-items:center;aspect-ratio:4/3;padding:18% 16%;background:var(--ground);border:1px solid var(--hair)}
+.swatch .cap{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:8px 0 0;font-size:12px}
+.dots{display:inline-flex;gap:3px}
+.dot{width:10px;height:10px;border-radius:50%;box-shadow:0 0 0 1px var(--hair)}
+.c-ink-paper{--ground:var(--paper);--mark:var(--ink)}
+.c-purple-paper{--ground:var(--paper);--mark:var(--purple)}
+.c-paper-purple{--ground:var(--purple);--mark:var(--paper)}
+.c-deep-paper{--ground:var(--paper);--mark:var(--deep)}
+.c-two-tone{--ground:var(--paper);--mark:var(--deep);--accent:var(--purple)}
 
-.caption{display:flex;align-items:center;justify-content:space-between;gap:16px}
-.label,.note{margin:0;font-size:12px;line-height:1.5}
-.label b{font-weight:400}
+.motion{--ground:var(--stage-ground);--mark:var(--stage-mark);min-width:0;border:1px solid var(--hair);padding:0 0 14px}
+.motion .stage{display:grid;place-items:center;aspect-ratio:3/2;padding:16% 14%;background:var(--ground)}
+.motion .cap{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:12px 14px 0}
+.motion .cap p{margin:0;font-size:12px}
+.motion .what{margin:6px 14px 0;font-size:12px;line-height:1.5}
+.replay{font:inherit;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--text);background:transparent;
+  border:1px solid var(--text);padding:5px 10px;cursor:pointer}
+.replay:hover{background:var(--purple);border-color:var(--purple);color:var(--ink)}
+.replay:focus-visible{outline:2px solid var(--purple);outline-offset:2px}
 
-/* Where the mark sits between B (warm humanist) and E (geometric with tension), 1-6. */
-.lean{display:inline-flex;align-items:center;gap:6px;font-size:11px}
-.lean i{font-style:normal}
-.lean .track{position:relative;width:72px;height:1px;background:var(--label)}
-.lean .track::after{content:"";position:absolute;top:-4px;left:calc((var(--pos) - 1) / 5 * 100%);width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--rule)}
+/* Motion. Every animation uses fill-mode backwards only, so once it ends the glyphs
+   fall back to their resting styles: the exact static mark. */
+.motion .glyph{stroke-linejoin:round}
 
-.mark .line{fill:none;stroke:var(--mark);stroke-linecap:butt;stroke-linejoin:miter}
+.motion[data-play].m-draw .glyph{animation:draw-on 560ms cubic-bezier(.4,0,.2,1) calc(var(--i) * 90ms) backwards}
+@keyframes draw-on{
+  0%{stroke:var(--mark);stroke-width:calc(var(--u) * 10);stroke-dasharray:1;stroke-dashoffset:1;fill-opacity:0}
+  65%{stroke:var(--mark);stroke-width:calc(var(--u) * 10);stroke-dasharray:1;stroke-dashoffset:0;fill-opacity:0}
+  100%{stroke:var(--mark);stroke-width:0;stroke-dasharray:1;stroke-dashoffset:0;fill-opacity:1}
+}
+
+/* The erode filter's radius animates to zero in SVG; this only holds the filter on
+   for the run and fades the word in, then drops the filter entirely. */
+.motion[data-play].m-settle .word{animation:weight-settle 820ms linear backwards}
+@keyframes weight-settle{
+  0%{filter:var(--erode);opacity:0}
+  20%{filter:var(--erode);opacity:1}
+  99.9%{filter:var(--erode);opacity:1}
+  100%{filter:none;opacity:1}
+}
+
+.motion[data-play].m-rise .glyph{animation:letter-rise 520ms cubic-bezier(.2,.7,.2,1) calc(var(--i) * 90ms) backwards}
+@keyframes letter-rise{
+  0%{opacity:0;transform:translateY(calc(var(--u) * 120))}
+  100%{opacity:1;transform:translateY(0)}
+}
+
+.motion[data-play].m-gather .glyph{animation:gather 780ms cubic-bezier(.33,1,.68,1) backwards}
+@keyframes gather{
+  0%{opacity:0;transform:translateX(calc(var(--u) * 260 * var(--o)))}
+  35%{opacity:1}
+  100%{opacity:1;transform:translateX(0)}
+}
+
+.motion[data-play].m-open .mark{animation:level-open 720ms cubic-bezier(.65,0,.35,1) backwards}
+@keyframes level-open{
+  0%{clip-path:inset(38% -2% 62% -2%)}
+  100%{clip-path:inset(0 -2% 0 -2%)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .motion .glyph,.motion .word,.motion .mark{animation:none !important}
+}
