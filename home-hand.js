@@ -39,82 +39,73 @@
   window.arquHand = { ink: ink, opts: opts, INK: INK, PURPLE: PURPLE };
 
   /* ── the hero: a person holding up their ask, in front of what we bring ── */
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+
+  /* head, then body, legs, the lowered arm, and the arm raised to hold up the ask */
+  function figure(rc) {
+    var g = document.createElementNS(SVG_NS, 'g'),
+      pen = { stroke: INK, strokeWidth: 2.1, roughness: 0.9, bowing: 1 };
+    var limbs = [
+      [
+        [40, 330],
+        [41, 378],
+      ],
+      [
+        [41, 378],
+        [28, 413],
+      ],
+      [
+        [41, 378],
+        [55, 412],
+      ],
+      [
+        [40, 344],
+        [26, 372],
+      ],
+      [
+        [40, 343],
+        [61, 326],
+        [81, 306],
+      ],
+    ];
+    g.appendChild(rc.circle(40, 316, 27, opts(21, pen)));
+    limbs.forEach(function (points, i) {
+      g.appendChild(rc.linearPath(points, opts(22 + i, pen)));
+    });
+    return g;
+  }
+
+  /* the small arrow from the ask back toward the person */
+  function arrow(rc) {
+    var g = document.createElementNS(SVG_NS, 'g'),
+      pen = { stroke: INK, strokeWidth: 1.3, roughness: 1, bowing: 1 };
+    var shaft = [
+        [182, 350],
+        [174, 337],
+        [158, 330],
+      ],
+      head = [
+        [166, 324],
+        [157, 330],
+        [167, 336],
+      ];
+    g.appendChild(rc.curve(shaft, opts(40, pen)));
+    g.appendChild(rc.linearPath(head, opts(41, pen)));
+    return g;
+  }
+
   function heroMotif() {
     var svg = document.querySelector('.hand-motif');
     if (!svg) return;
-    var rc = rough.svg(svg),
-      g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    var fig = { stroke: INK, strokeWidth: 2.1, roughness: 0.9, bowing: 1 };
-    var ask = rc.ellipse(136, 251, 156, 150, opts(3, { stroke: INK, strokeWidth: 1.5, roughness: 1.5 }));
-    [
-      rc.circle(40, 316, 27, opts(21, fig)),
-      rc.linearPath(
-        [
-          [40, 330],
-          [41, 378],
-        ],
-        opts(22, fig),
-      ),
-      rc.linearPath(
-        [
-          [41, 378],
-          [28, 413],
-        ],
-        opts(23, fig),
-      ),
-      rc.linearPath(
-        [
-          [41, 378],
-          [55, 412],
-        ],
-        opts(24, fig),
-      ),
-      rc.linearPath(
-        [
-          [40, 344],
-          [26, 372],
-        ],
-        opts(25, fig),
-      ),
-      rc.linearPath(
-        [
-          [40, 343],
-          [61, 326],
-          [81, 306],
-        ],
-        opts(26, fig),
-      ),
-    ].forEach(function (n) {
-      g.appendChild(n);
-    });
-    var arrow = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    var a = { stroke: INK, strokeWidth: 1.3, roughness: 1, bowing: 1 };
-    arrow.appendChild(
-      rc.curve(
-        [
-          [182, 350],
-          [174, 337],
-          [158, 330],
-        ],
-        opts(40, a),
-      ),
+    var rc = rough.svg(svg);
+    var ask = svg.appendChild(
+      rc.ellipse(136, 251, 156, 150, opts(3, { stroke: INK, strokeWidth: 1.5, roughness: 1.5 })),
     );
-    arrow.appendChild(
-      rc.linearPath(
-        [
-          [166, 324],
-          [157, 330],
-          [167, 336],
-        ],
-        opts(41, a),
-      ),
-    );
-    svg.appendChild(ask);
-    svg.appendChild(g);
-    svg.appendChild(arrow);
+    var person = svg.appendChild(figure(rc));
+    var back = svg.appendChild(arrow(rc));
     ink(ask, 750, 0.6);
-    ink(g, 1150, 0.35);
-    ink(arrow, 2050, 0.4);
+    ink(person, 1150, 0.35);
+    ink(back, 2050, 0.4);
   }
   heroMotif();
 

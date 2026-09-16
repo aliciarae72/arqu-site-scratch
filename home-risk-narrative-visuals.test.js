@@ -49,6 +49,15 @@ test('loss history totals the years and each bar selects its own year', async (t
     incurred: document.querySelector('[data-rn-incurred]').textContent,
     claims: document.querySelector('[data-rn-claims]').textContent,
     pressed: document.querySelector('.rn-bar[aria-pressed="true"]').dataset.year,
+    label: document.querySelector('.rn-bar[data-year="2023"]').getAttribute('aria-label'),
+    heights: [...document.querySelectorAll('.rn-bar')].map((b) => b.style.getPropertyValue('--h')),
   }));
-  assert.deepEqual(read, { incurred: '$212,000', claims: '3', pressed: '2023' });
+  // 2023 is the peak year, so it is the full-height bar and the others scale against it
+  assert.deepEqual(read, {
+    incurred: '$212,000',
+    claims: '3',
+    pressed: '2023',
+    label: '2023: $212,000 incurred, 3 claims',
+    heights: ['2', '23', '100', '45', '6'],
+  });
 });

@@ -31,6 +31,24 @@
     window.arquHand.ink(g, 500, 0.5);
   }
 
+  /* the wildfire map's hand-drawn read: a ring at 2.5 mi, where the closest fire on
+     record stopped, and a line from that ring up to its note */
+  function closestFire(rc, o, cx, cy, mile) {
+    var g = el('g', {});
+    g.appendChild(rc.circle(cx, cy, 2.5 * mile * 2, o(14, { strokeWidth: 1.8, roughness: 1.4 })));
+    g.appendChild(
+      rc.curve(
+        [
+          [350, 64],
+          [342, 80],
+          [cx + 90, cy - 86],
+        ],
+        o(15, { stroke: '#56514f', strokeWidth: 1.2, roughness: 1 }),
+      ),
+    );
+    return g;
+  }
+
   /* 1. wildfire: distance rings around the site. The pointer measures. */
   function wildfire(host) {
     var svg = el('svg', { viewBox: '0 0 480 360' }, host),
@@ -52,19 +70,7 @@
     return {
       enter: function () {
         hand(svg, function (rc, o) {
-          var g = el('g', {});
-          g.appendChild(rc.circle(CX, CY, 2.5 * MI * 2, o(14, { strokeWidth: 1.8, roughness: 1.4 })));
-          g.appendChild(
-            rc.curve(
-              [
-                [350, 64],
-                [342, 80],
-                [CX + 90, CY - 86],
-              ],
-              o(15, { stroke: '#56514f', strokeWidth: 1.2, roughness: 1 }),
-            ),
-          );
-          return g;
+          return closestFire(rc, o, CX, CY, MI);
         });
       },
       move: function (e) {
@@ -84,15 +90,10 @@
     };
   }
 
-  /* 2. seismic: a magnitude scale, the site's mean and max, the USGS felt line.
-     Each whole magnitude is ten times the ground motion, so the pointer reads
-     any magnitude against the largest event on record. */
-  function seismic(host) {
-    var svg = el('svg', { viewBox: '0 0 480 360' }, host),
-      Y = 240;
-    function X(m) {
-      return 40 + m * 80;
-    }
+  /* the seismic slide's fixed drawing: the USGS "not felt" band, the M0-M5 axis,
+     the site's mean and largest events, and a pulse on the largest */
+  function magnitudeScale(svg, X, Y) {
+    var m;
     el(
       'rect',
       { class: 'reveal-late', x: X(0), y: Y - 16, width: X(2.5) - X(0), height: 16, rx: 3, fill: '#f3f1ff' },
@@ -100,7 +101,7 @@
     );
     el('text', { class: 'hand reveal-late', x: X(0) + 4, y: Y - 24 }, svg, 'usually not felt (USGS)');
     el('line', { x1: X(0), y1: Y, x2: X(5), y2: Y, stroke: '#d5cec5' }, svg);
-    for (var m = 0; m <= 5; m++) {
+    for (m = 0; m <= 5; m++) {
       el('line', { x1: X(m), y1: Y, x2: X(m), y2: Y + 6, stroke: '#d5cec5' }, svg);
       el('text', { x: X(m), y: Y + 22, 'text-anchor': 'middle' }, svg, 'M' + m);
     }
@@ -114,6 +115,18 @@
       el('text', { x: X(k[0]), y: k[1] - 12, 'text-anchor': 'middle', style: 'fill:' + k[3] }, g, k[2]);
     });
     el('circle', { class: 'pulse', cx: X(2.43), cy: 74, r: 4.5 }, svg);
+  }
+
+  /* 2. seismic: a magnitude scale, the site's mean and max, the USGS felt line.
+     Each whole magnitude is ten times the ground motion, so the pointer reads
+     any magnitude against the largest event on record. */
+  function seismic(host) {
+    var svg = el('svg', { viewBox: '0 0 480 360' }, host),
+      Y = 240;
+    function X(m) {
+      return 40 + m * 80;
+    }
+    magnitudeScale(svg, X, Y);
     var probe = el('g', { class: 'live' }, svg);
     var pl = el('line', { x1: 0, y1: Y, x2: 0, y2: 40 }, probe);
     var bar = liveBar(host);
@@ -142,29 +155,55 @@
     };
   }
 
+  function num(bar, key) {
+    return +bar.getAttribute('data-' + key);
+  }
+
+  /* the slide title, from the bars: "Five years, 7 claims, $368,000 incurred." */
+  function lossSummary(bars) {
+    var sum = function (key) {
+      return bars.reduce(function (s, b) {
+        return s + num(b, key);
+      }, 0);
+    };
+    var years = ['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][bars.length] || bars.length;
+    return years + ' years, ' + sum('claims') + ' claims, ' + money.format(sum('incurred')) + ' incurred.';
+  }
+
+  /* a bar's height against the peak year, and the label a screen reader reads for it */
+  function sizeBar(bar, peak) {
+    bar.style.setProperty('--h', Math.max(2, Math.round((num(bar, 'incurred') / peak) * 100)));
+    bar.setAttribute(
+      'aria-label',
+      bar.getAttribute('data-year') +
+        ': ' +
+        money.format(num(bar, 'incurred')) +
+        ' incurred, ' +
+        num(bar, 'claims') +
+        ' claims',
+    );
+  }
+
+  /* the incurred figure counts from the year shown before to this one */
+  function countTo(node, from, to) {
+    var t0 = 0;
+    (function tick(now) {
+      if (!t0) t0 = now;
+      var k = RM ? 1 : Math.min(1, (now - t0) / 520),
+        ease = 1 - Math.pow(1 - k, 3);
+      node.textContent = money.format(Math.round(from + (to - from) * ease));
+      if (k < 1) requestAnimationFrame(tick);
+    })(performance.now());
+  }
+
   /* 3. loss history: the bars are the controls */
   function loss(host, slide) {
     var bars = Array.prototype.slice.call(host.querySelectorAll('.rn-bar'));
-    var val = function (b, k) {
-      return +b.getAttribute('data-' + k);
-    };
     var peak =
       bars.reduce(function (m, b) {
-        return Math.max(m, val(b, 'incurred'));
+        return Math.max(m, num(b, 'incurred'));
       }, 0) || 1;
-    var total = bars.reduce(function (s, b) {
-      return s + val(b, 'incurred');
-    }, 0);
-    var claims = bars.reduce(function (s, b) {
-      return s + val(b, 'claims');
-    }, 0);
-    slide.querySelector('[data-rn-loss-title]').textContent =
-      (['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][bars.length] || bars.length) +
-      ' years, ' +
-      claims +
-      ' claims, ' +
-      money.format(total) +
-      ' incurred.';
+    slide.querySelector('[data-rn-loss-title]').textContent = lossSummary(bars);
     var inc = slide.querySelector('[data-rn-incurred]'),
       yr = slide.querySelector('[data-rn-year]');
     var clm = slide.querySelector('[data-rn-claims]'),
@@ -174,32 +213,15 @@
       bars.forEach(function (x) {
         x.setAttribute('aria-pressed', x === b ? 'true' : 'false');
       });
-      var to = val(b, 'incurred'),
-        from = shown === null ? to : shown,
-        t0 = 0;
+      var to = num(b, 'incurred');
+      countTo(inc, shown === null ? to : shown, to);
       shown = to;
-      (function tick(now) {
-        if (!t0) t0 = now;
-        var k = RM ? 1 : Math.min(1, (now - t0) / 520),
-          ease = 1 - Math.pow(1 - k, 3);
-        inc.textContent = money.format(Math.round(from + (to - from) * ease));
-        if (k < 1) requestAnimationFrame(tick);
-      })(performance.now());
       yr.textContent = b.getAttribute('data-year') + ' incurred';
       clm.textContent = b.getAttribute('data-claims');
       note.textContent = b.getAttribute('data-note');
     }
     bars.forEach(function (b) {
-      b.style.setProperty('--h', Math.max(2, Math.round((val(b, 'incurred') / peak) * 100)));
-      b.setAttribute(
-        'aria-label',
-        b.getAttribute('data-year') +
-          ': ' +
-          money.format(val(b, 'incurred')) +
-          ' incurred, ' +
-          val(b, 'claims') +
-          ' claims',
-      );
+      sizeBar(b, peak);
       b.addEventListener('click', function () {
         pick(b);
       });

@@ -39,6 +39,35 @@
     [11, 'M344 242L283 285L215 355', 46],
   ];
   var ORBIT = { cx: 320, cy: 500, rx: 272, ry: 58 };
+  /* "you" on the left, "your broker" on the right */
+  var LABEL_ARROWS = [
+    {
+      shaft: [
+        [148, 92],
+        [170, 96],
+        [184, 114],
+      ],
+      head: [
+        [174, 110],
+        [185, 116],
+        [186, 104],
+      ],
+      seed: 51,
+    },
+    {
+      shaft: [
+        [476, 92],
+        [466, 100],
+        [462, 118],
+      ],
+      head: [
+        [455, 110],
+        [461, 120],
+        [470, 112],
+      ],
+      seed: 53,
+    },
+  ];
   function el(tag, attrs, parent) {
     var n = document.createElementNS(NS, tag);
     for (var k in attrs) n.setAttribute(k, attrs[k]);
@@ -106,6 +135,16 @@
     return end;
   }
 
+  /* one hand-drawn arrow per label, down to its figure: a curved shaft, then its head */
+  function labelArrows(rc, parent) {
+    var H = window.arquHand,
+      pen = { stroke: '#56514f', strokeWidth: 1.6, roughness: 1, bowing: 1 };
+    LABEL_ARROWS.forEach(function (a) {
+      parent.appendChild(rc.curve(a.shaft, H.opts(a.seed, pen)));
+      parent.appendChild(rc.linearPath(a.head, H.opts(a.seed + 1, pen)));
+    });
+  }
+
   function decorate(delay) {
     var H = window.arquHand,
       rc = rough.svg(svg);
@@ -117,48 +156,8 @@
       H.opts(8, { stroke: '#d5cec5', strokeWidth: 1.5, roughness: 1.3, curveFitting: 1 }),
     );
     back.insertBefore(ring, back.firstChild);
-    var arrows = el('g', {}, svg),
-      a = { stroke: '#56514f', strokeWidth: 1.6, roughness: 1, bowing: 1 };
-    arrows.appendChild(
-      rc.curve(
-        [
-          [148, 92],
-          [170, 96],
-          [184, 114],
-        ],
-        H.opts(51, a),
-      ),
-    );
-    arrows.appendChild(
-      rc.linearPath(
-        [
-          [174, 110],
-          [185, 116],
-          [186, 104],
-        ],
-        H.opts(52, a),
-      ),
-    );
-    arrows.appendChild(
-      rc.curve(
-        [
-          [476, 92],
-          [466, 100],
-          [462, 118],
-        ],
-        H.opts(53, a),
-      ),
-    );
-    arrows.appendChild(
-      rc.linearPath(
-        [
-          [455, 110],
-          [461, 120],
-          [470, 112],
-        ],
-        H.opts(54, a),
-      ),
-    );
+    var arrows = el('g', {}, svg);
+    labelArrows(rc, arrows);
     H.ink(ring, delay, 0.9);
     H.ink(arrows, delay + 700, 0.5);
     setTimeout(function () {
