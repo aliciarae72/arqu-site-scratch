@@ -18,15 +18,20 @@
     var box = svg.getBoundingClientRect();
     if (!box.width) return;
     var tile = document.getElementById('way-' + current).getBoundingClientRect();
-    var x0 = (tile.left + tile.width / 2 - box.left) / box.width * 100;
+    var x0 = ((tile.left + tile.width / 2 - box.left) / box.width) * 100;
     var anchors = Array.prototype.slice.call(flow.querySelectorAll('[data-anchor]'));
-    var firstTop = Math.min.apply(null, anchors.map(function (a) { return a.getBoundingClientRect().top; }));
+    var firstTop = Math.min.apply(
+      null,
+      anchors.map(function (a) {
+        return a.getBoundingClientRect().top;
+      }),
+    );
     var d = 'M' + x0.toFixed(2) + ' 0 V26';
     anchors.forEach(function (a) {
       var r = a.getBoundingClientRect();
       if (Math.abs(r.top - firstTop) > 2) return;
       /* land on the first dot of the column's mark, not the middle of its rule */
-      var x = (r.left + 2.5 - box.left) / box.width * 100;
+      var x = ((r.left + 2.5 - box.left) / box.width) * 100;
       if (Math.abs(x - x0) < 1.5) x = x0;
       d += ' M' + x0.toFixed(2) + ' 26 H' + x.toFixed(2) + ' V56';
     });
@@ -46,7 +51,9 @@
       f.hidden = !show;
       if (show) {
         f.querySelectorAll('.reveal, .wire').forEach(function (el) {
-          el.style.animation = 'none'; void el.offsetWidth; el.style.animation = '';
+          el.style.animation = 'none';
+          void el.offsetWidth;
+          el.style.animation = '';
         });
       }
     });
@@ -60,8 +67,15 @@
     }
   }
 
-  tiles.forEach(function (t) { t.addEventListener('click', function () { open(t.dataset.way, true); }); });
-  window.addEventListener('resize', function () { place(); wire(); });
+  tiles.forEach(function (t) {
+    t.addEventListener('click', function () {
+      open(t.dataset.way, true);
+    });
+  });
+  window.addEventListener('resize', function () {
+    place();
+    wire();
+  });
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(wire);
 
   var start = new URLSearchParams(location.search).get('open');

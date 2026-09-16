@@ -29,11 +29,25 @@ test('serves at least the home page', () => {
 
 test('home.html links its split stylesheets and scripts, in load order', () => {
   const html = readFileSync(join(ROOT, 'home.html'), 'utf8');
-  assert.deepEqual(stylesheetHrefs(html).filter((h) => h.startsWith('home')), ['home.css', 'home-layers.css']);
-  assert.deepEqual(scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')), [
-    'home-flows.js', 'home-interaction.js', 'home-risk-narrative.js', 'home-card-art.js',
-    'roughjs', 'home-hand.js', 'home-handshake.js', 'home-ambient.js', 'arqu-edit-layer.js'
-  ]);
+  assert.deepEqual(
+    stylesheetHrefs(html).filter((h) => h.startsWith('home')),
+    ['home.css', 'home-layers.css'],
+  );
+  assert.deepEqual(
+    scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')),
+    [
+      'home-flows.js',
+      'home-interaction.js',
+      'home-risk-narrative-visuals.js',
+      'home-risk-narrative.js',
+      'home-card-art.js',
+      'roughjs',
+      'home-hand.js',
+      'home-handshake.js',
+      'home-ambient.js',
+      'arqu-edit-layer.js',
+    ],
+  );
 });
 
 for (const page of PAGES) {
