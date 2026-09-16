@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+# Run the static-site checks. No dependencies beyond Node's built-in test runner.
+set -euo pipefail
+cd "$(dirname "$0")/.."
+exec node --test "test/*.test.mjs"

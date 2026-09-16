@@ -1212,11 +1212,11 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 })();
 </script>
 
-<script src="vendor/rough.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js" integrity="sha384-1NLkwxMO2sOqcq7rQkFBhIAUJtbt8ziLxhVKVgKfFGMEU8pF+GEq5LVogviveup6" crossorigin="anonymous"></script>
 <script>
 /* ══ HAND LAYER — the human marks, inked in as they come into view ═══════════
-   Strokes come from rough.js (MIT, vendor/rough.js — the same copy the vellum
-   route ships), which re-renders real geometry with jitter and a double pass.
+   Strokes come from rough.js 4.6.6 (MIT, jsdelivr, byte-identical to the copy
+   the vellum route vendors), which re-renders real geometry with jitter and a double pass.
    Each path is drawn on with stroke-dashoffset, one after another, the way a
    person makes marks. Text marks are measured with a Range on the phrase, so no
    markup is added inside anything the edit layer owns; if the copy is edited
