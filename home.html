@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>arqu home</title>
 <meta name="description" content="arqu home page mockup, v2.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap">
 <style>
 /* ============================================================
    arqu home — VELLUM restyle, CHI'S PALETTE.
@@ -26,6 +29,8 @@
   --font-logo:"Hoefler Text","Didot","Bodoni 72",Palatino,Georgia,serif;
   --ease:cubic-bezier(.2,.7,.2,1);
   --gutter:clamp(24px,6vw,96px);
+  --font-hand:"Caveat","Bradley Hand","Segoe Print",cursive;
+  --spring:cubic-bezier(.34,1.56,.64,1);
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -66,19 +71,31 @@ p{margin:0}
 .hero .lead{font-size:19px;color:var(--ink-2);max-width:48ch}
 .hero .cta{display:flex;flex-wrap:wrap;gap:16px;margin-top:40px}
 
-.motif{position:relative;aspect-ratio:1/1;width:100%;max-width:340px;justify-self:end}
-.motif .beyond{position:absolute;inset:18% 0 0 18%;background:var(--tint);border:1px solid var(--tint-2);border-radius:0;transform-origin:0 0;animation:grow 1.1s .2s var(--ease) both}
-.motif .ask{position:absolute;inset:0 38% 38% 0;border:1px dashed var(--ink-3);border-radius:0;background:var(--bg)}
-.motif .lbl{position:absolute;font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3)}
-.motif .l1{left:14px;top:12px}
-.motif .l2{right:18px;bottom:16px;color:var(--purple-deep)}
-@keyframes grow{from{transform:scale(.62)}to{transform:scale(1)}}
+/* hero motif: the ask is a small circle a person is holding up; what we
+   bring is the big one behind it, and it bleeds past the edge of the page. */
+main{overflow-x:clip}
+.motif{position:relative;aspect-ratio:1/1;width:100%;justify-self:end;--px:0;--py:0}
+.motif .beyond{position:absolute;left:34%;top:-34%;width:172%;aspect-ratio:1/1;
+  transform:translate(calc(var(--px) * 14px),calc(var(--py) * 10px));transition:transform .9s var(--ease)}
+.motif .beyond-in{position:absolute;inset:0;border-radius:50%;transform-origin:0 60%;animation:grow 1.3s .15s var(--ease) both;
+  background:radial-gradient(circle at 30% 42%,var(--tint) 0%,var(--tint-2) 100%)}
+.motif .beyond-in::before{content:"";position:absolute;inset:-7%;border-radius:50%;border:1px solid var(--purple);opacity:.35}
+.motif .ask{position:absolute;left:14%;top:40%;width:34%;aspect-ratio:1/1;border-radius:50%;background:var(--bg);
+  transform:translate(calc(var(--px) * -6px),calc(var(--py) * -5px));transition:transform .9s var(--ease);
+  animation:pop .7s .55s cubic-bezier(.34,1.56,.64,1) both}
+.motif svg.hand-motif{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.motif .lbl{position:absolute;font-family:var(--font-hand);font-size:clamp(22px,2vw,27px);line-height:1;color:var(--ink-2);
+  opacity:0;animation:fade .6s 1.9s var(--ease) forwards}
+.motif .l1{left:31%;top:79%;white-space:nowrap}
+.motif .l2{left:58%;top:10%;white-space:nowrap;color:var(--purple-deep);animation-delay:2.2s}
+@keyframes grow{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes pop{from{transform:scale(.6);opacity:0}to{opacity:1}}
 
 /* values */
 .values{padding-block:clamp(56px,8vw,96px) 0}
 .values .sec-head{margin-bottom:34px}
 .val-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0 clamp(28px,4vw,56px)}
-.val{border-top:1px solid var(--ink);padding-top:22px}
+.val{padding-top:24px}
 .val h3{font-size:clamp(24px,2.4vw,30px);font-weight:400;font-style:italic;line-height:1.1;margin-bottom:12px}
 .val p{color:var(--ink-2);font-size:17px;max-width:38ch}
 .val .tag{display:inline-block;font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-top:16px}
@@ -90,26 +107,34 @@ p{margin:0}
 .sec-head h2 em{font-style:italic;color:var(--purple-deep)}
 .sec-head .hint{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3)}
 
-/* THE MARK — three dots into a rule. From the vellum route
-   (12 brand system/v2-routes/v2-vellum/brand.css, ".run"), inked in
-   Chi's purple instead of the route's oxblood. It opens the hero and
-   every section head, so the page carries our design language while
-   Chi's copy and structure stay exactly as she wrote them. */
-.run{display:block;width:100%;height:10px;margin:0 0 20px;overflow:visible}
-.run-dot{fill:var(--purple-deep)}
-.run-ln{stroke:var(--purple-deep);stroke-width:1.25;fill:none;
-  stroke-dasharray:1200;stroke-dashoffset:1200;animation:ink 1.1s .25s ease-out forwards}
-@keyframes ink{to{stroke-dashoffset:0}}
-.sec-head-run{margin-bottom:20px}
 
 
-.way-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(12px,2vw,28px)}
-.or{font-family:var(--font-display);font-style:italic;font-size:19px;color:var(--ink-3)}
-.way{appearance:none;font:inherit;color:inherit;text-align:left;cursor:pointer;background:transparent;border:0;border-top:1px solid var(--ink);border-radius:0;aspect-ratio:auto;max-height:none;width:100%;padding:26px 0 30px;display:flex;flex-direction:column;justify-content:space-between;gap:22px;position:relative;transition:background .25s var(--ease),opacity .25s var(--ease),border-color .25s var(--ease)}
-.way:hover{background:var(--surface)}
-.way.on{background:var(--tint);border-top-color:var(--purple-deep);box-shadow:0 0 0 1px var(--tint-2) inset}
-.way.dim{opacity:.5}
-.way.dim:hover{opacity:.8}
+/* both cards stretch to the row, so their edges line up at any copy length */
+.way-grid{display:grid;grid-template-columns:1fr auto 1fr;align-items:stretch;gap:clamp(14px,2vw,28px)}
+.or{align-self:center;font-family:var(--font-display);font-style:italic;font-size:19px;color:var(--ink-3);padding:6px 4px}
+.way{appearance:none;font:inherit;color:inherit;text-align:left;cursor:pointer;width:100%;
+  display:flex;flex-direction:column;justify-content:space-between;gap:26px;position:relative;isolation:isolate;overflow:hidden;
+  background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:clamp(22px,2.6vw,34px);
+  box-shadow:0 1px 2px rgba(34,31,32,.05),0 16px 36px -24px rgba(34,31,32,.30);
+  transition:transform .5s var(--spring),box-shadow .4s var(--ease),border-color .3s var(--ease),opacity .3s var(--ease)}
+/* a soft wash that follows the pointer inside the card */
+.way::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(360px circle at var(--mx,50%) var(--my,30%),rgba(140,130,250,.18),rgba(140,130,250,0) 70%);
+  opacity:0;transition:opacity .35s var(--ease)}
+.way:hover{transform:translateY(-6px);border-color:var(--purple);
+  box-shadow:0 2px 4px rgba(94,84,200,.08),0 34px 60px -32px rgba(94,84,200,.55)}
+.way:hover::after,.way.on::after{opacity:1}
+.way:active{transform:translateY(-2px) scale(.994)}
+.way.on{border-color:var(--purple-deep);box-shadow:0 0 0 1px var(--purple-deep),0 30px 60px -36px rgba(94,84,200,.5)}
+.way.dim{opacity:.62}
+.way.dim:hover{opacity:1}
+.way-title{transition:color .3s var(--ease)}
+.way:hover .way-title{color:var(--purple-deep)}
+.way-cta{transition:gap .35s var(--spring)}
+.way:hover .way-cta{gap:16px}
+.way .plus{transition:background .3s var(--ease),color .3s var(--ease),transform .5s var(--spring)}
+.way:hover .plus,.way.on .plus{background:var(--purple-deep);border-color:var(--purple-deep);color:var(--surface)}
+.way:hover .plus{transform:rotate(90deg)}
 .way-top{display:flex;justify-content:space-between;align-items:start;gap:16px}
 .way-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
 .way-title{display:block;font-family:var(--font-display);font-weight:400;font-size:clamp(34px,4.2vw,54px);line-height:1;letter-spacing:-.03em;margin-bottom:14px}
@@ -134,17 +159,17 @@ p{margin:0}
 .flows{position:relative}
 .flow{padding-top:0}
 .wire{display:block;width:100%;height:56px;overflow:visible;animation:fade .45s var(--ease) both}
-.wire path{fill:none;stroke:var(--purple-deep);stroke-width:1.25;stroke-linecap:round;stroke-linejoin:round}
+.wire path{fill:none;stroke:var(--purple-deep);stroke-width:1;stroke-opacity:.55;stroke-linecap:round;stroke-linejoin:round}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 .reveal{animation:rise .55s var(--ease) both;animation-delay:calc(var(--i,0) * 110ms + 250ms)}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
-.node{background:transparent;border:0;border-top:1px solid var(--line);border-radius:0;padding:24px 0 26px;position:relative}
-.node .dot{display:block;width:7px;height:7px;border-radius:50%;background:var(--purple-deep);margin-bottom:18px}
+.node{background:transparent;border:0;border-radius:0;padding:26px 0 26px;position:relative}
+.node .dot{display:none}
 .node h3{font-size:clamp(23px,2.4vw,29px);line-height:1.1;font-weight:400;font-style:italic;letter-spacing:-.02em;margin-bottom:10px}
 .node p{color:var(--ink-2);font-size:16px}
 .chips{display:flex;flex-wrap:wrap;gap:8px 16px;margin-top:18px}
-.wins{list-style:none;margin:18px 0 0;padding:16px 0 0;border-top:1px solid var(--line);display:grid;gap:12px}
+.wins{list-style:none;margin:18px 0 0;padding:18px 0 0;display:grid;gap:12px}
 .wins li{display:grid;grid-template-columns:150px 1fr;gap:12px;font-size:16px;color:var(--ink-2)}
 .wins b{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep);font-weight:400;padding-top:5px}
 @media (max-width:600px){.wins li{grid-template-columns:1fr;gap:2px}}
@@ -157,11 +182,11 @@ p{margin:0}
 .link::after{content:"";position:absolute;left:50%;bottom:-1px;width:6px;height:6px;border-right:1px solid var(--purple-deep);border-bottom:1px solid var(--purple-deep);transform:translateX(-50%) rotate(45deg)}
 .step-no{position:absolute;top:24px;right:0;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;color:var(--ink-3);font-variant-numeric:tabular-nums}
 
-.how{margin-top:clamp(40px,5vw,56px);border-top:1px solid var(--line);padding-top:28px}
+.how{margin-top:clamp(40px,5vw,56px);padding-top:8px}
 .how-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:24px}
 .how-head h3{font-size:24px;font-weight:400;font-style:italic}
 .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,44px);list-style:none;margin:0;padding:0}
-.steps li{border-top:1px solid var(--line);padding-top:16px}
+.steps li{padding-top:18px}
 .steps li b{display:block;font-family:var(--font-display);font-weight:400;font-size:38px;line-height:1;color:var(--line-2);margin-bottom:10px;font-variant-numeric:tabular-nums}
 .steps li strong{display:block;font-family:var(--font-display);font-weight:400;font-style:italic;font-size:20px;margin-bottom:4px}
 .steps li span{color:var(--ink-2);font-size:16px}
@@ -188,7 +213,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 @media (max-width:860px){
   .nav a:not(.btn){display:none}
   .hero{grid-template-columns:1fr}
-  .motif{justify-self:start;max-width:220px}
+  .motif{justify-self:start;max-width:340px;margin-top:24px}
+  .motif .beyond{top:-8%;width:140%}
   .way-grid{grid-template-columns:1fr}
   .or{text-align:center}
   .way{min-height:0}
@@ -199,84 +225,39 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .motif .beyond,.reveal{animation:none}
-  .run-ln{animation:none;stroke-dashoffset:0}
   .wire{animation:none}
 }
 
-/* ── the mark, taken INTO the page ──────────────────────────
-   Four copies of the same full-width run at the top of each
-   block is stamping the mark, not using it. Chi's layout is
-   already built on hairline rules, and the mark IS a hairline
-   with dots on it — so every rule that means something gets
-   its own, painted on a ::before over the border-top the
-   element already has. No markup moves: her copy, structure
-   and class names stay byte-identical and the edit layer
-   still lands on the same elements.
-   --mk-n = how many dots. --mk-bg = the paper it interrupts. */
-.val,.way,.how,.steps li,.wins{--mk-n:3;--mk-bg:var(--bg);position:relative}
-.val::before,.way::before,.how::before,.steps li::before,.wins::before{
-  content:"";position:absolute;z-index:1;box-sizing:border-box;
-  left:0;top:-3.6px;height:6.2px;
-  width:calc(var(--mk-n) * 16px + 14px);padding-right:14px;
-  background-image:
-    radial-gradient(circle 2.6px at 2.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%),
-    linear-gradient(var(--mk-bg),var(--mk-bg));
-  background-size:16px 100%,100% 100%;
-  background-repeat:repeat-x,no-repeat;
-  background-position:0 50%,0 0;
-  /* the dots clip to the content box, so exactly --mk-n of them
-     render and the padding becomes the gap before the rule. */
-  background-origin:content-box,border-box;
-  background-clip:content-box,border-box;
-}
-/* the way buttons change paper on hover and when open, so the
-   gap the mark cuts has to change with them. Same source order
-   as the background rules above, so "open" still beats "hover". */
-.way:hover{--mk-bg:var(--surface)}
-.way.on{--mk-bg:var(--tint)}
-/* the steps COUNT: one dot, two, three. The mark walks you
-   through the process instead of repeating above it. */
+/* ── THE MARK, one version everywhere: dots, a gap, then the rule ────────────
+   Rev 2026-09-16 from Alicia's stickies. It was a heavy full-width divider over
+   every section head, a dots-only stub on the market columns and mirrored on the
+   closing band. Now it is one quiet mark: small dots in purple, a hairline in the
+   paper's own line colour, always in that order. It sits on the rules that mean
+   something (values, market columns, program rows, the 1-2-3 steps) and bookends
+   the page once at the hero and once at the close. No section head carries one.
+   --mk-n = how many dots. The rule is painted after the dots, not under them, so
+   nothing has to cut a hole in the paper and the ambient field shows through. */
+.val,.node,.steps li,.wins{--mk-n:3;position:relative}
+.val::before,.node::before,.steps li::before,.wins::before,
+.val::after,.node::after,.steps li::after,.wins::after{content:"";position:absolute;pointer-events:none;left:0}
+.val::before,.node::before,.steps li::before,.wins::before{
+  top:-2.5px;height:5px;width:calc(var(--mk-n) * 10px);
+  background:radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 0 0/10px 100% repeat-x}
+.val::after,.node::after,.steps li::after,.wins::after{
+  top:0;height:1px;right:0;left:calc(var(--mk-n) * 10px + 6px);background:var(--line-2)}
+/* the steps COUNT: one dot, two, three */
 .steps li:nth-child(1){--mk-n:1}
 .steps li:nth-child(2){--mk-n:2}
 .steps li:nth-child(3){--mk-n:3}
-/* the node's single dot was already half the motif — make it
-   the whole one. Three dots, same rhythm as every other mark. */
-.node .dot{width:38px;height:5.2px;border-radius:0;background:
-  radial-gradient(circle 2.6px at 2.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%) 0 50%/16px 100% repeat-x}
-/* the closing band mirrors: the rule runs in from the left and
-   lands on the dots, so the page ends on the mark instead of
-   opening with it a fourth time. */
-.band .run{transform:scaleX(-1)}
-/* no mark on the footer: the band's bottom border and the
-   footer's top border already stack into a double hairline
-   there, and the mirrored band mark two lines above is the
-   closing beat. A second one just reads as a smudge. */
 
-/* ── the four full-width runs, repainted in CSS ─────────────
-   They were inline SVG with preserveAspectRatio="none", so the
-   1200-unit viewBox squashed the x axis on any narrow screen:
-   the dots collapsed into ellipses and bunched up. Painting
-   them the same way as every other mark makes the geometry
-   width-independent and leaves ONE mark implementation instead
-   of two. The <svg> stays put as the box — only its innards
-   are hidden — so nothing in the DOM moves. */
-.run{box-sizing:border-box;height:6.2px;margin:0 0 26px;padding-left:62px;overflow:hidden;
-  background-image:
-    radial-gradient(circle 2.6px at 2.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%),
-    radial-gradient(circle 2.6px at 18.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%),
-    radial-gradient(circle 2.6px at 34.6px 50%,var(--purple-deep) 98%,rgba(0,0,0,0) 100%),
-    linear-gradient(var(--purple-deep),var(--purple-deep));
-  background-repeat:no-repeat;
-  background-position:0 50%,0 50%,0 50%,0 50%;
-  background-origin:padding-box,padding-box,padding-box,content-box;
-  background-clip:padding-box,padding-box,padding-box,content-box;
-  background-size:100% 100%,100% 100%,100% 100%,100% 1.25px}
+/* the two bookend marks (hero, closing band) — same geometry as above */
+.run{display:block;box-sizing:border-box;width:100%;height:5px;margin:0 0 26px;overflow:hidden;
+  background:
+    radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 0 0/10px 100% no-repeat,
+    radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 10px 0/10px 100% no-repeat,
+    radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 20px 0/10px 100% no-repeat,
+    linear-gradient(var(--line-2),var(--line-2)) 36px 50%/100% 1px no-repeat}
 .run>*{display:none}
-/* deliberately NOT animated. The old SVG inked its rule in via
-   stroke-dashoffset; the CSS equivalent is animating background-size,
-   and that left the rule stuck at zero width in every render I could
-   verify. A mark that is definitely there beats one that might ink in. */
-.sec-head-run{margin-bottom:20px}
 
 /* ══ INTERACTION LAYER — added 2026-09-15 on Alicia's work order ══════════════
    Scroll spine (ported from the scroll study), the human-centered globe, and
@@ -287,17 +268,18 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
    elements. That is why the globe section uses .g-* divs, not h2/.lead/.eyebrow.
    Lives at the END of the stylesheet on purpose — source order decides ties. */
 
-/* ── the spine: three dots, then a line that keeps going ───────────────────── */
-.spine{position:fixed;left:max(16px,calc(var(--gutter) * .40));top:50%;transform:translateY(-50%);
-  z-index:60;display:none;pointer-events:none}
+/* ── the spine: a full-height rail. Each dot sits where its section sits on the
+   page, so the rail doubles as a map, and the ink fills down it as you scroll. ── */
+.spine{position:fixed;left:max(16px,calc(var(--gutter) * .40));top:var(--spine-top,112px);bottom:28px;width:24px;
+  z-index:60;display:none;pointer-events:none;transition:top .2s linear}
 @media (min-width:1080px){.spine{display:block}}
-.spine-ln{position:absolute;left:50%;top:-18px;bottom:-18px;width:1px;background:var(--line-2);
-  transform:translateX(-50%)}
+.spine-ln{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line-2);transform:translateX(-50%)}
 .spine-ln::after{content:"";position:absolute;left:0;top:0;width:1px;background:var(--purple-deep);
   height:var(--spine-p,0%);transition:height .16s linear}
-.sdots{position:relative;display:flex;flex-direction:column;align-items:center;pointer-events:auto}
-.sdot{appearance:none;border:0;background:transparent;padding:0;margin:0;cursor:pointer;position:relative;
-  width:24px;height:var(--dot-gap,22px);display:flex;align-items:center;justify-content:center}
+.sdots{position:absolute;inset:0;pointer-events:none}
+.sdot{appearance:none;border:0;background:transparent;padding:0;margin:0;cursor:pointer;position:absolute;left:0;
+  top:var(--y,0px);transform:translateY(-50%);width:24px;height:24px;display:flex;align-items:center;justify-content:center;
+  pointer-events:auto;transition:top .3s var(--ease)}
 .sdot i{display:block;width:7px;height:7px;border-radius:50%;background:var(--line-2);
   transition:background .3s var(--ease),transform .3s var(--ease)}
 .sdot.past i{background:var(--purple-deep);opacity:.42}
@@ -392,9 +374,19 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   .rn-peril::after,.rn-year::after,.rn-bar::after{transition:none}
   .rn-swap{opacity:1}
 }
+
+/* ══ STICKIES LAYER — 2026-09-16 ═══════════════════════════════════════════════
+   The ambient field and the hand-drawn overlay. Both are aria-hidden, never take
+   the pointer, and add no element the edit layer's data-selector matches. */
+.ambient{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+#hand{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;z-index:5;pointer-events:none}
+#hand path,.hand-motif path{stroke-linecap:round;stroke-linejoin:round}
 </style>
 </head>
 <body>
+
+<canvas class="ambient" aria-hidden="true"></canvas>
+<svg id="hand" aria-hidden="true"></svg>
 
 <div class="flag">Mockup · home v3 · scratch, not live</div>
 
@@ -432,10 +424,11 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
         </div>
       </div>
       <div class="motif" aria-hidden="true">
-        <span class="beyond"></span>
+        <span class="beyond"><span class="beyond-in"></span></span>
         <span class="ask"></span>
-        <span class="lbl l1">The ask</span>
-        <span class="lbl l2">What we bring</span>
+        <svg class="hand-motif" viewBox="0 0 440 440" preserveAspectRatio="xMidYMid meet"></svg>
+        <span class="lbl l1">your ask</span>
+        <span class="lbl l2">what we bring</span>
       </div>
     </section>
 
@@ -443,10 +436,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 
   <section id="values" class="values" aria-labelledby="values-title">
     <div class="wrap">
-      <svg class="run sec-head-run" viewBox="0 0 1200 10" preserveAspectRatio="none" aria-hidden="true">
-        <circle class="run-dot" cx="3" cy="5" r="2.6"/><circle class="run-dot" cx="19" cy="5" r="2.6"/><circle class="run-dot" cx="35" cy="5" r="2.6"/>
-        <path class="run-ln" d="M51 5 H1200"/>
-      </svg>
       <div class="sec-head">
         <div>
           <p class="eyebrow">How we do business</p>
@@ -472,10 +461,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 
   <section id="ways" class="ways" aria-labelledby="ways-title">
     <div class="wrap">
-      <svg class="run sec-head-run" viewBox="0 0 1200 10" preserveAspectRatio="none" aria-hidden="true">
-        <circle class="run-dot" cx="3" cy="5" r="2.6"/><circle class="run-dot" cx="19" cy="5" r="2.6"/><circle class="run-dot" cx="35" cy="5" r="2.6"/>
-        <path class="run-ln" d="M51 5 H1200"/>
-      </svg>
       <div class="sec-head">
         <div>
           <p class="eyebrow">Two ways in</p>
@@ -635,10 +620,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 
   <section id="human" class="globe-sec" aria-labelledby="globe-title">
     <div class="wrap">
-      <svg class="run sec-head-run" viewBox="0 0 1200 10" preserveAspectRatio="none" aria-hidden="true">
-        <circle class="run-dot" cx="3" cy="5" r="2.6"/><circle class="run-dot" cx="19" cy="5" r="2.6"/><circle class="run-dot" cx="35" cy="5" r="2.6"/>
-        <path class="run-ln" d="M51 5 H1200"/>
-      </svg>
       <div class="g-head">
         <div class="g-kicker">Human-centered</div>
         <div class="g-title" id="globe-title" role="heading" aria-level="2">A person stays at the centre of it.</div>
@@ -648,7 +629,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
         <div>
           <div class="g-say">Every point is something in motion &mdash; a submission, a carrier, a risk being worked. Scroll and it turns. Move your cursor and it tilts toward you.</div>
           <div class="g-say">The figure in the middle never leaves. The technology orbits a person, not the other way round.</div>
-          <div class="g-note">Drawn by the browser &mdash; no 3D library</div>
+          <div class="g-note">The tools turn. The handshake holds.</div>
         </div>
       </div>
     </div>
@@ -714,7 +695,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     anchors.forEach(function (a) {
       var r = a.getBoundingClientRect();
       if (Math.abs(r.top - firstTop) > 2) return;
-      var x = (r.left + r.width / 2 - box.left) / box.width * 100;
+      /* land on the first dot of the column's mark, not the middle of its rule */
+      var x = (r.left + 2.5 - box.left) / box.width * 100;
       if (Math.abs(x - x0) < 1.5) x = x0;
       d += ' M' + x0.toFixed(2) + ' 26 H' + x.toFixed(2) + ' V56';
     });
@@ -740,6 +722,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     });
     place();
     wire();
+    window.dispatchEvent(new Event('arqu:layout'));
     if (current && scroll) {
       var target = document.getElementById('flow-' + current);
       var top = target.getBoundingClientRect().top;
@@ -764,8 +747,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 (function () {
   var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  /* ── 1. the spine. Three dots at the motif's own spacing, then the rest
-        spread out — the ellipsis resolves, then the line takes over. ──────── */
+  /* ── 1. the spine. A full-height rail; every dot sits where its section
+        sits on the page, so the rail is a map of the scroll. ─────────────── */
   var SECTIONS = [
     ['top',     'Start'],
     ['values',  'Values'],
@@ -786,8 +769,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
       b.type = 'button';
       b.className = 'sdot';
       b.setAttribute('aria-label', sec.label);
-      /* the first three sit at the motif's own spacing, then the rest spread out */
-      b.style.setProperty('--dot-gap', (i < 3 ? 22 : 34) + 'px');
       b.innerHTML = '<i></i><b></b>';
       b.querySelector('b').textContent = sec.label;
       b.addEventListener('click', function () {
@@ -798,8 +779,32 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     });
   }
 
+  /* Each dot goes where the fill line will be when its section becomes
+     current, then dots are nudged apart so the last two never stack. */
+  function placeDots() {
+    if (!DOTS.length || !spine) return;
+    var railH = spine.getBoundingClientRect().height;
+    var span = document.documentElement.scrollHeight - window.innerHeight;
+    if (!railH || span <= 0) return;
+    var GAP = 30, ys = SECTIONS.map(function (sec) {
+      var top = sec.el.getBoundingClientRect().top + window.scrollY - window.innerHeight * 0.42;
+      return Math.min(1, Math.max(0, top / span)) * railH;
+    });
+    for (var i = 1; i < ys.length; i++) ys[i] = Math.max(ys[i], ys[i - 1] + GAP);
+    ys[ys.length - 1] = Math.min(ys[ys.length - 1], railH);
+    for (var j = ys.length - 2; j >= 0; j--) ys[j] = Math.min(ys[j], ys[j + 1] - GAP);
+    DOTS.forEach(function (d, k) { d.style.setProperty('--y', ys[k].toFixed(1) + 'px'); });
+  }
+
+  /* the rail starts under the sticky header wherever the header currently is */
+  var header = document.querySelector('.top');
+  function spineTop() {
+    if (spine && header) spine.style.setProperty('--spine-top', Math.round(header.getBoundingClientRect().bottom + 22) + 'px');
+  }
+
   var active = -1;
   function spineTick() {
+    spineTop();
     if (!DOTS.length) return;
     var mid = window.scrollY + window.innerHeight * 0.42;
     var cur = 0;
@@ -932,7 +937,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   }
 
   /* ── 3. reveals. JS applies the attribute, so with JS off nothing is hidden. ── */
-  var RISE = '.hero > div, .motif, .val, .way, .node, .steps li, .wins, .close > div, ' +
+  var RISE = '.hero > div, .motif, .val, .way-grid, .node, .steps li, .wins, .close > div, ' +
              '.g-head, .globe-stage, .g-say, .g-note';
   function reveals() {
     var els = Array.prototype.slice.call(document.querySelectorAll(RISE));
@@ -966,9 +971,11 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     requestAnimationFrame(function () { queued = false; spineTick(); globeTick(); });
   }
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', function () { spineTick(); globeTick(); }, { passive: true });
+  window.addEventListener('resize', function () { placeDots(); spineTick(); globeTick(); }, { passive: true });
+  window.addEventListener('arqu:layout', function () { placeDots(); spineTick(); });
 
-  window.addEventListener('load', function () { spineTick(); globeTick(); });
+  window.addEventListener('load', function () { placeDots(); spineTick(); globeTick(); });
+  if ('ResizeObserver' in window) new ResizeObserver(function () { placeDots(); }).observe(document.body);
   if ('ResizeObserver' in window && cv) new ResizeObserver(request).observe(cv.parentNode);
 
   reveals();
@@ -1066,6 +1073,243 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   }
   years.forEach(function(b){ b.addEventListener('click', function(){ selectYear(b); }); });
   selectYear(years.filter(function(b){ return b.classList.contains('is-on'); })[0] || years[0]);
+})();
+</script>
+<script src="vendor/rough.js"></script>
+<script>
+/* ══ HAND LAYER — the human marks, inked in as they come into view ═══════════
+   Strokes come from rough.js (MIT, vendor/rough.js — the same copy the vellum
+   route ships), which re-renders real geometry with jitter and a double pass.
+   Each path is drawn on with stroke-dashoffset, one after another, the way a
+   person makes marks. Text marks are measured with a Range on the phrase, so no
+   markup is added inside anything the edit layer owns; if the copy is edited
+   and the phrase is gone, that mark simply doesn't draw. */
+(function () {
+  if (!window.rough) return;
+  var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var INK = '#221f20', PURPLE = '#5e54c8';
+
+  function opts(seed, over) {
+    var o = { stroke: PURPLE, strokeWidth: 1.6, roughness: 1.6, bowing: 1.6, seed: seed };
+    for (var k in over) o[k] = over[k];
+    return o;
+  }
+
+  /* draw every path in node on, in order; returns when the last one finishes */
+  function ink(node, delay, speed) {
+    var paths = (node.tagName === 'path' ? [node] : Array.prototype.slice.call(node.querySelectorAll('path')))
+      .filter(function (p) { return p.getAttribute('stroke') !== 'none'; });
+    var t = delay || 0;
+    paths.forEach(function (p) {
+      var L = p.getTotalLength();
+      if (RM || !L) return;
+      var dur = Math.max(160, L / (speed || 0.7));
+      p.style.strokeDasharray = L + ' ' + L;
+      p.style.strokeDashoffset = L;
+      p.getBoundingClientRect();
+      p.style.transition = 'stroke-dashoffset ' + dur + 'ms cubic-bezier(.5,.1,.3,1) ' + t + 'ms';
+      p.style.strokeDashoffset = '0';
+      t += dur * 0.6;
+    });
+    return t;
+  }
+  window.arquHand = { ink: ink, opts: opts, INK: INK, PURPLE: PURPLE };
+
+  /* ── page marks ─────────────────────────────────────────────────────────── */
+  var layer = document.getElementById('hand');
+  var MARKS = [
+    { sel: '#hero-title', text: 'beyond', kind: 'circle', seed: 9, wait: 1100 },
+    { sel: '.val:nth-child(2) h3', text: 'Human touch', kind: 'underline', seed: 27, wait: 800 },
+    { sel: '.way-grid .or', text: 'or', kind: 'circle', seed: 5, wait: 700, ink: true },
+    { sel: '[data-rn] .rn-head h3', text: '93 seconds', kind: 'underline', seed: 12, wait: 1300 },
+    { sel: '#close-title + p', text: 'A broker', kind: 'underline', seed: 31, wait: 700 }
+  ];
+
+  function phraseRect(el, text) {
+    var walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT), n;
+    while ((n = walk.nextNode())) {
+      var i = n.nodeValue.indexOf(text);
+      if (i < 0) continue;
+      var r = document.createRange();
+      r.setStart(n, i); r.setEnd(n, i + text.length);
+      var rect = r.getClientRects()[0];
+      return rect && rect.width ? rect : null;
+    }
+    return null;
+  }
+
+  function shape(rc, m, b) {
+    var o = opts(m.seed, m.ink ? { stroke: INK, strokeWidth: 1.3 } : {});
+    if (m.kind === 'circle') {
+      var big = b.h > 46;
+      o.roughness = 1.9; o.bowing = 2.1; o.strokeWidth = big ? 2 : o.strokeWidth;
+      return rc.ellipse(b.x + b.w / 2, b.y + b.h / 2,
+        b.w * (big ? 1.08 : 1.3) + (big ? 18 : 22), b.h * (big ? 1.0 : 1.35) + 8, o);
+    }
+    var y = b.y + b.h + 2;
+    o.roughness = 1.3; o.bowing = 2.2;
+    return rc.linearPath([[b.x - 4, y + 2], [b.x + b.w * 0.4, y + 4], [b.x + b.w * 0.75, y], [b.x + b.w + 6, y + 3]], o);
+  }
+
+  function drawMark(m, animate) {
+    var el = document.querySelector(m.sel);
+    var r = el && phraseRect(el, m.text);
+    if (m.node && m.node.parentNode) m.node.parentNode.removeChild(m.node);
+    m.node = null;
+    if (!r) return false;
+    var b = { x: r.left + window.scrollX, y: r.top + window.scrollY, w: r.width, h: r.height };
+    m.node = shape(rough.svg(layer), m, b);
+    layer.appendChild(m.node);
+    if (animate) ink(m.node, 0, 0.55);
+    return true;
+  }
+
+  function redraw() { MARKS.forEach(function (m) { if (m.seen) drawMark(m, false); }); }
+
+  if ('IntersectionObserver' in window && !RM) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var m = en.target.__mark;
+        io.unobserve(en.target);
+        setTimeout(function () { if (drawMark(m, true)) m.seen = true; else io.observe(en.target); }, m.wait || 600);
+      });
+    }, { rootMargin: '0px 0px -15% 0px', threshold: 0.5 });
+    MARKS.forEach(function (m) {
+      var el = document.querySelector(m.sel);
+      if (el) { el.__mark = m; io.observe(el); }
+    });
+  } else {
+    MARKS.forEach(function (m) { m.seen = true; });
+    redraw();
+  }
+
+  var queued = 0;
+  function later() { clearTimeout(queued); queued = setTimeout(redraw, 120); }
+  window.addEventListener('resize', later);
+  window.addEventListener('arqu:layout', function () { setTimeout(redraw, 700); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(later);
+
+  /* ── the hero: a person holding up their ask, in front of what we bring ── */
+  function heroMotif() {
+    var svg = document.querySelector('.hand-motif');
+    if (!svg) return;
+    var rc = rough.svg(svg), g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    var fig = { stroke: INK, strokeWidth: 2.1, roughness: 0.9, bowing: 1 };
+    var ask = rc.ellipse(136, 251, 156, 150, opts(3, { stroke: INK, strokeWidth: 1.5, roughness: 1.5 }));
+    [rc.circle(40, 316, 27, opts(21, fig)), rc.linearPath([[40, 330], [41, 378]], opts(22, fig)),
+     rc.linearPath([[41, 378], [28, 413]], opts(23, fig)), rc.linearPath([[41, 378], [55, 412]], opts(24, fig)),
+     rc.linearPath([[40, 344], [26, 372]], opts(25, fig)),
+     rc.linearPath([[40, 343], [61, 326], [81, 306]], opts(26, fig))].forEach(function (n) { g.appendChild(n); });
+    var arrow = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    var a = { stroke: INK, strokeWidth: 1.3, roughness: 1, bowing: 1 };
+    arrow.appendChild(rc.curve([[182, 350], [174, 337], [158, 330]], opts(40, a)));
+    arrow.appendChild(rc.linearPath([[166, 324], [157, 330], [167, 336]], opts(41, a)));
+    svg.appendChild(ask); svg.appendChild(g); svg.appendChild(arrow);
+    ink(ask, 750, 0.6);
+    ink(g, 1150, 0.35);
+    ink(arrow, 2050, 0.4);
+  }
+  heroMotif();
+
+  /* the hero leans a few pixels toward the pointer: big circle one way, the ask the other */
+  var hero = document.querySelector('.hero'), motif = document.querySelector('.motif');
+  if (hero && motif && !RM) {
+    hero.addEventListener('pointermove', function (e) {
+      var r = hero.getBoundingClientRect();
+      motif.style.setProperty('--px', ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
+      motif.style.setProperty('--py', ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
+    }, { passive: true });
+    hero.addEventListener('pointerleave', function () {
+      motif.style.setProperty('--px', 0); motif.style.setProperty('--py', 0);
+    });
+  }
+
+  /* the card wash follows the pointer */
+  Array.prototype.forEach.call(document.querySelectorAll('.way'), function (card) {
+    card.addEventListener('pointermove', function (e) {
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+      card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+    }, { passive: true });
+  });
+})();
+</script>
+
+<script>
+/* ══ AMBIENT FIELD — a page-wide grid of dots, kept deliberately faint ════════
+   Alicia's keyword was subtle. At rest the dots are barely there and fainter
+   still over the text column. They answer three things a person does: the
+   pointer (dots near it lift into purple and step aside), scrolling (the grid
+   drifts at a slower rate than the page) and a click or tap (one soft ring
+   travels out through the grid). It only animates while one of those is
+   settling, and it does nothing at all under prefers-reduced-motion. */
+(function () {
+  var cv = document.querySelector('canvas.ambient');
+  if (!cv || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var ctx = cv.getContext('2d');
+  var GAP = 30, REACH = 170, w = 0, h = 0, colL = 0, colR = 0, raf = 0;
+  var P = { x: -1e4, y: -1e4, tx: -1e4, ty: -1e4, on: 0, von: 0 };
+  var rings = [];
+
+  function size() {
+    var dpr = Math.min(2, window.devicePixelRatio || 1);
+    w = window.innerWidth; h = window.innerHeight;
+    cv.width = w * dpr | 0; cv.height = h * dpr | 0;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    var col = document.querySelector('main .wrap');
+    if (col) { var r = col.getBoundingClientRect(); colL = r.left + 40; colR = r.right - 40; }
+    kick();
+  }
+
+  function lift(x, y, now) {
+    var dx = x - P.x, dy = y - P.y, d = Math.sqrt(dx * dx + dy * dy), f = 0, g = 0;
+    if (P.von > 0.01 && d < REACH) { f = 1 - d / REACH; f = f * f * (3 - 2 * f) * P.von; }
+    for (var i = 0; i < rings.length; i++) {
+      var age = now - rings[i].t, rr = age * 0.42;
+      var rx = x - rings[i].x, ry = y - rings[i].y, e = (Math.sqrt(rx * rx + ry * ry) - rr) / 28;
+      g = Math.max(g, Math.exp(-e * e) * (1 - age / 1700));
+    }
+    return { f: f, g: g, dx: d ? dx / d : 0, dy: d ? dy / d : 0 };
+  }
+
+  function frame(now) {
+    raf = 0;
+    P.x += (P.tx - P.x) * 0.16; P.y += (P.ty - P.y) * 0.16;
+    P.von += (P.on - P.von) * 0.08;
+    rings = rings.filter(function (r) { return now - r.t < 1700; });
+    ctx.clearRect(0, 0, w, h);
+    var oy = -((window.scrollY * 0.18) % GAP), ox = (w % GAP) / 2;
+    for (var y = oy; y < h + GAP; y += GAP) {
+      for (var x = ox; x < w + GAP; x += GAP) {
+        var L = lift(x, y, now), inCol = x > colL && x < colR;
+        var push = L.f * 7, hot = Math.max(L.f, L.g);
+        var a = (inCol ? 0.05 : 0.085) * (1 - hot);
+        if (a > 0.004) { ctx.fillStyle = 'rgba(34,31,32,' + a.toFixed(3) + ')'; ctx.fillRect(x - 0.8, y - 0.8, 1.6, 1.6); }
+        if (hot > 0.02) {
+          ctx.beginPath();
+          ctx.arc(x + L.dx * push, y + L.dy * push, 0.8 + hot * 1.1, 0, 6.2832);
+          ctx.fillStyle = 'rgba(94,84,200,' + (hot * (inCol ? 0.2 : 0.3)).toFixed(3) + ')';
+          ctx.fill();
+        }
+      }
+    }
+    var moving = Math.abs(P.tx - P.x) > 0.3 || Math.abs(P.ty - P.y) > 0.3 || Math.abs(P.on - P.von) > 0.01;
+    if (moving || rings.length) kick();
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+
+  window.addEventListener('pointermove', function (e) {
+    if (e.pointerType === 'touch') return;
+    if (P.x < -9000) { P.x = e.clientX; P.y = e.clientY; }
+    P.tx = e.clientX; P.ty = e.clientY; P.on = 1; kick();
+  }, { passive: true });
+  document.addEventListener('pointerleave', function () { P.on = 0; kick(); });
+  window.addEventListener('blur', function () { P.on = 0; kick(); });
+  window.addEventListener('pointerdown', function (e) { rings.push({ x: e.clientX, y: e.clientY, t: performance.now() }); kick(); }, { passive: true });
+  window.addEventListener('scroll', kick, { passive: true });
+  window.addEventListener('resize', size);
+  size();
 })();
 </script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
