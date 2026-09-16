@@ -65,16 +65,6 @@ p{margin:0}
 .hero h1 em{font-style:italic;color:var(--purple-deep)}
 .hero .lead{font-size:19px;color:var(--ink-2);max-width:48ch}
 .hero .cta{display:flex;flex-wrap:wrap;gap:16px;margin-top:40px}
-/* the drift field — the mood board's p5 trail, slowed right down. It bleeds
-   into the gutters so the streaks run off the edge instead of stopping in a
-   box, and it is always behind the hero's own two columns. */
-.hero{position:relative;isolation:isolate}
-.hero>div{position:relative;z-index:1}
-/* a canvas is a replaced element: with width:auto it keeps its intrinsic
-   300x150 and quietly ignores the left/right insets, so the size is stated. */
-#c-drift{position:absolute;top:-30px;left:calc(var(--gutter) * -1);z-index:0;
-  width:calc(100% + var(--gutter) * 2);height:calc(100% + 48px);
-  display:block;pointer-events:none;opacity:.5}
 
 .motif{position:relative;aspect-ratio:1/1;width:100%;max-width:340px;justify-self:end}
 .motif .beyond{position:absolute;inset:18% 0 0 18%;background:var(--tint);border:1px solid var(--tint-2);border-radius:0;transform-origin:0 0;animation:grow 1.1s .2s var(--ease) both}
@@ -209,7 +199,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   .motif .beyond,.reveal{animation:none}
-  #c-drift{opacity:.42}
   .run-ln{animation:none;stroke-dashoffset:0}
   .wire{animation:none}
 }
@@ -429,7 +418,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 <main id="top">
   <div class="wrap">
     <section class="hero" aria-labelledby="hero-title">
-      <canvas id="c-drift" aria-hidden="true"></canvas>
       <div>
         <svg class="run" viewBox="0 0 1200 10" preserveAspectRatio="none" aria-hidden="true">
           <circle class="run-dot" cx="3" cy="5" r="2.6"/><circle class="run-dot" cx="19" cy="5" r="2.6"/><circle class="run-dot" cx="35" cy="5" r="2.6"/>
@@ -1078,150 +1066,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   }
   years.forEach(function(b){ b.addEventListener('click', function(){ selectYear(b); }); });
   selectYear(years.filter(function(b){ return b.classList.contains('is-on'); })[0] || years[0]);
-})();
-</script>
-<script>
-/* ══ DRIFT — the mood board's p5.js trail, slowed right down ═══════════════
-   Added 2026-09-16. Same idea as the p5 tile on the mood board: a row of dots
-   whose height is a noise field, over a surface that is only partly cleared
-   each frame, so every dot smears into a trail instead of landing as a dot.
-
-   Two deliberate changes from the tile:
-     · the noise clock runs 6x slower (0.3 -> 0.05 noise units per second), so
-       the field drifts instead of darting;
-     · the fade drops by the same factor (.157 -> .05), because trail length is
-       speed divided by fade — keeping the tile's fade at this speed would have
-       thrown the trail away, and the trail is the part worth keeping.
-
-   The fade is destination-out rather than a wash of paper, so the canvas stays
-   transparent where nothing has moved and the vellum tooth reads through it.
-   p5 itself is NOT loaded here — a megabyte of library for forty circles does
-   not belong on a marketing page, so the noise is a small value noise inline. */
-(function () {
-  var cv = document.getElementById('c-drift');
-  if (!cv || !cv.getContext) return;
-  var ctx = cv.getContext('2d');
-  if (!ctx) return;
-  var hero = cv.parentNode;
-  var RM = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-  var DOT   = '94,84,200';   /* --purple-deep */
-  var CLOCK = 0.06;          /* noise units per second — the tile ran 0.3 */
-  var FADE  = 0.022;         /* erased per frame — the tile washed 40/255 */
-  var INK   = 0.45;          /* base dot alpha — the tile filled at 160/255.
-                                a fainter dot leaves a trail too faint to see,
-                                which is the whole point of the effect. */
-  var FPS   = 30;
-  var SEED  = 12;            /* start mid-field, so it opens already drifting */
-
-  var w = 0, h = 0, n = 0, t = SEED, last = 0, raf = 0, onScreen = true;
-
-  function ease(k) { return k * k * (3 - 2 * k); }
-  function hash(x, y) {
-    var v = (x * 374761393 + y * 668265263) | 0;
-    v = (v ^ (v >> 13)) * 1274126177;
-    return ((v ^ (v >> 16)) >>> 0) / 4294967295;
-  }
-  /* smoothed value noise in 0..1 — same range and feel as p5's noise() */
-  function noise(x, y) {
-    var xi = Math.floor(x), yi = Math.floor(y);
-    var u = ease(x - xi), v = ease(y - yi);
-    var a = hash(xi, yi), b = hash(xi + 1, yi);
-    var c = hash(xi, yi + 1), d = hash(xi + 1, yi + 1);
-    var top = a + (b - a) * u;
-    return top + ((c + (d - c) * u) - top) * v;
-  }
-
-  function size() {
-    var dpr = Math.min(window.devicePixelRatio || 1, 2);
-    w = cv.clientWidth; h = cv.clientHeight;
-    if (!w || !h) return false;
-    cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    /* the tile packed 40 columns into 300px; at hero width that spacing is
-       what stops the field reading as scattered confetti instead of a field */
-    n = Math.max(48, Math.min(200, Math.round(w / 11)));
-    return true;
-  }
-
-  function paint() {
-    /* the trail: erase a little of what is there, never clear it */
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.fillStyle = 'rgba(0,0,0,' + FADE + ')';
-    ctx.fillRect(0, 0, w, h);
-    ctx.globalCompositeOperation = 'source-over';
-    for (var i = 0; i < n; i++) {
-      /* the field always spans the tile's own 12 noise units, whatever the
-         column count is — so its shape is the same on a phone and a monitor */
-      var k = (i / n) * 12;
-      var y = noise(k, t) * h;
-      /* a second, slower field nudges each column sideways, so the streaks
-         are not pinned to a grid */
-      var x = (i / n) * w + (noise(k + 90, t * 0.6) - 0.5) * 26;
-      var r = 1.8 + noise(k + 300, t * 0.4) * 2.4;
-      ctx.fillStyle = 'rgba(' + DOT + ',' + (INK + r * 0.05).toFixed(3) + ')';
-      ctx.beginPath();
-      ctx.arc(x, y, r, 0, 6.2831853);
-      ctx.fill();
-    }
-  }
-
-  function stop() { if (raf) { cancelAnimationFrame(raf); raf = 0; } }
-
-  function frame(now) {
-    raf = requestAnimationFrame(frame);
-    if (now - last < 1000 / FPS) return;
-    t += ((now - last) / 1000) * CLOCK;
-    last = now;
-    paint();
-  }
-
-  function start() {
-    if (raf || !onScreen || RM.matches || document.hidden) return;
-    last = performance.now();
-    raf = requestAnimationFrame(frame);
-  }
-
-  /* reduced motion gets the field, not the movement: one frame, held */
-  function still() {
-    stop();
-    if (!size()) return;
-    ctx.clearRect(0, 0, w, h);
-    t = SEED;
-    paint();
-  }
-
-  if (!size()) return;
-  if (RM.matches) still(); else { paint(); start(); }
-
-  /* run only while the hero is on screen — scrolled past, it costs nothing */
-  if (window.IntersectionObserver) {
-    new IntersectionObserver(function (es) {
-      onScreen = es[0].isIntersecting;
-      if (onScreen) start(); else stop();
-    }, { threshold: 0 }).observe(hero);
-  }
-
-  document.addEventListener('visibilitychange', function () {
-    if (document.hidden) stop(); else start();
-  });
-
-  var rt;
-  window.addEventListener('resize', function () {
-    clearTimeout(rt);
-    rt = setTimeout(function () {
-      if (RM.matches) { still(); return; }
-      var was = !!raf;
-      stop();
-      if (size() && was) start();
-    }, 180);
-  });
-
-  if (RM.addEventListener) {
-    RM.addEventListener('change', function () {
-      if (RM.matches) still(); else { size(); start(); }
-    });
-  }
 })();
 </script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
