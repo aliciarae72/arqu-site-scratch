@@ -1,9 +1,7 @@
-/* Wordmark specimen sheet. Tokens are copied from home's :root on purpose:
-   home.css is mid-edit on another branch, and this page must not move with it. */
+/* Wordmark specimen sheet. The palette is closed to these five tokens, copied
+   from home's :root so this page does not move with home.css edits. */
 :root{
-  --bg:#fbfaf7; --band:#f2efe9; --surface:#ffffff;
-  --ink:#221f20; --ink-2:#56514f;
-  --line:#e7e2db;
+  --bg:#fbfaf7; --ink:#221f20;
   --purple:#8c82fa; --purple-deep:#5e54c8; --tint:#f3f1ff;
   --font-mono:ui-monospace,"SF Mono","IBM Plex Mono",Menlo,"Courier New",monospace;
 }
@@ -15,23 +13,19 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-mono)
 .sheet{max-width:1180px;margin-inline:auto;padding:clamp(28px,6vw,72px) clamp(16px,4vw,40px) clamp(48px,8vw,96px)}
 
 .sheet-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;
-  border-bottom:1px solid var(--line);padding-bottom:18px;margin-bottom:clamp(24px,4vw,40px)}
-.sheet-head p{margin:0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-2)}
-.sheet-head a{color:var(--ink-2);text-decoration:none;font-size:11px;letter-spacing:.2em;text-transform:uppercase}
+  border-bottom:1px solid var(--ink);padding-bottom:18px;margin-bottom:clamp(24px,4vw,40px)}
+.sheet-head p,.sheet-head a{margin:0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);text-decoration:none}
 .sheet-head a:hover{color:var(--purple-deep)}
 
-.attempts{list-style:none;margin:0;padding:0;display:grid;gap:clamp(14px,2vw,22px);
+/* One hairline grid: the ink background shows through the 1px gaps. */
+.attempts{list-style:none;margin:0;padding:1px;display:grid;gap:1px;background:var(--ink);
   grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr))}
 
 .attempt{display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-width:0;
-  border:1px solid transparent;border-radius:28px;padding:clamp(28px,4vw,48px) clamp(20px,3.5vw,40px) 22px;
-  background:var(--card);color:var(--label)}
-.on-paper{--card:var(--bg);--mark:var(--purple-deep);--label:var(--ink-2);border-color:var(--line)}
-.on-deep{--card:var(--purple-deep);--mark:var(--bg);--label:var(--tint)}
-.on-tint{--card:var(--tint);--mark:var(--ink);--label:var(--ink-2)}
-.on-ink{--card:var(--ink);--mark:var(--purple);--label:var(--line)}
-.on-band{--card:var(--band);--mark:var(--purple-deep);--label:var(--ink-2)}
-.on-surface{--card:var(--surface);--mark:var(--ink);--accent:var(--purple);--label:var(--ink-2);border-color:var(--line)}
+  padding:clamp(28px,4vw,48px) clamp(20px,3.5vw,40px) 22px;background:var(--card);color:var(--label)}
+.on-paper{--card:var(--bg);--mark:var(--ink);--accent:var(--purple-deep);--label:var(--ink)}
+.on-deep{--card:var(--purple-deep);--mark:var(--bg);--label:var(--bg)}
+.on-purple{--card:var(--purple);--mark:var(--ink);--label:var(--ink)}
 
 .stage{display:grid;place-items:center;min-height:clamp(170px,30vw,260px)}
 
