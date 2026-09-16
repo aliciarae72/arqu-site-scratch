@@ -25,7 +25,7 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-mono)
   padding:clamp(28px,4vw,48px) clamp(20px,3.5vw,40px) 22px;background:var(--card);color:var(--label);box-shadow:0 0 0 1px var(--ink)}
 .on-paper{--card:var(--bg);--mark:var(--ink);--label:var(--ink);--rule:var(--purple)}
 .on-paper-deep{--card:var(--bg);--mark:var(--purple-deep);--label:var(--ink);--rule:var(--purple)}
-.on-deep{--card:var(--purple-deep);--mark:var(--bg);--label:var(--bg);--rule:var(--purple)}
+.on-deep{--card:var(--purple-deep);--mark:var(--bg);--label:var(--bg);--rule:var(--bg)}
 
 .stage{display:grid;place-items:center;min-height:clamp(170px,30vw,260px);margin-bottom:12px}
 
@@ -40,3 +40,5 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-mono)
 .lean i{font-style:normal}
 .lean .track{position:relative;width:72px;height:1px;background:var(--label)}
 .lean .track::after{content:"";position:absolute;top:-4px;left:calc((var(--pos) - 1) / 5 * 100%);width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--rule)}
+
+.mark .line{fill:none;stroke:var(--mark);stroke-linecap:butt;stroke-linejoin:miter}
