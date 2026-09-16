@@ -1,14 +1,14 @@
-/* Wordmark specimen sheet. The palette is closed to these five tokens, copied
+/* Wordmark specimen sheet. The palette is closed to these four tokens, copied
    from home's :root so this page does not move with home.css edits. */
 :root{
   --bg:#fbfaf7; --ink:#221f20;
-  --purple:#8c82fa; --purple-deep:#5e54c8; --tint:#f3f1ff;
+  --purple:#8c82fa; --purple-deep:#5e54c8;
   --font-mono:ui-monospace,"SF Mono","IBM Plex Mono",Menlo,"Courier New",monospace;
 }
 
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-mono);-webkit-font-smoothing:antialiased}
-::selection{background:var(--tint)}
+::selection{background:var(--purple);color:var(--ink)}
 
 .sheet{max-width:1180px;margin-inline:auto;padding:clamp(28px,6vw,72px) clamp(16px,4vw,40px) clamp(48px,8vw,96px)}
 
@@ -17,24 +17,26 @@ body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-mono)
 .sheet-head p,.sheet-head a{margin:0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);text-decoration:none}
 .sheet-head a:hover{color:var(--purple-deep)}
 
-/* One hairline grid: the ink background shows through the 1px gaps. */
-.attempts{list-style:none;margin:0;padding:1px;display:grid;gap:1px;background:var(--ink);
+/* Hairline grid: each cell's 1px ring fills the 1px gap, so an empty cell stays paper. */
+.attempts{list-style:none;margin:0;padding:1px;display:grid;gap:1px;
   grid-template-columns:repeat(auto-fill,minmax(min(100%,480px),1fr))}
 
-.attempt{display:flex;flex-direction:column;justify-content:space-between;gap:28px;min-width:0;
-  padding:clamp(28px,4vw,48px) clamp(20px,3.5vw,40px) 22px;background:var(--card);color:var(--label)}
-.on-paper{--card:var(--bg);--mark:var(--ink);--accent:var(--purple-deep);--label:var(--ink)}
-.on-deep{--card:var(--purple-deep);--mark:var(--bg);--label:var(--bg)}
-.on-purple{--card:var(--purple);--mark:var(--ink);--label:var(--ink)}
+.attempt{display:flex;flex-direction:column;gap:10px;min-width:0;
+  padding:clamp(28px,4vw,48px) clamp(20px,3.5vw,40px) 22px;background:var(--card);color:var(--label);box-shadow:0 0 0 1px var(--ink)}
+.on-paper{--card:var(--bg);--mark:var(--ink);--label:var(--ink);--rule:var(--purple)}
+.on-paper-deep{--card:var(--bg);--mark:var(--purple-deep);--label:var(--ink);--rule:var(--purple)}
+.on-deep{--card:var(--purple-deep);--mark:var(--bg);--label:var(--bg);--rule:var(--purple)}
 
-.stage{display:grid;place-items:center;min-height:clamp(170px,30vw,260px)}
+.stage{display:grid;place-items:center;min-height:clamp(170px,30vw,260px);margin-bottom:12px}
 
-/* The inline script turns each .spine centerline into a filled .ink outline and
-   fits the viewBox to the result, so height alone sizes the mark. */
-.mark{display:block;height:clamp(92px,13vw,146px);width:auto;max-width:100%}
-.mark .spine{fill:none;stroke:none}
-.mark .ink{fill:var(--mark)}
-.mark .ink.accent{fill:var(--accent,var(--mark))}
+.mark{display:block;height:clamp(88px,12vw,132px);width:auto;max-width:100%;fill:var(--mark);overflow:visible}
 
-.label{margin:0;font-size:12px;line-height:1.5}
+.caption{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.label,.note{margin:0;font-size:12px;line-height:1.5}
 .label b{font-weight:400}
+
+/* Where the mark sits between B (warm humanist) and E (geometric with tension), 1-6. */
+.lean{display:inline-flex;align-items:center;gap:6px;font-size:11px}
+.lean i{font-style:normal}
+.lean .track{position:relative;width:72px;height:1px;background:var(--label)}
+.lean .track::after{content:"";position:absolute;top:-4px;left:calc((var(--pos) - 1) / 5 * 100%);width:9px;height:9px;margin-left:-4.5px;border-radius:50%;background:var(--rule)}
