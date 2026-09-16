@@ -15,8 +15,8 @@
     if (!current) return;
     var flow = document.getElementById('flow-' + current);
     var svg = flow.querySelector('.wire');
-    var box = svg.getBoundingClientRect();
-    if (!box.width) return;
+    var box = svg && svg.getBoundingClientRect();
+    if (!box || !box.width) return;
     var tile = document.getElementById('way-' + current).getBoundingClientRect();
     var x0 = ((tile.left + tile.width / 2 - box.left) / box.width) * 100;
     var anchors = Array.prototype.slice.call(flow.querySelectorAll('[data-anchor]'));

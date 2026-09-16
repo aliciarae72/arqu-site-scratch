@@ -1,5 +1,8 @@
-/* The ambient field and the hand-drawn overlay. Both are aria-hidden, never take
-   the pointer, and add no element the edit layer's data-selector matches. */
+/* The ambient field and the hand-drawn marks. Both are aria-hidden, never take
+   the pointer, and add no element the edit layer's data-selector matches. A mark
+   sits inside the element holding its words (home-hand-marks.js), so it moves
+   with them. */
 .ambient{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-#hand{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;z-index:5;pointer-events:none}
-#hand path,.hand-motif path{stroke-linecap:round;stroke-linejoin:round}
+.hand-host{position:relative}
+.hand-mark{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;z-index:2;pointer-events:none}
+.hand-mark path,.hand-motif path,.sector-icon path{stroke-linecap:round;stroke-linejoin:round}

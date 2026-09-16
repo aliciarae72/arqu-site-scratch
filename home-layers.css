@@ -10,8 +10,7 @@
 /* ── the human-centered section: the handshake ─────────────────────────────── */
 .globe-sec,.lines-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
 .globe-sec .g-head,.lines-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
-.g-kicker{font:600 11px/1 var(--font-mono);letter-spacing:.17em;text-transform:uppercase;
-  color:var(--purple-deep);margin-bottom:14px}
+.g-kicker{margin-bottom:14px}
 .g-title{font-family:var(--font-display);font-weight:400;font-size:clamp(28px,4.4vw,46px);
   line-height:1.06;letter-spacing:-.02em;color:var(--ink);max-width:18ch}
 .globe-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
@@ -39,3 +38,16 @@
   [data-rise]{opacity:1!important;transform:none!important;transition:none}
   .sdot i,.sdot b,.spine-ln::after{transition:none}
 }
+
+/* ══ WASH — the Open market card's purple wash (.way::after), same colour and
+   falloff, carried to two more surfaces: the closing band and the ground under
+   the handshake. Unlike the card it is always faintly on, resting where the eye
+   already is, and it follows the pointer (home-hand.js sets --mx/--my). */
+.band[data-wash]{position:relative;isolation:isolate}
+.band[data-wash]::after,.globe-stage[data-wash]::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none}
+.band[data-wash]::after{
+  background:radial-gradient(560px circle at var(--mx,80%) var(--my,55%),rgba(140,130,250,.18),rgba(140,130,250,0) 70%)}
+.globe-stage[data-wash]{isolation:isolate}
+.globe-stage[data-wash]::before{
+  background:radial-gradient(380px circle at var(--mx,50%) var(--my,62%),rgba(140,130,250,.18),rgba(140,130,250,0) 70%);
+  -webkit-mask-image:radial-gradient(closest-side,#000 60%,transparent);mask-image:radial-gradient(closest-side,#000 60%,transparent)}
