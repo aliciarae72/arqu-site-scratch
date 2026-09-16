@@ -145,15 +145,11 @@ main{overflow-x:clip}
 .plus::after{transform:translate(-50%,-50%) rotate(90deg)}
 .way.on .plus::after{transform:translate(-50%,-50%) rotate(0deg)}
 
-/* tile art: many small markets / one book — set as ink marks, not chips */
-.art{width:92px;height:92px;flex:none;position:relative}
-.art-market i{position:absolute;width:16px;height:16px;border-radius:0;background:transparent;border:1px solid var(--purple-deep)}
-.art-market i:nth-child(1){left:0;top:8px}.art-market i:nth-child(2){left:32px;top:0}.art-market i:nth-child(3){left:66px;top:14px}
-.art-market i:nth-child(4){left:12px;top:44px}.art-market i:nth-child(5){left:48px;top:38px;background:var(--purple-deep)}.art-market i:nth-child(6){left:72px;top:62px}
-.art-market i:nth-child(7){left:28px;top:72px}
-.art-prog i{position:absolute;left:10px;right:10px;height:12px;border-radius:0;background:transparent;border:1px solid var(--purple-deep)}
-.art-prog i:nth-child(1){top:14px}.art-prog i:nth-child(2){top:32px}.art-prog i:nth-child(3){top:50px}
-.art-prog i:nth-child(4){top:68px;background:var(--purple-deep)}
+/* tile art: one dot opening out to the market / many dots closing into one book */
+.art{display:block;height:clamp(120px,12vw,156px);border-radius:12px;background:var(--bg);border:1px solid var(--line);
+  transition:background .4s var(--ease),border-color .4s var(--ease)}
+.way:hover .art,.way.on .art{background:var(--tint);border-color:var(--tint-2)}
+.art canvas{display:block;width:100%;height:100%}
 
 /* flows */
 .flows{position:relative}
@@ -260,12 +256,12 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 .run>*{display:none}
 
 /* ══ INTERACTION LAYER — added 2026-09-15 on Alicia's work order ══════════════
-   Scroll spine (ported from the scroll study), the human-centered globe, and
+   Scroll spine (ported from the scroll study), the human-centered section, and
    scroll-linked reveals. Everything here is ADDITIVE: it introduces no element
    matching the edit layer's data-selector, because that layer keys saved copy
    by NUMERIC DOM INDEX (arqu-edit-layer.js:82, `saved[i]`). One new matching
    node anywhere above the footer would paste Chi's edits onto the wrong
-   elements. That is why the globe section uses .g-* divs, not h2/.lead/.eyebrow.
+   elements. That is why the human section uses .g-* divs, not h2/.lead/.eyebrow.
    Lives at the END of the stylesheet on purpose — source order decides ties. */
 
 /* ── the spine: a full-height rail. Each dot sits where its section sits on the
@@ -292,7 +288,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 .sdot[aria-current="true"] b{color:var(--purple-deep)}
 .sdot:focus-visible{outline:1px solid var(--purple-deep);outline-offset:2px}
 
-/* ── the human-centered globe ──────────────────────────────────────────────── */
+/* ── the human-centered section: the handshake ─────────────────────────────── */
 .globe-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
 .globe-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
 .g-kicker{font:600 11px/1 var(--font-mono);letter-spacing:.17em;text-transform:uppercase;
@@ -302,8 +298,14 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 .globe-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
   gap:clamp(24px,5vw,64px);align-items:center}
 @media (max-width:860px){.globe-row{grid-template-columns:1fr}}
-.globe-stage{position:relative;aspect-ratio:1/1;max-height:min(58vh,540px);margin-inline:auto;width:100%}
-.globe-stage canvas{display:block;width:100%;height:100%}
+.globe-stage{position:relative;aspect-ratio:16/15;max-height:min(64vh,560px);margin-inline:auto;width:100%}
+.hs{display:block;width:100%;height:100%;overflow:visible;cursor:grab}
+.hs .fig{fill:var(--ink)}
+.hs .lbl{font-family:var(--font-hand);font-size:30px;fill:var(--ink-2);opacity:0;transition:opacity .6s var(--ease)}
+.hs .lbl.us{fill:var(--purple-deep)}
+.hs.drawn .lbl{opacity:1}
+.hs .odot{opacity:0;transition:opacity .8s var(--ease)}
+.hs.orbiting .odot{opacity:1}
 .g-say{color:var(--ink-2);font-size:clamp(15px,1.5vw,17px);line-height:1.62;max-width:46ch}
 .g-say + .g-say{margin-top:15px}
 .g-note{margin-top:20px;font:600 10px/1.5 var(--font-mono);letter-spacing:.13em;
@@ -319,59 +321,79 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   .sdot i,.sdot b,.spine-ln::after{transition:none}
 }
 
-/* ---- risk narrative visuals (Open market) ---- */
-.rn{border-top:1px solid var(--line);padding-top:30px;margin-top:8px}
-.rn-head{max-width:62ch;margin-bottom:30px}
+/* ---- risk narrative: a slideshow, one visual on the left, the read on the right ---- */
+.rn{padding-top:34px;margin-top:10px}
+.rn-head{max-width:62ch;margin-bottom:28px}
 .rn-head h3{font-size:clamp(23px,2.4vw,29px);line-height:1.1;font-weight:400;font-style:italic;letter-spacing:-.02em;margin:8px 0 10px}
 .rn-lede{color:var(--ink-2);font-size:16px}
-.rn-grid{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,3vw,44px)}
-.rn-card{border-top:1px solid var(--line-2);padding-top:18px;min-width:0}
-.rn-card-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px}
-.rn-kicker,.rn-note{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase}
-.rn-kicker{color:var(--purple-deep)}
-.rn-note{color:var(--ink-3)}
-.rn-perils,.rn-years{display:flex;flex-wrap:wrap;gap:8px 18px;margin-bottom:24px}
-.rn-peril,.rn-year{background:transparent;border:0;border-bottom:1px solid var(--line-2);border-radius:0;padding:0 0 5px;cursor:pointer;
-  font-family:var(--font-mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);
-  transition:color .25s var(--ease),border-color .25s var(--ease)}
-.rn-peril:hover,.rn-year:hover{color:var(--ink-2);border-bottom-color:var(--ink-3)}
-.rn-peril.is-on,.rn-year.is-on{color:var(--purple-deep);border-bottom-color:var(--purple-deep)}
-.rn-meter-top{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:10px}
-.rn-band{font-family:var(--font-display,inherit);font-size:clamp(18px,2vw,22px);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--ink)}
-.rn-read{color:var(--ink-2);font-size:15px;margin-top:16px;min-height:4.5em}
-.rn-bars{display:flex;align-items:flex-end;gap:10px;height:86px;margin-bottom:20px}
-.rn-bar{flex:1;background:var(--line-2);position:relative;height:calc(var(--h,4) * 1%);min-height:2px;
-  transition:height .6s var(--ease),background-color .25s var(--ease)}
-.rn-bar.is-on{background:var(--purple-deep)}
-.rn-figs{display:flex;gap:clamp(24px,4vw,48px);margin-bottom:4px}
-.rn-fig{display:flex;flex-direction:column;gap:4px}
-.rn-fig b{font-size:clamp(22px,2.4vw,28px);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--ink)}
-.rn-fig i{font-family:var(--font-mono);font-style:normal;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-.rn-foot{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:26px}
-/* motion + hover: the two reads answer the pointer, not just the click */
-.rn-card{transition:border-top-color .35s var(--ease)}
-.rn-card:hover{border-top-color:var(--ink-3)}
-.rn-peril,.rn-year{position:relative}
-.rn-peril::after,.rn-year::after{content:'';position:absolute;left:0;right:0;bottom:-1px;height:1px;
-  background:var(--purple-deep);transform:scaleX(0);transform-origin:left;transition:transform .3s var(--ease)}
-.rn-peril:hover::after,.rn-year:hover::after,.rn-peril.is-on::after,.rn-year.is-on::after{transform:scaleX(1)}
-.rn-peril:focus-visible,.rn-year:focus-visible{outline:1px solid var(--purple-deep);outline-offset:4px}
-.rn-read,.rn-band,.rn-note{transition:opacity .22s var(--ease)}
+.rn-show{position:relative;outline:none}
+.rn-show:focus-visible{outline:1px solid var(--purple-deep);outline-offset:10px;border-radius:22px}
+.rn-slides{display:grid}
+.rn-slide{grid-area:1/1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(24px,4vw,60px);align-items:center;
+  opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility 0s .4s}
+.rn-slide.is-on{opacity:1;visibility:visible;transition:opacity .55s var(--ease) .06s,visibility 0s}
+.rn-vis{position:relative;aspect-ratio:4/3;background:var(--surface);border:1px solid var(--line-2);border-radius:18px;overflow:hidden;
+  box-shadow:0 1px 2px rgba(34,31,32,.05),0 22px 44px -32px rgba(34,31,32,.35);
+  transform:translateX(-18px);transition:transform .8s var(--ease)}
+.rn-say{transform:translateX(18px);transition:transform .8s var(--ease)}
+.rn-slide.is-on .rn-vis,.rn-slide.is-on .rn-say{transform:none}
+.rn-vis svg{display:block;width:100%;height:100%;touch-action:pan-y;cursor:crosshair}
+.rn-vis text{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;fill:var(--ink-3);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
+.rn-vis text.hand{font-family:var(--font-hand);font-size:19px;letter-spacing:0;fill:var(--ink-2)}
+.rn-vis .ring{fill:none;stroke:var(--line-2);stroke-width:1;transform-box:fill-box;transform-origin:center;transform:scale(.2);opacity:0;
+  transition:transform 1s var(--ease),opacity .6s var(--ease)}
+.rn-vis .grow{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);opacity:0;transition:transform .9s var(--spring),opacity .4s var(--ease)}
+.rn-vis.in .ring,.rn-vis.in .grow{transform:none;opacity:1}
+.rn-vis .site{fill:var(--purple-deep)}
+.rn-vis .pulse{fill:none;stroke:var(--purple-deep);transform-box:fill-box;transform-origin:center;animation:rnpulse 2.4s var(--ease) infinite}
+@keyframes rnpulse{from{transform:scale(1);opacity:.7}to{transform:scale(5);opacity:0}}
+.rn-vis .live{fill:none;stroke:var(--ink-3);stroke-dasharray:3 4;opacity:0;transition:opacity .25s}
+.rn-vis.probe .live{opacity:1}
+.rn-vis .reveal-late{opacity:0;transition:opacity .6s var(--ease) 1.2s}
+.rn-vis.in .reveal-late{opacity:1}
+.rn-live{position:absolute;left:16px;right:16px;bottom:12px;display:flex;justify-content:space-between;gap:12px;pointer-events:none;
+  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.rn-live b{font-weight:400;color:var(--purple-deep)}
+.rn-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-deep)}
+.rn-title{font-family:var(--font-display);font-size:clamp(24px,2.5vw,33px);line-height:1.12;letter-spacing:-.02em;margin:14px 0}
+.rn-read{color:var(--ink-2);font-size:16px}
+.rn-facts{margin:22px 0 0}
+.rn-facts div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:10px 0;border-top:1px solid var(--line)}
+.rn-facts dt{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rn-facts dd{margin:0;font-style:italic;color:var(--ink);text-align:right;transition:opacity .22s var(--ease)}
 .rn-swap{opacity:0}
-.rn-bar{cursor:pointer}
-.rn-bar:hover{background:var(--ink-3)}
-.rn-bar.is-on:hover{background:var(--purple-deep)}
-.rn-bar::after{content:attr(data-label);position:absolute;bottom:calc(100% + 9px);left:50%;
-  transform:translate(-50%,5px);opacity:0;pointer-events:none;z-index:2;
-  font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;white-space:nowrap;
-  color:var(--ink);background:var(--surface);border:1px solid var(--line-2);padding:4px 7px;
-  transition:opacity .22s var(--ease),transform .22s var(--ease)}
-.rn-bar:hover::after{opacity:1;transform:translate(-50%,0)}
-.rn-bars{overflow:visible}
-@media (max-width:820px){.rn-grid{grid-template-columns:1fr}.rn-read{min-height:0}}
+/* loss history bars are the controls themselves */
+.rn-bars{position:absolute;inset:22px 22px 44px;display:flex;align-items:flex-end;gap:12px}
+.rn-bar{appearance:none;flex:1;height:100%;border:0;background:transparent;padding:0;cursor:pointer;position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch}
+.rn-bar i{display:block;border-radius:6px 6px 2px 2px;background:var(--line-2);height:0;min-height:3px;
+  transition:height .9s var(--spring),background .25s var(--ease)}
+.rn-vis.in .rn-bar i{height:calc(var(--h) * 1%)}
+.rn-bar:nth-child(2) i{transition-delay:.06s}.rn-bar:nth-child(3) i{transition-delay:.12s}
+.rn-bar:nth-child(4) i{transition-delay:.18s}.rn-bar:nth-child(5) i{transition-delay:.24s}
+.rn-bar:hover i{background:var(--ink-3)}
+.rn-bar[aria-pressed="true"] i{background:var(--purple-deep)}
+.rn-bar span{position:absolute;left:0;right:0;bottom:-26px;text-align:center;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;color:var(--ink-3)}
+.rn-bar[aria-pressed="true"] span{color:var(--purple-deep)}
+.rn-bar:focus-visible{outline:1px solid var(--purple-deep);outline-offset:4px;border-radius:6px}
+.rn-figs{display:flex;gap:clamp(24px,4vw,48px);margin:20px 0 6px}
+.rn-fig{display:flex;flex-direction:column;gap:4px}
+.rn-fig b{font-size:clamp(24px,2.4vw,30px);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--ink)}
+.rn-fig i{font-family:var(--font-mono);font-style:normal;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rn-nav{display:flex;align-items:center;gap:14px;margin-top:28px}
+.rn-arrow{appearance:none;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);
+  cursor:pointer;font:16px/1 var(--font-sans);transition:border-color .25s var(--ease),color .25s var(--ease),transform .4s var(--spring)}
+.rn-arrow:hover{border-color:var(--purple-deep);color:var(--purple-deep);transform:translateY(-2px)}
+.rn-pips{display:flex;align-items:center;gap:8px;padding:0 4px}
+.rn-pip{appearance:none;border:0;padding:0;width:7px;height:7px;border-radius:4px;background:var(--line-2);cursor:pointer;
+  transition:width .5s var(--spring),background .3s var(--ease)}
+.rn-pip:hover{background:var(--ink-3)}
+.rn-pip[aria-selected="true"]{width:36px;background:var(--purple-deep)}
+.rn-count{margin-left:auto;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rn-foot{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:22px}
+@media (max-width:820px){.rn-slide{grid-template-columns:1fr;align-items:start}.rn-vis,.rn-say{transform:none}.rn-live{flex-direction:column;gap:3px;bottom:10px}}
 @media (prefers-reduced-motion:reduce){
-  .rn-bar,.rn-card,.rn-read,.rn-band,.rn-note,
-  .rn-peril::after,.rn-year::after,.rn-bar::after{transition:none}
+  .rn-slide,.rn-vis,.rn-say,.rn-vis .ring,.rn-bar i,.rn-pip,.rn-facts dd{transition:none}
+  .rn-vis .pulse{animation:none}
   .rn-swap{opacity:1}
 }
 
@@ -472,8 +494,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
         <button class="way" type="button" id="way-market" data-way="market" aria-expanded="false" aria-controls="flow-market">
           <span class="way-top">
             <span class="way-kicker">One risk at a time</span>
-            <span class="art art-market" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span>
           </span>
+          <span class="art" aria-hidden="true"><canvas data-art="market"></canvas></span>
           <span>
             <span class="way-title">Open market</span>
             <span class="way-desc">See how AI and data unlock better solutions with our nearly 100 capacity partners.</span>
@@ -486,8 +508,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
         <button class="way" type="button" id="way-programs" data-way="programs" aria-expanded="false" aria-controls="flow-programs">
           <span class="way-top">
             <span class="way-kicker">A whole book at once</span>
-            <span class="art art-prog" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
           </span>
+          <span class="art" aria-hidden="true"><canvas data-art="programs"></canvas></span>
           <span>
             <span class="way-title">Programs</span>
             <span class="way-desc">See how we build custom capacity for your book and find the economies of scale inside it.</span>
@@ -523,51 +545,74 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
             <div class="rn-head">
               <p class="eyebrow">Inside the submission</p>
               <h3>What an underwriter sees in 93 seconds</h3>
-              <p class="rn-lede">Every submission we send out carries the same two reads: how each peril classifies for the site, and what the loss history actually did. Both are built from the documents you already sent us.</p>
+              <p class="rn-lede">Every submission we send carries a risk narrative: a short slideshow, one visual and one plain-English read per slide, built from the documents you already sent us.</p>
             </div>
 
-            <div class="rn-grid">
-              <div class="rn-card">
-                <div class="rn-card-head">
-                  <span class="rn-kicker">Risk profile</span>
-                  <span class="rn-note" data-rn-note>Pick a peril</span>
-                </div>
+            <div class="rn-show" data-rn-show role="region" aria-roledescription="carousel" aria-label="Risk narrative" tabindex="0">
+              <div class="rn-slides">
                 <!-- Wildfire and Seismic are the two perils the risk-narrative export actually
                      supports. Both read as a named hazard class plus the distance/date evidence
                      beside it, grounded in a real (anonymized) submission — never a synthesized
                      0-100 score. Do not add other perils here without a real data source. -->
-                <div class="rn-perils" role="tablist" aria-label="Perils">
-                  <button class="rn-peril is-on" type="button" role="tab" aria-selected="true" data-peril="wildfire" data-band="Moderately Low &middot; Lowest Difficulty (0&ndash;10)" data-read="Burn probability rates Moderately Low, and the site is very defensible: suppression difficulty rates Lowest Difficulty (0&ndash;10). The closest historical fire &mdash; 2019, McKay Butte &mdash; stopped roughly 2.5 miles out.">Wildfire</button>
-                  <button class="rn-peril" type="button" role="tab" aria-selected="false" data-peril="quake" data-band="M2.43 max &middot; M1.42 mean" data-read="Over 20+ years of records, the largest nearby seismic event measured M2.43 against a mean of M1.42 &mdash; background seismicity, not an active-fault concern.">Seismic</button>
-                </div>
-                <div class="rn-meter">
-                  <div class="rn-meter-top">
-                    <span class="rn-band" data-rn-band>Moderately Low &middot; Lowest Difficulty (0&ndash;10)</span>
+                <div class="rn-slide is-on" role="group" aria-roledescription="slide" aria-label="1 of 3, Wildfire">
+                  <div class="rn-vis" data-vis="wildfire"></div>
+                  <div class="rn-say">
+                    <span class="rn-kicker">01 &middot; Wildfire</span>
+                    <p class="rn-title">Moderately Low burn probability, on a very defensible site.</p>
+                    <p class="rn-read">Suppression difficulty rates Lowest Difficulty (0&ndash;10). The closest historical fire, 2019&rsquo;s McKay Butte, stopped roughly 2.5 miles out.</p>
+                    <dl class="rn-facts">
+                      <div><dt>Burn probability</dt><dd>Moderately Low</dd></div>
+                      <div><dt>Suppression difficulty</dt><dd>Lowest Difficulty (0&ndash;10)</dd></div>
+                      <div><dt>Closest fire on record</dt><dd>McKay Butte, 2019 &middot; ~2.5 mi</dd></div>
+                    </dl>
                   </div>
-                  <p class="rn-read" data-rn-read>Burn probability rates Moderately Low, and the site is very defensible: suppression difficulty rates Lowest Difficulty (0&ndash;10). The closest historical fire &mdash; 2019, McKay Butte &mdash; stopped roughly 2.5 miles out.</p>
+                </div>
+
+                <div class="rn-slide" role="group" aria-roledescription="slide" aria-label="2 of 3, Seismic">
+                  <div class="rn-vis" data-vis="seismic"></div>
+                  <div class="rn-say">
+                    <span class="rn-kicker">02 &middot; Seismic</span>
+                    <p class="rn-title">Background seismicity, not an active-fault concern.</p>
+                    <p class="rn-read">Over 20+ years of records, the largest nearby seismic event measured M2.43 against a mean of M1.42.</p>
+                    <dl class="rn-facts">
+                      <div><dt>Largest nearby event</dt><dd>M2.43</dd></div>
+                      <div><dt>Mean event</dt><dd>M1.42</dd></div>
+                      <div><dt>Record</dt><dd>20+ years</dd></div>
+                    </dl>
+                  </div>
+                </div>
+
+                <div class="rn-slide" role="group" aria-roledescription="slide" aria-label="3 of 3, Loss history">
+                  <div class="rn-vis" data-vis="loss">
+                    <div class="rn-bars" data-rn-bars>
+                      <button class="rn-bar" type="button" data-year="2021" data-incurred="0" data-claims="0" data-note="Clean year. No reported claims."><i></i><span>2021</span></button>
+                      <button class="rn-bar" type="button" data-year="2022" data-incurred="48000" data-claims="2" data-note="Two small water-damage claims, both closed."><i></i><span>2022</span></button>
+                      <button class="rn-bar" type="button" data-year="2023" data-incurred="212000" data-claims="3" data-note="One equipment loss drives the year. Reserves closed out at 78 percent of the original figure."><i></i><span>2023</span></button>
+                      <button class="rn-bar" type="button" data-year="2024" data-incurred="96000" data-claims="1" data-note="Single subcontractor liability claim, still open at reserve." data-start><i></i><span>2024</span></button>
+                      <button class="rn-bar" type="button" data-year="2025" data-incurred="12000" data-claims="1" data-note="Minor property claim. Loss ratio back inside target."><i></i><span>2025</span></button>
+                    </div>
+                  </div>
+                  <div class="rn-say">
+                    <span class="rn-kicker">03 &middot; Loss history</span>
+                    <p class="rn-title" data-rn-loss-title>Five years of losses, incurred.</p>
+                    <div class="rn-figs">
+                      <span class="rn-fig"><b data-rn-incurred>$96,000</b><i data-rn-year>2024 incurred</i></span>
+                      <span class="rn-fig"><b data-rn-claims>1</b><i>Claims</i></span>
+                    </div>
+                    <p class="rn-read" data-rn-year-note>Single subcontractor liability claim, still open at reserve.</p>
+                  </div>
                 </div>
               </div>
 
-              <div class="rn-card">
-                <div class="rn-card-head">
-                  <span class="rn-kicker">Loss history</span>
-                  <span class="rn-note">Five years, incurred</span>
+              <div class="rn-nav">
+                <button class="rn-arrow" type="button" data-rn-prev aria-label="Previous slide">&larr;</button>
+                <div class="rn-pips" role="tablist" aria-label="Slides">
+                  <button class="rn-pip" type="button" role="tab" aria-selected="true" aria-label="Wildfire"></button>
+                  <button class="rn-pip" type="button" role="tab" aria-selected="false" aria-label="Seismic"></button>
+                  <button class="rn-pip" type="button" role="tab" aria-selected="false" aria-label="Loss history"></button>
                 </div>
-                <div class="rn-years" data-rn-years>
-                  <button class="rn-year" type="button" data-year="2021" data-incurred="0" data-claims="0" data-note="Clean year. No reported claims.">2021</button>
-                  <button class="rn-year" type="button" data-year="2022" data-incurred="48000" data-claims="2" data-note="Two small water-damage claims, both closed.">2022</button>
-                  <button class="rn-year" type="button" data-year="2023" data-incurred="212000" data-claims="3" data-note="One equipment loss drives the year. Reserves closed out at 78 percent of the original figure.">2023</button>
-                  <button class="rn-year is-on" type="button" data-year="2024" data-incurred="96000" data-claims="1" data-note="Single subcontractor liability claim, still open at reserve.">2024</button>
-                  <button class="rn-year" type="button" data-year="2025" data-incurred="12000" data-claims="1" data-note="Minor property claim. Loss ratio back inside target.">2025</button>
-                </div>
-                <div class="rn-bars" aria-hidden="true" data-rn-bars></div>
-                <div class="rn-year-out">
-                  <div class="rn-figs">
-                    <span class="rn-fig"><b data-rn-incurred>$96,000</b><i>Incurred</i></span>
-                    <span class="rn-fig"><b data-rn-claims>1</b><i>Claims</i></span>
-                  </div>
-                  <p class="rn-read" data-rn-year-note>Single subcontractor liability claim, still open at reserve.</p>
-                </div>
+                <button class="rn-arrow" type="button" data-rn-next aria-label="Next slide">&rarr;</button>
+                <span class="rn-count" data-rn-count aria-live="polite">01 / 03 &middot; Wildfire</span>
               </div>
             </div>
             <p class="rn-foot">Wildfire and seismic reads are drawn from an actual submission's risk narrative, anonymized. Loss history is representative of the format, not any one account.</p>
@@ -622,13 +667,13 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     <div class="wrap">
       <div class="g-head">
         <div class="g-kicker">Human-centered</div>
-        <div class="g-title" id="globe-title" role="heading" aria-level="2">A person stays at the centre of it.</div>
+        <div class="g-title" id="globe-title" role="heading" aria-level="2">Insurance still runs on a handshake.</div>
       </div>
       <div class="globe-row">
-        <div class="globe-stage"><canvas id="c-globe"></canvas></div>
+        <div class="globe-stage"><svg class="hs" id="hs" viewBox="0 0 640 600" role="img" aria-label="Two stick figures shake hands while a few dots circle around them"></svg></div>
         <div>
-          <div class="g-say">Every point is something in motion &mdash; a submission, a carrier, a risk being worked. Scroll and it turns. Move your cursor and it tilts toward you.</div>
-          <div class="g-say">The figure in the middle never leaves. The technology orbits a person, not the other way round.</div>
+          <div class="g-say">Behind every submission is a retailer who knows the account and a broker who knows the market. That conversation is the part we protect.</div>
+          <div class="g-say">Data, models and nearly 100 capacity partners move around that relationship. AI clears the desk so it gets more of our time, not less.</div>
           <div class="g-note">The tools turn. The handshake holds.</div>
         </div>
       </div>
@@ -740,7 +785,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 </script>
 
 <script>
-/* ══ INTERACTION LAYER — spine navigation, the human-centered globe, reveals ══
+/* ══ INTERACTION LAYER — spine navigation and reveals ══════════════════════════
    Added 2026-09-15. Scroll position is the clock: nothing here autoplays, so
    scrolling back rewinds it. Adds NO element matching the edit layer's
    data-selector — see the CSS note for why that is load-bearing. */
@@ -824,118 +869,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     if (spine) spine.style.setProperty('--spine-p', (p * 100).toFixed(2) + '%');
   }
 
-  /* ── 2. the globe. 340 points on a sphere, projected by hand, with a person
-        held at the centre. Back-hemisphere points draw behind the figure,
-        front-hemisphere points draw over it. ─────────────────────────────── */
-  var TAU = Math.PI * 2;
-  var NP = 340, PTS = [];
-  (function () {
-    /* Fibonacci sphere — even coverage without clumping at the poles */
-    var ga = Math.PI * (3 - Math.sqrt(5));
-    for (var i = 0; i < NP; i++) {
-      var y = 1 - (i / (NP - 1)) * 2;
-      var r = Math.sqrt(Math.max(0, 1 - y * y));
-      var th = ga * i;
-      PTS.push([Math.cos(th) * r, y, Math.sin(th) * r]);
-    }
-  })();
-
-  var cv = document.getElementById('c-globe');
-  var POINTER = { x: -9999, y: -9999, on: false };
-  var gT = 0, raf = 0;
-
-  function figure(ctx, cx, cy, R) {
-    /* head + shoulders, the same glyph the scroll study uses for "a person decides" */
-    var headR = R * 0.155, headY = cy - R * 0.20;
-    ctx.beginPath();
-    ctx.arc(cx, cy - R * 0.02, R * 0.60, 0, TAU);
-    ctx.fillStyle = 'rgba(251,250,247,.80)';
-    ctx.fill();
-
-    ctx.fillStyle = '#5e54c8';
-    ctx.beginPath();
-    ctx.arc(cx, headY, headR, 0, TAU);
-    ctx.fill();
-    ctx.beginPath();
-    ctx.arc(cx, headY + headR * 2.25, headR * 1.78, Math.PI, 0);
-    ctx.fill();
-  }
-
-  function drawGlobe() {
-    if (!cv) return;
-    var dpr = Math.min(2, window.devicePixelRatio || 1);
-    var box = cv.getBoundingClientRect();
-    var w = Math.round(box.width), h = Math.round(box.height);
-    /* Layout may not be settled on first call; retry rather than give up —
-       returning silently here left the canvas at its 300x150 default. */
-    if (!w || !h) { setTimeout(globeTick, 120); return; }
-    if (cv.width !== (w * dpr | 0) || cv.height !== (h * dpr | 0)) {
-      cv.width = w * dpr | 0; cv.height = h * dpr | 0;
-    }
-    var ctx = cv.getContext('2d');
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    ctx.clearRect(0, 0, w, h);
-
-    var cx = w / 2, cy = h / 2, R = Math.min(w, h) * 0.40, F = 2.6;
-    var px = POINTER.on ? POINTER.x : cx, py = POINTER.on ? POINTER.y : cy;
-    var ay = gT * TAU + (px / w - 0.5) * 1.2;
-    var ax = 0.34 + (py / h - 0.5) * 0.7;
-    var ca = Math.cos(ay), sa = Math.sin(ay), cb = Math.cos(ax), sb = Math.sin(ax);
-
-    var back = [], front = [], i;
-    for (i = 0; i < NP; i++) {
-      var x = PTS[i][0], y = PTS[i][1], z = PTS[i][2];
-      var x1 = x * ca - z * sa, z1 = x * sa + z * ca;
-      var y1 = y * cb - z1 * sb, z2 = y * sb + z1 * cb;
-      var sc = F / (F - z2);
-      (z2 < 0 ? back : front).push([cx + x1 * R * sc, cy + y1 * R * sc, z2, sc, i]);
-    }
-    back.sort(function (a, b) { return a[2] - b[2]; });
-    front.sort(function (a, b) { return a[2] - b[2]; });
-
-    function paint(list, dim) {
-      for (var k = 0; k < list.length; k++) {
-        var o = list[k], dep = (o[2] + 1) / 2;
-        ctx.beginPath();
-        ctx.arc(o[0], o[1], Math.max(0.7, 1.0 + 2.2 * dep * o[3] * 0.6), 0, TAU);
-        ctx.fillStyle = (o[4] % 7 === 0)
-          ? 'rgba(94,84,200,' + ((0.22 + 0.62 * dep) * dim).toFixed(3) + ')'
-          : 'rgba(34,31,32,' + ((0.10 + 0.40 * dep) * dim).toFixed(3) + ')';
-        ctx.fill();
-      }
-    }
-
-    paint(back, 0.55);
-    figure(ctx, cx, cy, R);
-    paint(front, 1);
-  }
-
-  function request() {
-    if (raf) return;
-    raf = requestAnimationFrame(function () { raf = 0; drawGlobe(); });
-  }
-
-  if (cv) {
-    var stage = cv.parentNode;
-    stage.addEventListener('pointermove', function (e) {
-      var r = cv.getBoundingClientRect();
-      POINTER.x = e.clientX - r.left; POINTER.y = e.clientY - r.top; POINTER.on = true;
-      request();
-    }, { passive: true });
-    stage.addEventListener('pointerleave', function () { POINTER.on = false; request(); }, { passive: true });
-  }
-
-  function globeTick() {
-    if (!cv) return;
-    var sec = document.getElementById('human');
-    var r = sec.getBoundingClientRect();
-    var span = r.height + window.innerHeight;
-    /* 0 as the section enters the viewport, 1 as it leaves — scroll IS the clock */
-    var p = span > 0 ? (window.innerHeight - r.top) / span : 0;
-    gT = Math.min(1, Math.max(0, p));
-    request();
-  }
-
   /* ── 3. reveals. JS applies the attribute, so with JS off nothing is hidden. ── */
   var RISE = '.hero > div, .motif, .val, .way-grid, .node, .steps li, .wins, .close > div, ' +
              '.g-head, .globe-stage, .g-say, .g-note';
@@ -963,118 +896,322 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     }, 2200);
   }
 
-  /* ── wiring. One passive scroll listener drives both the spine and the globe. ── */
+  /* ── wiring. One passive scroll listener drives the spine. ── */
   var queued = false;
   function onScroll() {
     if (queued) return;
     queued = true;
-    requestAnimationFrame(function () { queued = false; spineTick(); globeTick(); });
+    requestAnimationFrame(function () { queued = false; spineTick(); });
   }
   window.addEventListener('scroll', onScroll, { passive: true });
-  window.addEventListener('resize', function () { placeDots(); spineTick(); globeTick(); }, { passive: true });
+  window.addEventListener('resize', function () { placeDots(); spineTick(); }, { passive: true });
   window.addEventListener('arqu:layout', function () { placeDots(); spineTick(); });
 
-  window.addEventListener('load', function () { placeDots(); spineTick(); globeTick(); });
+  window.addEventListener('load', function () { placeDots(); spineTick(); });
   if ('ResizeObserver' in window) new ResizeObserver(function () { placeDots(); }).observe(document.body);
-  if ('ResizeObserver' in window && cv) new ResizeObserver(request).observe(cv.parentNode);
 
   reveals();
   spineTick();
-  globeTick();
 })();
 </script>
 
 <script>
-/* risk-narrative visuals in the Open market flow */
-(function(){
+/* ══ RISK NARRATIVE — the format our narratives actually use: a slideshow, one
+   interactive visual on the left, the plain-English read on the right. Arrows,
+   pips, arrow keys and a swipe all move it; nothing autoplays. */
+(function () {
   var rn = document.querySelector('[data-rn]');
   if (!rn) return;
+  var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var NS = 'http://www.w3.org/2000/svg';
+  var money = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 });
 
-  /* --- peril reads: named hazard class + evidence, never a synthesized score --- */
-  var perils = Array.prototype.slice.call(rn.querySelectorAll('.rn-peril'));
-  var bandE  = rn.querySelector('[data-rn-band]');
-  var readE  = rn.querySelector('[data-rn-read]');
-  var noteE  = rn.querySelector('[data-rn-note]');
-
-  var calm   = window.matchMedia('(prefers-reduced-motion: reduce)');
-
-  /* Swap text on a short fade so a changed read registers as a change. */
-  function swap(el, text){
-    if (calm.matches) { el.textContent = text; return; }
-    el.classList.add('rn-swap');
-    setTimeout(function(){ el.textContent = text; el.classList.remove('rn-swap'); }, 180);
+  function el(tag, attrs, parent, text) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (text) n.textContent = text;
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+  function svgPoint(svg, e) {
+    var r = svg.getBoundingClientRect();
+    return { x: (e.clientX - r.left) / r.width * 480, y: (e.clientY - r.top) / r.height * 360 };
+  }
+  function liveBar(host) {
+    var d = document.createElement('div'); d.className = 'rn-live';
+    d.innerHTML = '<span data-l></span><b data-r></b>';
+    host.appendChild(d);
+    return { l: d.querySelector('[data-l]'), r: d.querySelector('[data-r]') };
+  }
+  function hand(svg, draw) {
+    if (!window.rough || !window.arquHand) return;
+    var g = draw(rough.svg(svg), window.arquHand.opts);
+    svg.insertBefore(g, svg.firstChild);
+    window.arquHand.ink(g, 500, 0.5);
   }
 
-  /* Count a number up rather than snapping it. fmt turns the raw value into
-     display text — the loss-history dollar figure is the only thing left that ticks. */
-  function countTo(el, from, to, fmt){
-    if (calm.matches || from === to) { el.textContent = fmt(to); return; }
-    var t0 = 0, dur = 520;
-    function step(now){
-      if (!t0) t0 = now;
-      var k = Math.min(1, (now - t0) / dur);
-      /* ease-out cubic, so it lands softly instead of stopping dead */
-      var e = 1 - Math.pow(1 - k, 3);
-      el.textContent = fmt(Math.round(from + (to - from) * e));
-      if (k < 1) requestAnimationFrame(step);
-    }
-    requestAnimationFrame(step);
-  }
-
-  function selectPeril(btn){
-    perils.forEach(function(b){
-      var on = b === btn;
-      b.classList.toggle('is-on', on);
-      b.setAttribute('aria-selected', on ? 'true' : 'false');
+  /* 1. wildfire: distance rings around the site. The pointer measures. */
+  function wildfire(host) {
+    var svg = el('svg', { viewBox: '0 0 480 360' }, host), CX = 240, CY = 176, MI = 50;
+    [1, 2, 3].forEach(function (m) {
+      el('circle', { class: 'ring', cx: CX, cy: CY, r: m * MI, style: 'transition-delay:' + m * 90 + 'ms' }, svg);
+      el('text', { class: 'reveal-late', x: CX, y: CY - m * MI - 6, 'text-anchor': 'middle' }, svg, m + ' MI');
     });
-    swap(bandE, btn.getAttribute('data-band'));
-    swap(readE, btn.getAttribute('data-read'));
-    swap(noteE, btn.textContent);
+    var live = el('circle', { class: 'live', cx: CX, cy: CY, r: 0 }, svg);
+    el('circle', { class: 'pulse', cx: CX, cy: CY, r: 5 }, svg);
+    el('circle', { class: 'site', cx: CX, cy: CY, r: 5 }, svg);
+    el('text', { class: 'hand reveal-late', x: CX + 12, y: CY + 22 }, svg, 'the site');
+    el('text', { class: 'hand reveal-late', x: 330, y: 34 }, svg, 'McKay Butte, 2019,');
+    el('text', { class: 'hand reveal-late', x: 330, y: 54 }, svg, 'stopped about here');
+    var bar = liveBar(host);
+    bar.l.textContent = 'Move across the map';
+    return {
+      enter: function () {
+        hand(svg, function (rc, o) {
+          var g = el('g', {});
+          g.appendChild(rc.circle(CX, CY, 2.5 * MI * 2, o(14, { strokeWidth: 1.8, roughness: 1.4 })));
+          g.appendChild(rc.curve([[350, 64], [342, 80], [CX + 90, CY - 86]], o(15, { stroke: '#56514f', strokeWidth: 1.2, roughness: 1 })));
+          return g;
+        });
+      },
+      move: function (e) {
+        var p = svgPoint(svg, e), d = Math.min(185, Math.hypot(p.x - CX, p.y - CY)), mi = d / MI;
+        live.setAttribute('r', d.toFixed(1));
+        host.classList.add('probe');
+        bar.l.textContent = mi.toFixed(1) + ' mi from the site';
+        bar.r.textContent = mi < 2.5 ? 'Closer than any fire on record' : 'Past where the closest fire stopped';
+      },
+      leave: function () { host.classList.remove('probe'); bar.l.textContent = 'Move across the map'; bar.r.textContent = ''; }
+    };
   }
 
-  perils.forEach(function(b){
-    b.addEventListener('click', function(){ selectPeril(b); });
-  });
-
-  /* --- loss history --- */
-  var years  = Array.prototype.slice.call(rn.querySelectorAll('.rn-year'));
-  var barWrap= rn.querySelector('[data-rn-bars]');
-  var incE   = rn.querySelector('[data-rn-incurred]');
-  var clmE   = rn.querySelector('[data-rn-claims]');
-  var ynoteE = rn.querySelector('[data-rn-year-note]');
-  var money  = new Intl.NumberFormat('en-US', {style:'currency', currency:'USD', maximumFractionDigits:0});
-
-  var peak = years.reduce(function(m,b){ return Math.max(m, +b.getAttribute('data-incurred')); }, 0) || 1;
-  var bars = years.map(function(b){
-    var bar = document.createElement('span');
-    bar.className = 'rn-bar';
-    /* floor at 4% so a clean year still reads as a bar, not a gap */
-    bar.style.setProperty('--h', Math.max(4, Math.round(+b.getAttribute('data-incurred') / peak * 100)));
-    /* The tooltip is a CSS ::after on this attribute, so no extra node. */
-    bar.setAttribute('data-label', b.getAttribute('data-year') + ' \u00b7 ' +
-      money.format(+b.getAttribute('data-incurred')));
-    /* The bars duplicate the year tabs, which keep the keyboard path, so these
-       stay decorative (the wrapper is aria-hidden) and pointer-only. */
-    bar.addEventListener('click', function(){ selectYear(b); });
-    barWrap.appendChild(bar);
-    return bar;
-  });
-
-  var liveInc = null;
-  function selectYear(btn){
-    var i = years.indexOf(btn);
-    years.forEach(function(b,n){ b.classList.toggle('is-on', n === i); });
-    bars.forEach(function(b,n){ b.classList.toggle('is-on', n === i); });
-    var inc = +btn.getAttribute('data-incurred');
-    countTo(incE, liveInc === null ? inc : liveInc, inc, function(n){ return money.format(n); });
-    liveInc = inc;
-    clmE.textContent = btn.getAttribute('data-claims');
-    swap(ynoteE, btn.getAttribute('data-note'));
+  /* 2. seismic: a magnitude scale, the site's mean and max, the USGS felt line.
+     Each whole magnitude is ten times the ground motion, so the pointer reads
+     any magnitude against the largest event on record. */
+  function seismic(host) {
+    var svg = el('svg', { viewBox: '0 0 480 360' }, host), Y = 240;
+    function X(m) { return 40 + m * 80; }
+    el('rect', { class: 'reveal-late', x: X(0), y: Y - 16, width: X(2.5) - X(0), height: 16, rx: 3, fill: '#f3f1ff' }, svg);
+    el('text', { class: 'hand reveal-late', x: X(0) + 4, y: Y - 24 }, svg, 'usually not felt (USGS)');
+    el('line', { x1: X(0), y1: Y, x2: X(5), y2: Y, stroke: '#d5cec5' }, svg);
+    for (var m = 0; m <= 5; m++) {
+      el('line', { x1: X(m), y1: Y, x2: X(m), y2: Y + 6, stroke: '#d5cec5' }, svg);
+      el('text', { x: X(m), y: Y + 22, 'text-anchor': 'middle' }, svg, 'M' + m);
+    }
+    [[1.42, 150, 'MEAN M1.42', '#8d8785'], [2.43, 74, 'LARGEST M2.43', '#5e54c8']].forEach(function (k, i) {
+      var g = el('g', { class: 'grow', style: 'transition-delay:' + (200 + i * 160) + 'ms' }, svg);
+      el('line', { x1: X(k[0]), y1: Y, x2: X(k[0]), y2: k[1], stroke: k[3] }, g);
+      el('circle', { cx: X(k[0]), cy: k[1], r: 4.5, fill: k[3] }, g);
+      el('text', { x: X(k[0]), y: k[1] - 12, 'text-anchor': 'middle', style: 'fill:' + k[3] }, g, k[2]);
+    });
+    el('circle', { class: 'pulse', cx: X(2.43), cy: 74, r: 4.5 }, svg);
+    var probe = el('g', { class: 'live' }, svg);
+    var pl = el('line', { x1: 0, y1: Y, x2: 0, y2: 40 }, probe);
+    var bar = liveBar(host);
+    bar.l.textContent = 'Slide along the scale';
+    return {
+      enter: function () {},
+      move: function (e) {
+        var p = svgPoint(svg, e), x = Math.max(X(0), Math.min(X(5), p.x)), mag = (x - 40) / 80;
+        var ratio = Math.pow(10, mag - 2.43);
+        pl.setAttribute('x1', x); pl.setAttribute('x2', x);
+        host.classList.add('probe');
+        bar.l.textContent = 'M' + mag.toFixed(1);
+        bar.r.textContent = ratio >= 1 ? '~' + (ratio < 10 ? ratio.toFixed(1) : Math.round(ratio)) + '× the ground motion of the largest on record'
+          : '~1/' + Math.round(1 / ratio) + ' the ground motion of the largest on record';
+      },
+      leave: function () { host.classList.remove('probe'); bar.l.textContent = 'Slide along the scale'; bar.r.textContent = ''; }
+    };
   }
-  years.forEach(function(b){ b.addEventListener('click', function(){ selectYear(b); }); });
-  selectYear(years.filter(function(b){ return b.classList.contains('is-on'); })[0] || years[0]);
+
+  /* 3. loss history: the bars are the controls */
+  function loss(host, slide) {
+    var bars = Array.prototype.slice.call(host.querySelectorAll('.rn-bar'));
+    var val = function (b, k) { return +b.getAttribute('data-' + k); };
+    var peak = bars.reduce(function (m, b) { return Math.max(m, val(b, 'incurred')); }, 0) || 1;
+    var total = bars.reduce(function (s, b) { return s + val(b, 'incurred'); }, 0);
+    var claims = bars.reduce(function (s, b) { return s + val(b, 'claims'); }, 0);
+    slide.querySelector('[data-rn-loss-title]').textContent =
+      (['', 'One', 'Two', 'Three', 'Four', 'Five', 'Six'][bars.length] || bars.length) + ' years, ' + claims + ' claims, ' + money.format(total) + ' incurred.';
+    var inc = slide.querySelector('[data-rn-incurred]'), yr = slide.querySelector('[data-rn-year]');
+    var clm = slide.querySelector('[data-rn-claims]'), note = slide.querySelector('[data-rn-year-note]');
+    var shown = null;
+    function pick(b) {
+      bars.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+      var to = val(b, 'incurred'), from = shown === null ? to : shown, t0 = 0;
+      shown = to;
+      (function tick(now) {
+        if (!t0) t0 = now;
+        var k = RM ? 1 : Math.min(1, (now - t0) / 520), ease = 1 - Math.pow(1 - k, 3);
+        inc.textContent = money.format(Math.round(from + (to - from) * ease));
+        if (k < 1) requestAnimationFrame(tick);
+      })(performance.now());
+      yr.textContent = b.getAttribute('data-year') + ' incurred';
+      clm.textContent = b.getAttribute('data-claims');
+      note.textContent = b.getAttribute('data-note');
+    }
+    bars.forEach(function (b) {
+      b.style.setProperty('--h', Math.max(2, Math.round(val(b, 'incurred') / peak * 100)));
+      b.setAttribute('aria-label', b.getAttribute('data-year') + ': ' + money.format(val(b, 'incurred')) + ' incurred, ' + val(b, 'claims') + ' claims');
+      b.addEventListener('click', function () { pick(b); });
+      b.addEventListener('pointerenter', function () { pick(b); });
+    });
+    pick(bars.filter(function (b) { return b.hasAttribute('data-start'); })[0] || bars[0]);
+    return { enter: function () {}, move: function () {}, leave: function () {} };
+  }
+
+  var BUILD = { wildfire: wildfire, seismic: seismic, loss: loss };
+  var show = rn.querySelector('[data-rn-show]');
+  var slides = Array.prototype.slice.call(rn.querySelectorAll('.rn-slide'));
+  var pips = Array.prototype.slice.call(rn.querySelectorAll('.rn-pip'));
+  var count = rn.querySelector('[data-rn-count]');
+  var NAMES = ['Wildfire', 'Seismic', 'Loss history'];
+  var views = slides.map(function (s) {
+    var host = s.querySelector('.rn-vis'), v = BUILD[host.getAttribute('data-vis')](host, s);
+    host.addEventListener('pointermove', v.move, { passive: true });
+    host.addEventListener('pointerleave', v.leave);
+    v.host = host;
+    return v;
+  });
+  var cur = 0, started = false;
+
+  function go(i) {
+    cur = (i + slides.length) % slides.length;
+    slides.forEach(function (s, k) {
+      var on = k === cur;
+      s.classList.toggle('is-on', on);
+      s.setAttribute('aria-hidden', on ? 'false' : 'true');
+      if ('inert' in s) s.inert = !on;
+    });
+    pips.forEach(function (p, k) { p.setAttribute('aria-selected', k === cur ? 'true' : 'false'); });
+    count.textContent = '0' + (cur + 1) + ' / 0' + slides.length + ' · ' + NAMES[cur];
+    var v = views[cur];
+    if (started && !v.host.classList.contains('in')) {
+      requestAnimationFrame(function () { v.host.classList.add('in'); v.enter(); });
+    }
+  }
+
+  rn.querySelector('[data-rn-prev]').addEventListener('click', function () { go(cur - 1); });
+  rn.querySelector('[data-rn-next]').addEventListener('click', function () { go(cur + 1); });
+  pips.forEach(function (p, k) { p.addEventListener('click', function () { go(k); }); });
+  show.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowRight') { go(cur + 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft') { go(cur - 1); e.preventDefault(); }
+  });
+  var sx = null;
+  show.addEventListener('pointerdown', function (e) { if (e.pointerType === 'touch') sx = e.clientX; }, { passive: true });
+  show.addEventListener('pointerup', function (e) {
+    if (sx === null) return;
+    var dx = e.clientX - sx; sx = null;
+    if (Math.abs(dx) > 50) go(cur + (dx < 0 ? 1 : -1));
+  }, { passive: true });
+
+  go(0);
+  new IntersectionObserver(function (es, io) {
+    if (!es[0].isIntersecting) return;
+    io.disconnect();
+    started = true;
+    setTimeout(function () { views[cur].host.classList.add('in'); views[cur].enter(); }, 350);
+  }, { threshold: 0.35 }).observe(show);
 })();
 </script>
+<script>
+/* ══ CARD ART — open market: one dot opening out to many. Programs: many dots
+   closing into one. Same dots, same springs, opposite direction, so the two
+   cards read as a pair. Idle, each breathes through its move on a slow loop;
+   hovered or opened, it commits to its end state and leans toward the pointer. */
+(function () {
+  var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var N = 13, PERIOD = 5600;
+  function rnd(i, s) { var x = Math.sin(i * 127.1 + s * 311.7) * 43758.5453; return x - Math.floor(x); }
+
+  function Art(cv) {
+    var kind = cv.getAttribute('data-art'), card = cv.closest('.way'), ctx = cv.getContext('2d');
+    var st = { w: 0, h: 0, hover: false, px: 0, py: 0, core: 1, raf: 0, seen: false, t0: performance.now() };
+    var dots = [];
+    for (var i = 0; i < N; i++) {
+      dots.push({ x: 0, y: 0, vx: 0, vy: 0, ang: i * 2.39996 + rnd(i, 3) * 0.5, rad: 0.38 + 0.62 * rnd(i, 1),
+        r: 2.4 + 2.6 * rnd(i, 2), k: 0.035 + rnd(i, 4) * 0.03, lag: rnd(i, 5) * 0.12, fill: i % 4 === 0 });
+    }
+
+    function size() {
+      var dpr = Math.min(2, window.devicePixelRatio || 1), r = cv.getBoundingClientRect();
+      if (!r.width) return;
+      st.w = r.width; st.h = r.height;
+      cv.width = r.width * dpr | 0; cv.height = r.height * dpr | 0;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      dots.forEach(function (d) { if (!d.x) { d.x = st.w / 2; d.y = st.h / 2; } });
+      if (RM) paint(1);
+    }
+
+    /* 0 = gathered into one, 1 = spread across the market */
+    function spreadAt(now, lag) {
+      if (st.hover || card.classList.contains('on')) return kind === 'market' ? 1 : 0;
+      var u = ((now - st.t0) / PERIOD + lag) % 1;
+      var open = u > 0.12 && u < 0.62;
+      return kind === 'market' ? (open ? 1 : 0) : (open ? 0 : 1);
+    }
+
+    function step(now) {
+      var cx = st.w / 2, cy = st.h / 2, RX = st.w * 0.40, RY = st.h * 0.36, gathered = 0;
+      var reach = st.hover ? 1.08 : 1;
+      dots.forEach(function (d, i) {
+        var S = RM ? 1 : spreadAt(now, d.lag), sway = RM ? 0 : 2.2 * S;
+        var tx = cx + Math.cos(d.ang) * d.rad * RX * S * reach + Math.sin(now / 900 + i) * sway;
+        var ty = cy + Math.sin(d.ang) * d.rad * RY * S * reach + Math.cos(now / 1100 + i) * sway;
+        if (st.hover && S) { tx += (st.px - tx) * 0.12; ty += (st.py - ty) * 0.12; }
+        d.vx = (d.vx + (tx - d.x) * d.k) * 0.86; d.vy = (d.vy + (ty - d.y) * d.k) * 0.86;
+        d.x += d.vx; d.y += d.vy;
+        if (Math.abs(d.x - cx) + Math.abs(d.y - cy) < 6) gathered++;
+      });
+      st.core += ((kind === 'programs' ? 3.5 + 5 * gathered / N : 5.5) - st.core) * 0.12;
+    }
+
+    function paint() {
+      var cx = st.w / 2, cy = st.h / 2;
+      ctx.clearRect(0, 0, st.w, st.h);
+      dots.forEach(function (d) {
+        var dist = Math.hypot(d.x - cx, d.y - cy), a = Math.min(1, dist / 18);
+        if (a < 0.02) return;
+        ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(d.x, d.y);
+        ctx.strokeStyle = 'rgba(94,84,200,' + (0.16 * a).toFixed(3) + ')'; ctx.lineWidth = 1; ctx.stroke();
+      });
+      dots.forEach(function (d) {
+        var a = Math.min(1, Math.hypot(d.x - cx, d.y - cy) / 18);
+        if (a < 0.02) return;
+        ctx.beginPath(); ctx.arc(d.x, d.y, d.r * (0.5 + 0.5 * a), 0, 6.2832);
+        ctx.fillStyle = d.fill ? 'rgba(94,84,200,' + a + ')' : 'rgba(255,255,255,' + a + ')';
+        ctx.fill();
+        if (!d.fill) { ctx.strokeStyle = 'rgba(94,84,200,' + (0.8 * a) + ')'; ctx.lineWidth = 1.2; ctx.stroke(); }
+      });
+      ctx.beginPath(); ctx.arc(cx, cy, st.core, 0, 6.2832);
+      ctx.fillStyle = '#5e54c8'; ctx.fill();
+    }
+
+    function frame(now) {
+      st.raf = 0;
+      step(now); paint();
+      if (st.seen) st.raf = requestAnimationFrame(frame);
+    }
+
+    card.addEventListener('pointerenter', function () { st.hover = true; });
+    card.addEventListener('pointerleave', function () { st.hover = false; });
+    card.addEventListener('pointermove', function (e) {
+      var r = cv.getBoundingClientRect(); st.px = e.clientX - r.left; st.py = e.clientY - r.top;
+    }, { passive: true });
+    if ('ResizeObserver' in window) new ResizeObserver(size).observe(cv);
+    size();
+    if (RM) { for (var k = 0; k < 240; k++) step(0); paint(); return; }
+    new IntersectionObserver(function (es) {
+      st.seen = es[0].isIntersecting;
+      if (st.seen && !st.raf) st.raf = requestAnimationFrame(frame);
+    }).observe(cv);
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('canvas[data-art]'), Art);
+})();
+</script>
+
 <script src="vendor/rough.js"></script>
 <script>
 /* ══ HAND LAYER — the human marks, inked in as they come into view ═══════════
@@ -1233,6 +1370,145 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
       card.style.setProperty('--my', (e.clientY - r.top) + 'px');
     }, { passive: true });
   });
+})();
+</script>
+
+<script>
+/* ══ THE HANDSHAKE — arqu's own stick-figure Handshake.svg (02 marketing/08 corp
+   site, the same loose-ink art the illustration guide says to match), drawn on
+   stroke by stroke, then shaking hands. Each filled path is revealed through a
+   mask whose stroke traces that limb, so the real artwork appears as if drawn.
+   Six dots circle the pair on a hand-drawn ground ring: the tools move, the
+   people stay put. Hover or tap and they shake again. */
+(function () {
+  var svg = document.getElementById('hs');
+  if (!svg || !window.rough) return;
+  var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var NS = 'http://www.w3.org/2000/svg';
+  var ART = ["M9.44,113.01c.55,1.97,1.29,3.86,1.98,5.8.78,1.89,1.53,3.8,2.45,5.64.82,1.74,1.81,3.39,2.74,5.08.49.83,1.02,1.64,1.52,2.46.5.82,1.03,1.63,1.6,2.41,2.15,3.21,4.62,6.2,7.2,9.1,4.4,4.48,9.29,8.49,14.55,11.92,8.33,5.03,17.46,8.64,26.91,10.57,5.27.99,10.62,1.45,15.94,1.41,1.31-.05,2.61-.25,3.91-.37,1.3-.11,2.58-.35,3.87-.55l1.8-.31,1.78-.39c1.18-.26,2.37-.5,3.53-.85l2.91-.79,2.86-.93c5.18-1.84,10.11-4.18,14.69-6.96.74-.44,1.45-.96,2.16-1.44.71-.5,1.43-.96,2.11-1.48,1.36-1.06,2.74-2.06,4.01-3.19,1.58-1.29,3.05-2.72,4.5-4.11.88-.9,1.77-1.77,2.62-2.67.83-.94,1.67-1.84,2.47-2.78.94-1.13,1.95-2.18,2.82-3.36,1.43-1.72,2.75-3.52,4.02-5.34.82-1.29,1.69-2.53,2.43-3.86.38-.66.77-1.3,1.14-1.96l1.04-2.01c.58-.98,1.05-2.02,1.57-3.03.53-1,.96-2.06,1.42-3.09.37-.75.72-1.51,1.03-2.28.32-.77.66-1.53.96-2.31.56-1.57,1.17-3.11,1.63-4.71,1.06-2.99,1.83-6.08,2.47-9.17.73-3.23,1.15-6.52,1.45-9.82.14-3.14.25-6.28,0-9.42-.01-1.64-.22-3.28-.34-4.92-.15-1.3-.41-2.29-.54-3.63-.15-1.19-.36-2.38-.53-3.57-.2-1.19-.48-2.36-.71-3.55-1.26-4.9-3.03-9.66-5.31-14.19l-1.35-2.82-1.49-2.76c-.43-.8-.93-1.55-1.39-2.33-.45-.79-.95-1.55-1.47-2.29-1.73-2.65-3.74-5.12-5.81-7.54-.96-1.06-1.86-2.21-2.89-3.22-2.22-2.43-4.7-4.61-7.24-6.75-1.33-1.01-2.64-2.08-4.04-3-1.51-1.1-3.12-2.06-4.7-3.06-2.48-1.58-5.02-3.12-7.69-4.43-.8-.34-1.59-.73-2.4-1.04l-2.45-.94c-.98-.35-1.99-.58-2.99-.88-.99-.31-2.01-.54-3.02-.76-1.62-.5-3.26-.86-4.92-1.24-2.47-.33-4.96-.57-7.46-.67-2.51-.23-5.05-.35-7.59-.33-1.46-.04-2.72-.1-3.68-.43-.96-.31-1.61-.82-1.81-1.54-.38-1.31.52-3.05,3.9-3.81,1.39-.24,2.97-.4,4.58-.45,1.61.01,3.25-.01,4.77.1,3.82.17,7.6.68,11.36,1.34,9.18,2.27,17.87,6.03,25.62,11.09,7.68,5.01,14.47,11.21,19.99,18.3,2.28,2.92,4.44,5.91,6.3,9.09,3.56,5.65,6.3,11.78,8.32,18.09,1.99,6.33,3.13,12.89,3.51,19.47.14,1.6.16,3.2.24,4.8-.04,1.6.03,3.21-.08,4.81-.09,1.43-.11,2.87-.29,4.29-.14,1.43-.28,2.86-.52,4.27-.49,3.69-1.31,7.34-2.35,10.92-1.19,4.43-2.75,8.77-4.71,12.95-2.33,5.52-5.14,10.73-8.41,15.7-3.28,4.96-7.01,9.72-11.38,14.19-2.98,3.14-6.26,5.98-9.72,8.65-3.46,2.67-7.19,5.05-11.13,7.12-1.96,1.08-4.01,1.97-6.07,2.9-2.09.82-4.21,1.67-6.4,2.32-2.17.74-4.41,1.25-6.67,1.79-2.27.44-4.57.89-6.92,1.12-1.99.28-3.99.36-6,.51-1,.06-2.01.05-3.02.08-1.01.02-2.02.05-3.03,0-5.07-.19-10.14-.85-15.13-1.94-5.72-1.33-11.33-3.22-16.71-5.63-4.4-2.12-8.64-4.57-12.66-7.35-3.26-2.33-6.46-4.75-9.4-7.47-7.51-6.8-13.62-14.96-17.89-23.85C3.45,118.79,1,109.21.24,99.71c-.61-8.63-.05-17.23,1.78-25.46.93-4.1,2.07-8.13,3.59-11.99,1.49-3.86,3.2-7.61,5.23-11.15,1.94-3.45,4.07-6.77,6.47-9.85,2.36-3.1,4.92-6.02,7.68-8.7,10.93-11.41,24.98-19.23,39.68-22.44,4.81-1.07,9.47-1.37,13.59-.69.51,1.19-.6,2.58-1.87,3.27-1.73.89-2.85,1.2-4.34,1.37-.74.08-1.54.25-2.54.47-.49.12-1.04.25-1.63.43-.59.21-1.23.46-1.93.75-3.45,1.51-7.25,2.39-10.68,3.94-.85.33-1.65.78-2.48,1.16l-1.24.59-1.21.65c-1,.53-2.02,1.04-2.98,1.64-.97.59-1.97,1.13-2.91,1.79-1.97,1.18-3.87,2.47-5.73,3.85l-2.14,1.63-2.06,1.73c-.91.71-1.71,1.52-2.58,2.28-3.19,2.89-6.15,6.08-8.85,9.54-2.65,3.37-5.07,6.98-7.13,10.83-.63,1.07-1.17,2.19-1.77,3.29-.66,1.27-1.21,2.59-1.83,3.9-.54,1.33-1.09,2.67-1.61,4.03-1.34,3.91-2.35,7.96-3.09,12.09-.19,1.09-.4,2.18-.57,3.28l-.42,3.32c-.08.95-.07,1.9-.11,2.86-.03.96-.07,1.91-.03,2.87.01,1.18,0,2.37.04,3.55l.2,3.56c.43,4.99,1.31,9.99,2.65,14.9Z", "M89.91,301.34l-.78,12.82-.73,26.6-.17,11.93-.21,6.63-.34,9.75.03,21.67.55,14.12.62,12.88.39,6.34.45,4.37,2.61,19.16.58,8.68-.38,15.99c-.04,1.88-2.89,2.71-4.44,1.97l-.8-2.12-.44-12.45-.18-4.52-1.75-13.49-2.49-18.77-.67-12.11c-.85-15.44-.9-30.61-.55-46.1l.36-16.09.73-33.6,1.78-30.45.02-17.31-.3-17.9.05-12.28.91-28.87.12-11.97c.08-7.77.76-15.2,2.07-22.84.4-2.35.7-4.54,1.84-6.64l2.07-1.18c3.9,1.22,3.81,4.09,3.31,8.09l-1.58,12.83-.54,10.68-1.09,37.08.04,33.61-.4,23.25-.69,10.23Z", "M165.02,684.5l.21,1.89-.54,5.84-.49,2.59c-.15.79-.64,2.04-1.49,2.71-1.44,1.13-4.52,1.31-5.29.34-.32-.41-.3-.71-1.05-.85l-.41-2.99c.81-2.61,1.52-5.13,1.03-7.58l-1.92-9.68-2.77-10.54-2.88-8.66-.88-1.95-.86-1.97-2.18-5.17-2.48-5.4-1.34-2.89-1.02-2.2-7.29-17.6-2.67-6.44-1.1-2.6-1.24-2.9-1.1-2.61-3.39-8.81-2.12-6.87-.96-3.29-.81-3.12-2.09-6.66-1.67-4.79-2.88-7.6-1.89-5.3-3.41-10.64-1.35-3.79-1.65-4.85-1.35-4.04-1.66-5.52-1.52-5.5-.93-3.38-1.57-4.78c-2.38-7.25-4.42-14.45-6-21.97l-.88-2.66-1.51-5.15-.92-3.77-1.18-3.6c-.39-1.19-1.05-2-.94-3.33.11-1.28,1.61-2.42,3.61-2.43,2.66-.02,4.09,4.63,4.96,7.32l1.05,3.26,1.12,3,1.15,3.67.78,2.66.77,2.66,1.12,4.36.82,2.67,1.23,4.72,1.28,3.61,1.5,4.29,1.6,4.9,2.42,8.39,1.16,3.66,1.14,3.45,1.42,4.49,2.19,6.37,4.38,12.9,1.98,5.62,2.69,7.04,1.51,4.33,1.54,5.34,1.61,5.48,1.76,5.86,2.28,6.12,1.12,2.85.79,1.52,11.35,26.96,2.52,5.98,3.22,7.12.96,1.99,1.41,2.72.5,2.02c.17.68.56,1.17,1.34,1.49l-.57.73c-.18.23.6.65.82.77l1.01,2.69.36,1.23c.22.75.63,1.52.68,2.22.07.89.34,1.56.67,2.38l.59,1.45.45,2.45,1.17,4.31.77,3.15,2.22,8.73.02,1.61Z", "M55.43,358.42l-.23-2.02,3.01-14.17,2.11-8.25,1.89-6.09.85-2.86c.22-.73.6-1.26.57-2.17-.02-.67.36-1.5.59-2.17l.95-2.91,1.28-5.17,1.97-5.43,1.12-3.5,1.14-3.85.87-3.36.85-2.12,1.24-4.28.9-2.7.53-1.9,1.41-5.66.87-3.16,1.83-7.26.24-1.83.6-2.1.64-3.18.67-2.09.57-1.98,1.39-5.58c.26-1.03.46-1.53-.11-2.73-.12-.81,1.25-1.93,1.46-2.79l.84-3.44c.19-.76,1.35-1.5,2.11-2.13.8-.06,2.45.35,3.24.69,1.39,1.7.66,3.19.28,4.74l-4.45,18.29-1.91,7.31-2.69,11.14-1.5,5.39-1.75,6.82-1.19,3.84-5.27,16.96-1.14,3.92-2.11,6.64-1.5,5.48-1.09,3.53-1.52,5.39-3.25,15.22.06.38.09.7.18,1.45.5,2.92,1.79,12.53,2.97,24.18,1.75,16.53.44,6.33.64,7.93c.18,2.17.18,4.46-.64,6.55l-.78,1.96c-1.56.16-2.36-.67-2.7-1.61l-.91-2.55-1.62-7.62-.47-3.27-.26-1.18-.76-7.05-2.67-23.52v-2.04s-3.94-31.07-3.94-31.07Z", "M8.52,689.65l6.25-13.01,2.01-5.28,7.05-21.61,3.26-9.55,3.35-9.66,3.98-11.97,6.31-19.29,8.51-24.48,4.48-12.94,4.43-12.83.87-2.37.79-1.61,5.87-16.82,2.5-6.84,1.51-3.94,2.92-7.15,3.5-9.52,4.09-11.39,1.94-4.28,3.63-8.63c.49-1.16,2.55-1.94,4.27-1.12.71.34,1.62,1.49,1.49,2.36-.45,3.18-1.78,6.11-3.29,9.03-2.12,4.09-3.58,8.22-4.99,12.59l-1.57,4.88-3.14,8.75-4.43,11.4-6.27,17.51-7.36,20.46-3.97,11.58-5.03,14.81-2.73,7.75-3.18,9.61-4.12,13-2.09,6.31-3.96,12.01-2.17,6.33-6.76,21.1-1.92,6.15c-1.94,6.23-4.48,12.01-7.37,17.87l-3.32,6.74c-.53,1.08-2.47,1.98-3.71,1.23-1.23-.74-2.27-1.9-2.29-2.8-.03-1.54-.03-2.93.67-4.37Z", "M214.74,356.6l-8.42-7.03-3.57-2.36-14.91-8.57-6.55-3.92-6.61-4.02-8.24-4.82-13.31-7.66-17.26-10.5-.16-.1-6.79-8.56-6.38-8.04-1.15-1.52-.66-1.19-8.33-10.59-3.32-4.4-1.88-2.58-3.29-4.84-4.61-6.13-5.58-7.26-1.86-3.05-3.91-5.92c-.53-.8.14-2.68,1.72-3.73.66-.44,1.99-.73,2.52-.33,1.96,1.49,3.24,3.57,4.39,5.79,1.62,3.11,3.66,5.73,5.89,8.39l2.5,2.97,4.28,5.58,5.38,7.53,8.58,11.15,10.01,13.05,5.78,7.24,1.14,1.41,7.75,4.61,5.29,3.26,6.62,3.85,9.01,5.03,4.35,2.53,8.28,4.8,4.34,2.61,14.59,8.25,4.27,2.35c4.32,2.38,8.13,5.29,11.91,8.52l4.34,3.72c.7.6.86,2.49-.07,3.59-.92,1.08-2.11,1.96-2.82,1.9-1.21-.11-2.29-.24-3.23-1.02Z", "M287.89,124.88c.59,1.13,1.28,2.2,1.92,3.32.69,1.18,1.44,2.33,2.17,3.51.8,1.12,1.56,2.29,2.41,3.39.67.87,1.32,1.76,2.01,2.63l2.14,2.55c.9,1,1.79,2.04,2.72,3.03.97.95,1.9,1.98,2.92,2.9,1.91,1.8,3.93,3.55,6.06,5.16,2.63,2.04,5.48,3.8,8.41,5.51,3.22,1.75,6.58,3.32,10.08,4.67,3.51,1.29,7.13,2.42,10.86,3.25,2.4.49,4.84.92,7.31,1.21.9.14,1.8.22,2.7.3.9.08,1.81.18,2.72.23,1.82.07,3.66.19,5.49.14.85-.04,1.71-.06,2.56-.12l2.56-.23c1.21-.04,2.41-.19,3.61-.31l1.82-.19,1.8-.28,2.45-.37,2.44-.49c1.46-.34,2.89-.79,4.33-1.24,1.41-.42,2.78-.95,4.16-1.46,1.88-.72,3.66-1.66,5.49-2.49l2.66-1.27c.9-.42,1.78-.85,2.64-1.34l2.32-1.43c.77-.48,1.51-1.02,2.26-1.53,1.52-1,2.97-2.12,4.41-3.24.82-.62,1.58-1.3,2.36-1.97.77-.68,1.57-1.33,2.3-2.04l2.7-2.73,2.56-2.86c1.11-1.27,2.16-2.59,3.23-3.9,3.79-5.73,6.9-11.84,9.26-18.19,2.38-6.34,3.92-12.94,4.76-19.56.65-5.89.7-11.8.15-17.61-.46-4.76-1.32-9.46-2.55-14.02-.33-1.22-.63-2.45-1.04-3.64-.79-2.24-1.73-4.42-2.68-6.57-.73-1.44-1.37-2.9-2.16-4.3-1.44-2.56-2.98-5.03-4.67-7.39-.68-.93-1.22-1.71-1.78-2.46-.59-.73-1.17-1.44-1.86-2.26-.77-.95-1.64-1.82-2.47-2.71-.81-.9-1.68-1.75-2.56-2.58-.71-.93-1.48-1.79-2.36-2.58-.88-.8-1.75-1.62-2.76-2.38-3.32-2.72-6.87-5.08-10.52-7.13-1.49-.97-3.07-1.78-4.61-2.65l-2.37-1.17c-.78-.4-1.58-.76-2.39-1.09l-1.79-.94c-.6-.31-1.22-.57-1.83-.86l-1.82-.76-1.86-.68c-1.22-.48-2.48-.85-3.74-1.24-.92-.46-1.86-.84-2.81-1.23-3.06-.9-6.2-1.52-9.33-2.01l-2.92-.99c-1.78.63-3.12.23-4.4-.56-4.92-.13-9.55-.5-14.44-.1-2.49.21-4.97.53-7.42.99l-2.4.29-2.38.41c-1.55.25-3.06.7-4.6,1.05-3.21,1.14-6.4,2.34-9.43,3.9-1.11.23-2.1.62-3.04,1.17-.94.53-1.85,1.21-2.7,2.18-.61.27-2.36.37-2.86-.1-1.01-.97-1.8-3.17-.94-4.62,1.23-2.15,3.76-3.56,5.91-4.66,3.42-1.77,7-3.22,10.62-4.52,13.35-4.08,27.65-4.75,41.15-1.84,4.13.64,8.24,1.58,12.24,2.88.87.23,1.73.5,2.58.79l2.56.86c1.67.66,3.39,1.26,5.03,2.03,3.34,1.41,6.54,3.16,9.68,5.01,1.4.82,2.88,1.57,4.24,2.48,8.59,4.98,16.39,11.74,22.94,19.77,3.99,5.01,7.5,10.54,10.38,16.46.67,1.38,1.21,2.81,1.78,4.24.6,1.42,1.06,2.89,1.57,4.35,1.37,4.35,2.53,8.82,3.22,13.39,1.9,12.57,1.11,25.68-2.33,38.23-1.21,4.43-2.8,8.77-4.68,12.99-2.45,5.28-5.41,10.36-8.81,15.14-1.3,1.6-2.6,3.19-4.01,4.69-2.49,2.82-5.22,5.42-8.02,7.93-2.12,1.73-4.25,3.44-6.5,4.99-6.2,4.37-12.91,7.56-19.84,9.71-6.92,2.16-14.01,3.34-21.11,3.77-5.08.28-10.12.14-15.07-.4-3.97-.42-7.87-1.25-11.68-2.18-6.67-1.71-13.03-4.16-18.95-7.24-1.34-.79-2.68-1.55-3.98-2.37-1.28-.86-2.58-1.65-3.81-2.57-3.3-2.26-6.35-4.83-9.23-7.48-2.86-2.61-5.46-5.46-7.89-8.37-2.36-2.98-4.55-6.04-6.45-9.25-3.83-5.98-6.85-12.27-9.16-18.71-2.24-6.48-3.83-13.12-4.55-19.95l-.18-1.53-.1-1.54c-.05-1.02-.16-2.04-.15-3.07-.15-3.48.06-6.97.38-10.42.17-1.54.28-3.08.54-4.61.12-.76.22-1.53.36-2.29l.46-2.27c1.08-5.72,2.91-11.28,5.31-16.58l.63-1.47.7-1.43c.47-.96.92-1.92,1.45-2.85.62-1.18,1.24-2.37,1.95-3.51l1.03-1.73,1.11-1.68c2.02-3.26,4.28-6.4,6.83-9.31,2.53-2.93,5.27-5.73,8.27-8.24,1.09-1.02,3.62-1.74,4.73-1.93,1.61.71,1.06,2.87.36,4.28-.23.46-.48.88-.74,1.26-.25.4-.51.78-.8,1.14-.56.73-1.23,1.35-1.95,2.1-2.59,2.62-4.9,5.45-7,8.37-3.28,4.22-6.05,8.78-8.27,13.55-1.35,2.86-2.58,5.76-3.56,8.75-1.02,2.79-1.97,5.61-2.61,8.52-.38,1.33-.59,2.69-.89,4.04-.23,1.36-.45,2.73-.62,4.09-.13,1.33-.34,2.67-.39,4.01l-.13,2.01-.03,2.02-.02,1.23.05,1.23c.04.82.04,1.64.1,2.45.08,1.16.09,2.32.21,3.48.14,1.15.2,2.32.39,3.47.17.98.3,1.97.49,2.94l.62,2.92.53,3.02c1,3.94,2.35,7.82,4.04,11.59.61,1.62,1.36,3.19,2.1,4.78.52,1.07,1.11,2.1,1.67,3.16Z", "M348.56,176.21l.07,2.95-1.56,7c-1.57,9.23-1.86,18.41-1.59,27.8l.42,14.99.1,29.17-.1,4.14c-.19,8.2-.15,16.15-1.07,24.35-1.03,9.16-1.78,18.01-1.95,27.22l-.2,11.17c-.15,8.04-.71,15.84-.22,23.91l.8,13.14.93,13.52.49,12.17.44,12.36,1.07,19.23.71,11.26.23,12.19-.02,4.06.16,10.11.72,12-.2,8.65c-.03,1.55-.31,3.04-1.81,3.95-1.33.81-3.03.52-3.87-.78l-1.12-1.74.26-4.74-.17-9.47-.57-6.62-.54-18.08-.31-8.85-.69-11.51-1.59-24.14-.47-16.23-1.4-20.31c-.49-7.16-.84-13.99-.7-21.09l.3-14.93.08-7.13c.1-9.03.39-17.78,1.46-26.73.85-7.13,1.12-13.96,1.21-21.14l.21-16.62-.02-9.63-.71-22.14c-.3-9.26-.51-18.25.39-27.42.63-6.43,1.58-12.59,3.92-18.6l2.12-.42,1.92-.19c.52.72.76.94,1.72,1.24.18.22.97,1.43,1.14,1.92Z", "M414.95,697.15l-.79-2.11-.26-5.55c-.8-7.17-2.81-13.87-5.38-20.56l-4.11-10.67-7.32-21-.93-3.02c-1.85-5.97-3.86-11.69-5.02-17.9-1.29-6.94-2.78-13.56-4.9-20.25l-2.58-8.11c-1.85-5.84-3.25-11.65-5.72-17.31l-4.01-9.21-4.23-9.44-3.48-8.61-3.47-8.77-5.77-13.51-3.46-7.88-3.24-8.71-.99-2.93-2.65-7.23-3.66-8.41-1.96-6.3c-.35-1.13-.45-2.29.73-3.44,1.05-1.02,2.73-1.36,3.85-.69l1.49.89.93,3.5,2.5,6.77,2.18,4.58,4.99,12.85,2.49,6.28,3.5,8.07,7.48,16.88,4.46,11.54,6.36,14.19c2.24,5,4.27,9.81,5.89,14.98l3.41,10.86,1.69,5.16c2.15,6.54,4.03,12.94,5.25,19.74.96,5.41,2.4,10.43,4.09,15.63l3.92,12.05,2.4,6.93,6.16,15.73c2.58,6.58,5,12.99,6.43,19.89,1,4.84,1.63,9.58.9,14.68l-1.9.99-1.77.76c-.67-.35-.95-.43-1.93-.34-.23-.1-1.27-.71-1.55-1.01Z", "M364.32,368.65v-3.81s.15-7.96.15-7.96l.08-1.91-.05-.42-.83-4.18-.73-4.11-.7-3.22-1.81-9.01-.93-4.52-1.72-9.22-.55-2.68-.47-2.15-.98-4.49-1.19-4.62-.97-3.55-1.19-4.08-.62-1.79-1.82-6.57c-.08-.29-.41-.56-.26-.87.28-.55-.03-.81-1.06-.98l.74-.27-.57-2.17-.32-2.46-.43-1.32-.51-2.86-.69-2.88-1.05-4.99-.8-2.98-.41-2.21-.94-4.45-.78-2.44-.14-1.56-.1-5.18.27-4.48.1-1.82.9-3.09c.31-1.07,1.35-2.14,3.67-2.3,2.13-.15,3.01,1.21,2.57,2.36-.73,1.91-1,3.67-1.14,5.55-.29,3.81-.41,7.5.58,11.17l1.39,5.1,1.46,6.05,2.38,10.64,1.79,7.67,1.91,7.28,3.48,13.28,1.36,5.89,2.95,14.49,1.12,5.5,3.09,15.03.56,3.35-.11,8.18.02,10.08.64,18.81.1,4.08.15,22.55.06,7.61c.01,1.45-.46,2.81-1,4.21-.38,1-2.13,2.09-3.87,1.89-.69-.08-1.46-.77-1.48-1.23l-.19-4.62-.16-3.3-.17-13.77.02-3.85-.02-1.86.02-3.31.02-3.66-.13-3.74-.2-5.63-.11-2.57-.16-3.12-.21-8.1-.02-4.37Z", "M287.69,632.95l3.81-11.19,2.09-5.68,5.2-13.84,1.95-5.32,4.27-12.7,2.37-6.76-.52-.49c-.06-.06-.03-.14.06-.13l.76.11,5.28-15.37,3.73-10.27,2.97-7.06,1.06-2.22c.15-.31-.17-.82-.66-1.39l1.32.03,4.51-9.8,1.72-4.44,2.43-6.81-1.1-.22c-.22-.04-.39-.62-.33-.66l1.49.25,2.87-9.97,1.32-6.01,1.22-6.27,1.03-4.15.9-3.44,1.76-5.69.81-2.53.58-1.51c.57-1.49.25-6.12,4.39-5.1,1.19.29,2.73,1.36,2.49,2.42l-1.53,6.71-1.72,5.46-3.19,14.51-1.25,6.08-1.36,5.59c-3.96,16.28-12.36,29.87-17.55,45.25l-4.1,12.18-2.03,5.71-2.46,6.78-4.19,12.6-2.29,6.61-6.26,17-3.38,9.95-2.44,6.86-1.6,4.02-2.91,6.42-1.44,3.65-3.33,7.69-2.14,4.36-3.28,7.71-3.02,8.94-1,3.96-1.21,6.47-1.05,3.66c-.3,1.06-1.9,1.82-3.21,2.18-1.51.41-4.7-2.09-4.24-4.25l1.02-4.81.84-4.2,2.98-10.41,2.93-7.75,2.36-5.26,1.94-3.82,6.46-14.42,3.86-9.2Z", "M254.46,324.85l7.01-5.19,3.67-2.54,9.03-6.12,3.44-2.38,1.68-1.26,4.98-5.34,3.67-3.8-.32-.61c-.04-.07,0-.12.09-.06l.62.44,8.25-8.7,5.68-5.71,4.25-3.74,1.45-1.11c.2-.16.05-.68-.22-1.33l1.12.65,6.23-5,2.55-2.42,3.74-3.81-.88-.69c-.18-.14-.19-.64-.12-.64l1.21.89,4.87-5.91,2.59-3.75,2.57-3.99,1.89-2.54,1.61-2.08,2.89-3.31,1.31-1.46.86-.83c.85-.82,1.71-4.35,4.98-1.63.94.78,1.99,2.3,1.53,2.95l-2.94,4.17-2.8,3.16-6.26,9.06-2.55,3.84-2.53,3.43c-7.35,9.99-17.82,15.9-25.99,24.65l-6.47,6.93-3.12,3.2-3.75,3.77-6.21,6.72-1.15.87-4.17,3.04-10.99,7.6-6.22,4.62-4.38,3.12-2.69,1.73-4.56,2.53-2.43,1.57-5.35,3.13-3.22,1.62-5.32,3.17-5.58,4.16-2.21,2.06-3.3,3.62-2.14,1.82c-.62.53-2.11.05-3.22-.52-1.28-.66-2.77-4.32-1.62-5.5l2.54-2.62,2.19-2.32,6.09-5.18,5.07-3.41,3.72-2.09,2.87-1.38,10.19-5.73,6.31-3.82Z"];
+  /* one stroke per path, in the art's own coordinates, in drawing order */
+  var BONES = [
+    [0, 'M83 9a78 78 0 1 1-.1 0', 30], [6, 'M354 9a79 79 0 1 1-.1 0', 30],
+    [1, 'M88 166L88 476', 34], [7, 'M342 173L342 483', 34],
+    [4, 'M88 476L11 694', 40], [2, 'M90 476L161 694', 40],
+    [10, 'M344 476L269 694', 40], [8, 'M345 476L419 694', 40],
+    [3, 'M89 244L60 350L64 437', 42], [9, 'M345 244L367 350L369 430', 42],
+    [5, 'M90 242L140 306L219 355', 46], [11, 'M344 242L283 285L215 355', 46]
+  ];
+  var ORBIT = { cx: 320, cy: 500, rx: 272, ry: 58 };
+  function el(tag, attrs, parent) {
+    var n = document.createElementNS(NS, tag);
+    for (var k in attrs) n.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(n);
+    return n;
+  }
+
+  var defs = el('defs', {}, svg), back = el('g', {}, svg);
+  var art = el('g', { transform: 'translate(184 70) scale(.62)' }, svg), front = el('g', {}, svg);
+  var paths = ART.map(function (d, i) { return el('path', { d: d, class: 'fig', id: 'hs-p' + i }, art); });
+  var masks = BONES.map(function (b) {
+    var m = el('mask', { id: 'hs-m' + b[0], maskUnits: 'userSpaceOnUse', x: -60, y: -60, width: 560, height: 820 }, defs);
+    var stroke = el('path', { d: b[1], fill: 'none', stroke: '#fff', 'stroke-width': b[2], 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, m);
+    paths[b[0]].setAttribute('mask', 'url(#hs-m' + b[0] + ')');
+    return stroke;
+  });
+
+  var dots = [0, 1, 2, 3, 4, 5].map(function (i) {
+    var accent = i % 3 === 0;
+    return { a: i / 6 * Math.PI * 2 + (i % 2 ? 0.25 : 0), node: el('circle', { class: 'odot', r: accent ? 7 : 5,
+      fill: accent ? '#5e54c8' : 'rgba(34,31,32,.42)' }, back) };
+  });
+
+  var you = el('text', { class: 'lbl', x: 96, y: 86 }, svg);
+  you.textContent = 'you';
+  var them = el('text', { class: 'lbl us', x: 482, y: 86 }, svg);
+  them.textContent = 'your broker';
+
+  /* pairs (both heads, both bodies, ...) draw together; the handshake arms last */
+  function drawBones() {
+    var t = 0, end = 0;
+    masks.forEach(function (m, k) {
+      var L = m.getTotalLength(), dur = Math.max(260, L * 1.5);
+      m.style.strokeDasharray = L + ' ' + L; m.style.strokeDashoffset = L;
+      m.getBoundingClientRect();
+      m.style.transition = 'stroke-dashoffset ' + dur + 'ms cubic-bezier(.5,.1,.3,1) ' + t + 'ms';
+      m.style.strokeDashoffset = '0';
+      end = Math.max(end, t + dur);
+      if (k % 2) t = end - 120;
+    });
+    return end;
+  }
+
+  function decorate(delay) {
+    var H = window.arquHand, rc = rough.svg(svg);
+    var ring = rc.ellipse(ORBIT.cx, ORBIT.cy, ORBIT.rx * 2, ORBIT.ry * 2, H.opts(8, { stroke: '#d5cec5', strokeWidth: 1.5, roughness: 1.3, curveFitting: 1 }));
+    back.insertBefore(ring, back.firstChild);
+    var arrows = el('g', {}, svg), a = { stroke: '#56514f', strokeWidth: 1.6, roughness: 1, bowing: 1 };
+    arrows.appendChild(rc.curve([[148, 92], [170, 96], [184, 114]], H.opts(51, a)));
+    arrows.appendChild(rc.linearPath([[174, 110], [185, 116], [186, 104]], H.opts(52, a)));
+    arrows.appendChild(rc.curve([[476, 92], [466, 100], [462, 118]], H.opts(53, a)));
+    arrows.appendChild(rc.linearPath([[455, 110], [461, 120], [470, 112]], H.opts(54, a)));
+    H.ink(ring, delay, 0.9);
+    H.ink(arrows, delay + 700, 0.5);
+    setTimeout(function () { svg.classList.add('orbiting'); }, delay + 400);
+    setTimeout(function () { svg.classList.add('drawn'); }, delay + 600);
+  }
+
+  /* shake: shear each forearm about its own shoulder so the joined hands pump
+     up and down together while the shoulders stay put */
+  var shaking = 0;
+  function shake() {
+    if (RM || shaking) return;
+    var t0 = performance.now(), DUR = 1150;
+    shaking = 1;
+    (function tick(now) {
+      var k = (now - t0) / DUR, dy = k < 1 ? 11 * Math.sin(k * Math.PI * 6) * Math.sin(k * Math.PI) : 0;
+      var kl = dy / 129, kr = dy / (215 - 344);
+      paths[5].setAttribute('transform', 'matrix(1 ' + kl + ' 0 1 0 ' + (-kl * 90) + ')');
+      paths[11].setAttribute('transform', 'matrix(1 ' + kr + ' 0 1 0 ' + (-kr * 344) + ')');
+      if (k < 1) requestAnimationFrame(tick); else shaking = 0;
+    })(t0);
+  }
+
+  var phase = 0, pointer = 0, running = false, last = 0;
+  function orbit(now) {
+    var dt = last ? Math.min(50, now - last) : 16;
+    last = now;
+    phase += dt * (0.00011 + pointer * 0.00022);
+    var scrollTurn = window.scrollY * 0.0016;
+    dots.forEach(function (d) {
+      var a = d.a + phase + scrollTurn, depth = (Math.sin(a) + 1) / 2;
+      d.node.setAttribute('cx', (ORBIT.cx + Math.cos(a) * ORBIT.rx).toFixed(1));
+      d.node.setAttribute('cy', (ORBIT.cy + Math.sin(a) * ORBIT.ry).toFixed(1));
+      d.node.style.opacity = svg.classList.contains('orbiting') ? (0.45 + 0.55 * depth).toFixed(2) : 0;
+      var host = depth > 0.5 ? front : back;
+      if (d.node.parentNode !== host) host.appendChild(d.node);
+    });
+    if (running) requestAnimationFrame(orbit);
+  }
+
+  function start() {
+    if (RM) {
+      paths.forEach(function (p) { p.removeAttribute('mask'); });
+      decorate(0); running = false; orbit(performance.now());
+      return;
+    }
+    var end = drawBones();
+    setTimeout(function () { paths.forEach(function (p) { p.removeAttribute('mask'); }); shake(); }, end + 100);
+    decorate(end - 300);
+  }
+
+  svg.addEventListener('pointerenter', function () { pointer = 1; shake(); });
+  svg.addEventListener('pointerleave', function () { pointer = 0; });
+  svg.addEventListener('click', shake);
+
+  var begun = false;
+  new IntersectionObserver(function (es) {
+    var vis = es[0].isIntersecting;
+    if (vis && !begun) { begun = true; start(); }
+    if (vis && !running && !RM) { running = true; last = 0; requestAnimationFrame(orbit); }
+    if (!vis) running = false;
+  }, { threshold: 0.3 }).observe(svg);
 })();
 </script>
 
