@@ -321,13 +321,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   .sdot i,.sdot b,.spine-ln::after{transition:none}
 }
 
-/* ══ STICKIES LAYER — 2026-09-16 ═══════════════════════════════════════════════
-   The ambient field and the hand-drawn overlay. Both are aria-hidden, never take
-   the pointer, and add no element the edit layer's data-selector matches. */
-.ambient{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
-#hand{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;z-index:5;pointer-events:none}
-#hand path,.hand-motif path{stroke-linecap:round;stroke-linejoin:round}
 </style>
+<link rel="stylesheet" href="home-hand.css">
 <link rel="stylesheet" href="home-risk-narrative.css">
 <link rel="stylesheet" href="home-lines.css">
 </head>
@@ -629,11 +624,15 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
           <div class="lines-lede">Hail severity, mapped from NOAA records.</div>
         </div>
         <figure class="hail-frame">
+          <!-- The hail data ships from this repo, the basemap under it does not: the frame
+               fetches tiles and fonts from four third parties at render time. The note below
+               says so, because a visitor's IP reaches all four. -->
           <div class="hail-map">
             <iframe src="vendor/flourish-hail-map/index.html" title="Hail severity map" loading="lazy" scrolling="no" data-id="visualisation/26638881"
                     sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe>
           </div>
           <figcaption class="fig-source">Sources: NOAA Storm Events Database; NOAA Severe Weather Data Inventory</figcaption>
+          <p class="fig-note">The hail data is served from this site. The basemap under it is not: it loads from Esri (server.arcgisonline.com), Flourish (tiles.flourish.studio, public.flourish.studio) and OpenMapTiles (openmaptiles.github.io). Opening this page shows your address to those four.</p>
         </figure>
       </div>
     </div>

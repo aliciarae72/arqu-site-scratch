@@ -118,6 +118,20 @@ function flourishGlobal(html, name) {
   return JSON.parse(line.slice(line.indexOf('{'), line.lastIndexOf('}') + 1));
 }
 
+// Rendering the map fetches tiles and fonts from these four at run time, measured in Chrome.
+// The page says so, so a host added to the frame without a word to the visitor fails here.
+const MAP_HOSTS = [
+  'server.arcgisonline.com',
+  'tiles.flourish.studio',
+  'public.flourish.studio',
+  'openmaptiles.github.io',
+];
+
+test('home.html: the hail panel names every third party the map reaches', () => {
+  const note = LINES.match(/class="fig-note">([^<]+)</)[1];
+  MAP_HOSTS.forEach((host) => assert.ok(note.includes(host), `the note omits ${host}`));
+});
+
 const INSURED_COLUMNS = new Set(['name', 'address', 'city', 'zip', 'tiv', 'latitude', 'longitude']);
 
 test('vendor/flourish-hail-map carries no insured property data and no data download', () => {
