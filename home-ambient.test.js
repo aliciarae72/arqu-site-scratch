@@ -43,6 +43,13 @@ test('a click sends a ring out through the field', async (t) => {
   await page.mouse.click(300, 700);
   await page.mouse.move(5, 5);
   await page.waitForTimeout(500);
-  // about 0.42px per ms, so roughly 210px out after half a second
-  assert.ok((await purpleNear(page, 510, 700, 40)) > 0);
+  // The ring travels at about 0.42px per ms, so it is a few hundred px out by now. Which
+  // band it is in depends on how busy the page was, so look along the ray rather than at
+  // one radius: away from the click, and nowhere near the pointer's new corner.
+  const along = [];
+  for (let dx = 120; dx <= 420; dx += 60) along.push(await purpleNear(page, 300 + dx, 700, 40));
+  assert.ok(
+    along.some((hit) => hit > 0),
+    `no ring along the ray: ${along.join(', ')}`,
+  );
 });
