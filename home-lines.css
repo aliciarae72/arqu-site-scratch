@@ -14,6 +14,7 @@
 .dots-title{font-family:var(--font-display);font-style:italic;font-size:clamp(19px,1.9vw,23px);line-height:1.15}
 .dots-sub,.dots-label,.fig-source{font-family:var(--font-mono);font-size:9.5px;line-height:1.5;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
 .fig-source{margin-top:20px}
+.fig-note{margin:10px 0 0;max-width:62ch;color:var(--ink-3);font-size:13px;line-height:1.5}
 
 /* stack, label, stack, label, stack, label: two rows, filled a column at a time */
 .dots-cols{display:grid;grid-template-rows:auto auto;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:10px clamp(12px,2.4vw,28px)}
