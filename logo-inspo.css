@@ -1,0 +1,35 @@
+/* Logo inspiration sheet. The chrome stays in three of our colors; the logos
+   themselves keep their owners' real colors. */
+:root{
+  --paper:#fbfaf7; --ink:#221f20; --purple:#8c82fa;
+  --font-mono:ui-monospace,"SF Mono","IBM Plex Mono",Menlo,"Courier New",monospace;
+}
+
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--font-mono);-webkit-font-smoothing:antialiased}
+
+.sheet{max-width:1180px;margin-inline:auto;padding:clamp(28px,6vw,72px) clamp(16px,4vw,40px) clamp(48px,8vw,96px)}
+
+.sheet-head{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:8px 24px;
+  border-bottom:1px solid var(--ink);padding-bottom:18px}
+.sheet-head p,.sheet-head a{margin:0;font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);text-decoration:none}
+.sheet-head a:hover{text-decoration:underline;text-decoration-color:var(--purple)}
+
+.axis{margin-top:clamp(36px,5vw,56px)}
+.axis h2{margin:0;font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase}
+.axis h2 span{display:inline-block;min-width:1.9em;padding:2px 6px;margin-right:8px;text-align:center;background:var(--purple);color:var(--ink)}
+.tests{margin:6px 0 16px;font-size:12px}
+
+/* Hairline grid: the ink background shows through the 1px gaps. */
+.entries{list-style:none;margin:0;padding:1px;display:grid;gap:1px;background:var(--ink);
+  grid-template-columns:repeat(auto-fill,minmax(min(100%,240px),1fr))}
+
+.entry{display:flex;flex-direction:column;gap:6px;min-width:0;background:var(--paper);padding:18px 18px 20px}
+.plate{display:grid;place-items:center;height:150px;margin-bottom:8px}
+.plate img{display:block;max-width:100%;height:auto}
+.caption{margin:0;font-size:12px}
+.caption .num{display:inline-block;min-width:2.2em;border-bottom:2px solid var(--purple)}
+.caption b{font-weight:700}
+.note{margin:0;font-size:12px;line-height:1.5}
+
+.credit{margin-top:40px;border-top:1px solid var(--ink);padding-top:16px;font-size:11px;line-height:1.6}
