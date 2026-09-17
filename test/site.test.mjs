@@ -72,10 +72,9 @@ test('home.html: #lines sits between #ways and #human, and the page wires it up'
   assert.match(HOME, /var RISE = [^;]*\.dots-chart/s);
 });
 
-// The edit layer keys saved copy by element text, and falls back to DOM index when its
-// one-time migration refuses (data-migrate-nodes). Under that fallback one added element
-// matching data-selector moves saved edits onto the wrong words. No ancestor of #lines
-// matches a selector's first compound, so checking that compound is enough.
+// Under the edit layer's DOM-index fallback (when its one-time migration refuses), one
+// added element matching data-selector moves saved edits onto the wrong words. No ancestor
+// of #lines matches a selector's first compound, so checking that compound is enough.
 test('home.html: #lines adds nothing the edit layer selects', () => {
   const selector = HOME.match(/id="arqu-edit-layer"[^>]*data-selector="([^"]+)"/)[1];
   const classes = new Set([...LINES.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)));

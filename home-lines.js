@@ -1,6 +1,5 @@
-/* The casualty dot matrix in the #lines section. One dot is one record, and every
-   column shares one pitch and one width, so the columns compare by area and the
-   drop to a single dot reads true. */
+/* The casualty dot matrix. One dot is one record, and every column shares one
+   pitch and one width, so the columns compare by area. */
 (() => {
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const PER_ROW = 36;
@@ -52,8 +51,7 @@
     return svg;
   }
 
-  /* The page's own reveal pass (home.html, RISE) adds .seen to .dots-chart, and
-     carries the failsafe that shows every reveal when the observer never fires. */
+  /* Revealing belongs to the page's own RISE pass, with the failsafe it carries. */
   function mount(doc) {
     const chart = doc.querySelector('.dots-chart');
     if (!chart) throw new Error('home-lines: .dots-chart is missing from the page');

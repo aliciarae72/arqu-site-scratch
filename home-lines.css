@@ -21,7 +21,7 @@
 /* lining figures: the display serif's old-style 1 reads as a capital I */
 .dots-n{font-family:var(--font-display);font-weight:400;font-style:italic;font-size:clamp(20px,2.2vw,28px);line-height:1;text-align:center;font-variant-numeric:lining-nums tabular-nums}
 .dots-label{text-align:center}
-/* the full columns fill from the bottom up; the lone dot arrives last, as the punchline */
+/* the lone dot arrives last, as the punchline */
 .dots-stack svg{display:block;width:100%;height:auto;overflow:visible}
 .dots-stack:not([data-punchline]) svg{clip-path:inset(100% 0 0 0);transition:clip-path 1.6s var(--ease)}
 .dots-chart.seen .dots-stack:not([data-punchline]) svg{clip-path:inset(0 0 0 0)}
