@@ -118,11 +118,16 @@ function flourishGlobal(html, name) {
   return JSON.parse(line.slice(line.indexOf('{'), line.lastIndexOf('}') + 1));
 }
 
-test('vendor/flourish-hail-map carries no insured property rows and no data download', () => {
+test('vendor/flourish-hail-map carries no insured property data and no data download', () => {
   const html = readFileSync(join(ROOT, 'vendor/flourish-hail-map/index.html'), 'utf8');
   const data = flourishGlobal(html, '_Flourish_data');
-  assert.deepEqual(data.events, []);
+  // regions_map is the NOAA hail-severity grid; every other dataset held the book
+  Object.entries(data).forEach(([name, rows]) => {
+    if (name !== 'regions_map') assert.deepEqual(rows, [], `${name} carries rows`);
+  });
   assert.ok(data.regions_map.length > 0);
+  // the column bindings name the book's own fields (NAME, ADDRESS, ZIP, TIV), so they go too
+  assert.deepEqual(flourishGlobal(html, '_Flourish_data_column_names').events, {});
   assert.equal(flourishGlobal(html, '_Flourish_settings')['layout.footer_note_secondary'], '');
 });
 
