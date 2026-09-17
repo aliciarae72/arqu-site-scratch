@@ -38,6 +38,7 @@
     return el;
   }
 
+  /* One dot at this pitch is a few pixels wide, so the punchline column rings its dot. */
   function buildColumn(doc, stack) {
     const count = Number(stack.getAttribute('data-count'));
     const grid = dotGrid(count);
