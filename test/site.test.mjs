@@ -61,20 +61,33 @@ test('home.html: #lines sits between #ways and #human, and the spine lists it', 
 test('home.html: #lines adds nothing the edit layer selects', () => {
   const selector = HOME.match(/id="arqu-edit-layer"[^>]*data-selector="([^"]+)"/)[1];
   const classes = new Set([...LINES.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)));
-  selector.split(',').map((s) => s.trim().split(/\s+/)[0]).forEach((head) => {
-    if (head.startsWith('.')) assert.ok(!classes.has(head.slice(1)), `#lines uses ${head}`);
-    else assert.doesNotMatch(LINES, new RegExp(`<${head}\\b`), `#lines uses <${head}>`);
-  });
+  selector
+    .split(',')
+    .map((s) => s.trim().split(/\s+/)[0])
+    .forEach((head) => {
+      if (head.startsWith('.')) assert.ok(!classes.has(head.slice(1)), `#lines uses ${head}`);
+      else assert.doesNotMatch(LINES, new RegExp(`<${head}\\b`), `#lines uses <${head}>`);
+    });
 });
 
 test('home.html: each printed count in the dot matrix equals its data-count', () => {
   const stacks = [...LINES.matchAll(/data-count="(\d+)"[^>]*><span class="dots-n">([\d,]+)</g)];
-  assert.deepEqual(stacks.map((m) => [m[1], m[2]]), [['1349', '1,349'], ['3324', '3,324'], ['1', '1']]);
+  assert.deepEqual(
+    stacks.map((m) => [m[1], m[2]]),
+    [
+      ['1349', '1,349'],
+      ['3324', '3,324'],
+      ['1', '1'],
+    ],
+  );
   stacks.forEach((m) => assert.equal(Number(m[1]).toLocaleString('en-US'), m[2]));
 });
 
 test('home.html: the casualty chart names both sources, and the hail map is the self-hosted copy', () => {
-  assert.match(LINES, /class="dots-source">Sources: Pipeline and Hazardous Materials Safety Administration \(PHMSA\) incident data; National Interagency Fire Center</);
+  assert.match(
+    LINES,
+    /class="dots-source">Sources: Pipeline and Hazardous Materials Safety Administration \(PHMSA\) incident data; National Interagency Fire Center</,
+  );
   const src = LINES.match(/<iframe src="([^"]+)"[^>]*data-id="visualisation\/26638881"/)[1];
   assert.equal(src, 'vendor/flourish-hail-map/index.html');
   assert.ok(existsSync(join(ROOT, src)));

@@ -1,10 +1,9 @@
 // Unit checks for home-lines.js. The browser is the boundary: the document and
 // IntersectionObserver are small stand-ins, and every function under test is the real one.
-import { test } from 'node:test';
-import assert from 'node:assert/strict';
-import { createRequire } from 'node:module';
+const { test } = require('node:test');
+const assert = require('node:assert/strict');
 
-const lines = createRequire(import.meta.url)('../home-lines.js');
+const lines = require('../home-lines.js');
 
 class Element {
   constructor(tag, attrs = {}) {
@@ -15,11 +14,22 @@ class Element {
     this.classList = { add: (name) => this.classes.add(name) };
     this.found = {};
   }
-  setAttribute(key, value) { this.attrs.set(key, String(value)); }
-  getAttribute(key) { return this.attrs.has(key) ? this.attrs.get(key) : null; }
-  hasAttribute(key) { return this.attrs.has(key); }
-  appendChild(child) { this.children.push(child); return child; }
-  querySelectorAll(selector) { return this.found[selector] || []; }
+  setAttribute(key, value) {
+    this.attrs.set(key, String(value));
+  }
+  getAttribute(key) {
+    return this.attrs.has(key) ? this.attrs.get(key) : null;
+  }
+  hasAttribute(key) {
+    return this.attrs.has(key);
+  }
+  appendChild(child) {
+    this.children.push(child);
+    return child;
+  }
+  querySelectorAll(selector) {
+    return this.found[selector] || [];
+  }
 }
 
 const doc = {
@@ -29,7 +39,6 @@ const doc = {
 function dotsOf(path) {
   return [...path.matchAll(/M(\d+) (\d+)h0/g)].map((m) => [Number(m[1]), Number(m[2])]);
 }
-
 
 test('every column shares one width, and rows round up', () => {
   assert.deepEqual(lines.dotGrid(3324), { rows: 93, width: 360, height: 930 });
@@ -51,7 +60,10 @@ test('dots fill from the bottom-left, and the part row on top is centred', () =>
   const dots = dotsOf(lines.dotPath(38));
   assert.deepEqual(dots[0], [5, 15]);
   assert.deepEqual(dots[35], [355, 15]);
-  assert.deepEqual(dots.slice(36), [[175, 5], [185, 5]]);
+  assert.deepEqual(dots.slice(36), [
+    [175, 5],
+    [185, 5],
+  ]);
   assert.deepEqual(dotsOf(lines.dotPath(36)).at(-1), [355, 5]);
 });
 
@@ -61,7 +73,10 @@ test('buildColumn draws a hidden svg sized to the grid, with no ring on an ordin
   assert.equal(stack.children[0], svg);
   assert.equal(svg.getAttribute('viewBox'), '0 0 360 380');
   assert.equal(svg.getAttribute('aria-hidden'), 'true');
-  assert.deepEqual(svg.children.map((c) => c.tag), ['path']);
+  assert.deepEqual(
+    svg.children.map((c) => c.tag),
+    ['path'],
+  );
   assert.equal(svg.children[0].getAttribute('d'), lines.dotPath(1349));
 });
 
@@ -78,9 +93,16 @@ test('revealOnView fills the chart only once it scrolls into view', () => {
   const chart = new Element('figure');
   let observer;
   class IntersectionObserver {
-    constructor(callback) { this.callback = callback; observer = this; }
-    observe(el) { this.target = el; }
-    disconnect() { this.disconnected = true; }
+    constructor(callback) {
+      this.callback = callback;
+      observer = this;
+    }
+    observe(el) {
+      this.target = el;
+    }
+    disconnect() {
+      this.disconnected = true;
+    }
   }
   lines.revealOnView({ IntersectionObserver }, chart);
   assert.equal(observer.target, chart);
@@ -100,9 +122,14 @@ test('revealOnView fills the chart at once without IntersectionObserver', () => 
 test('mount draws every column and fills the chart', () => {
   const stacks = ['1349', '3324', '1'].map((count) => new Element('div', { 'data-count': count }));
   const chart = Object.assign(new Element('figure'), { found: { '.dots-stack[data-count]': stacks } });
-  const page = Object.assign(Object.create(doc), { querySelector: (selector) => (selector === '.dots-chart' ? chart : null) });
+  const page = Object.assign(Object.create(doc), {
+    querySelector: (selector) => (selector === '.dots-chart' ? chart : null),
+  });
   lines.mount(page, {});
-  assert.deepEqual(stacks.map((s) => dotsOf(s.children[0].children[0].getAttribute('d')).length), [1349, 3324, 1]);
+  assert.deepEqual(
+    stacks.map((s) => dotsOf(s.children[0].children[0].getAttribute('d')).length),
+    [1349, 3324, 1],
+  );
   assert.equal(chart.classes.has('in'), true);
 });
 
