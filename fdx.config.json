@@ -1,0 +1,18 @@
+{
+  "allow": {
+    "lint": [
+      {
+        "path": "vendor/flourish-hail-map/**",
+        "category": "vendored",
+        "reason": "Flourish self-host export of visualisation 26638881, shipped minified by Flourish. The repo hosts it as delivered, apart from the insured-property rows the public site must not carry."
+      }
+    ],
+    "tests": [
+      {
+        "path": "vendor/flourish-hail-map/**",
+        "category": "vendored",
+        "reason": "Flourish self-host export of visualisation 26638881. Third-party bundles carry no unit tests here; test/site.test.mjs checks the one property this repo owns, that the export carries no insured rows."
+      }
+    ]
+  }
+}
