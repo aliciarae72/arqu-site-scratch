@@ -14,5 +14,10 @@
         "reason": "Flourish self-host export of visualisation 26638881. Third-party bundles carry no unit tests here; test/site.test.mjs checks the one property this repo owns, that the export carries no insured rows."
       }
     ]
+  },
+  "commands": {
+    "security": {
+      "run": "pnpm audit --audit-level high"
+    }
   }
 }

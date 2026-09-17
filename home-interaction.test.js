@@ -11,7 +11,15 @@ test('the rail has one dot per section, placed top to bottom, under the header',
     spineTop: document.getElementById('spine').getBoundingClientRect().top,
     headerBottom: document.querySelector('.top').getBoundingClientRect().bottom,
   }));
-  assert.deepEqual(rail.labels, ['Start', 'Values', 'Ways to work', 'Casualty & property', 'Human-centered', 'Get in touch', 'Careers']);
+  assert.deepEqual(rail.labels, [
+    'Start',
+    'Values',
+    'Ways to work',
+    'Casualty & property',
+    'Human-centered',
+    'Get in touch',
+    'Careers',
+  ]);
   rail.ys
     .slice(1)
     .forEach((y, i) => assert.ok(y > rail.ys[i], `dot ${i + 1} at ${y} is not below dot ${i} at ${rail.ys[i]}`));
