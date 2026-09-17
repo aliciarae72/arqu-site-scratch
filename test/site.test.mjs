@@ -20,7 +20,7 @@ function scriptTags(html) {
 }
 
 function stylesheetHrefs(html) {
-  return [...html.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"/g)].map((m) => m[1]);
+  return [...html.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"[^>]*>/g)].map((m) => m[1]);
 }
 
 function assertLocalFilesExist(page, refs) {
@@ -33,6 +33,32 @@ test('serves at least the home page', () => {
   assert.ok(PAGES.includes('home.html'));
 });
 
+test('home.html links its split stylesheets and scripts, in load order', () => {
+  const html = readFileSync(join(ROOT, 'home.html'), 'utf8');
+  assert.deepEqual(
+    stylesheetHrefs(html).filter((h) => h.startsWith('home')),
+    ['home.css', 'home-layers.css', 'home-spine.css', 'home-hand.css', 'home-risk-narrative.css', 'home-lines.css'],
+  );
+  assert.deepEqual(
+    scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')),
+    [
+      'home-flows.js',
+      'home-interaction.js',
+      'home-risk-narrative-visuals.js',
+      'home-risk-narrative.js',
+      'home-card-art.js',
+      'roughjs',
+      'home-hand.js',
+      'home-hand-marks.js',
+      'home-sector-icons.js',
+      'home-handshake.js',
+      'home-ambient.js',
+      'home-lines.js',
+      'arqu-edit-layer.js',
+    ],
+  );
+});
+
 for (const page of PAGES) {
   const html = readFileSync(join(ROOT, page), 'utf8');
 
@@ -42,15 +68,21 @@ for (const page of PAGES) {
     });
   });
 
-  test(`${page}: every local script file exists`, () => {
+  test(`${page}: every local stylesheet exists`, () => {
+    assertLocalFilesExist(page, stylesheetHrefs(html));
+  });
+
+  test(`${page}: every local script file exists and parses`, () => {
     assertLocalFilesExist(
       page,
       scriptTags(html).map((s) => s.src),
     );
-  });
-
-  test(`${page}: every local stylesheet exists`, () => {
-    assertLocalFilesExist(page, stylesheetHrefs(html));
+    scriptTags(html)
+      .filter((s) => !/^https?:/.test(s.src))
+      .forEach((s) => {
+        const code = readFileSync(join(ROOT, s.src), 'utf8');
+        assert.doesNotThrow(() => new vm.Script(code, { filename: s.src }));
+      });
   });
 }
 
@@ -67,9 +99,10 @@ test('home.html: #lines sits between #ways and #human, and the page wires it up'
   assert.ok(HOME.indexOf('<section id="ways"') < HOME.indexOf('<section id="lines"'));
   assert.ok(HOME.indexOf('<section id="lines"') < HOME.indexOf('<section id="human"'));
   assert.ok(LINES.includes('lines-panel'));
-  assert.match(HOME, /\['lines',\s+'Casualty & property'\]/);
-  // the chart fills on .seen, which the page's own reveal pass adds
-  assert.match(HOME, /var RISE = [^;]*\.dots-chart/s);
+  // the spine list and the reveal pass live in the split interaction script
+  const interaction = readFileSync(join(ROOT, 'home-interaction.js'), 'utf8');
+  assert.match(interaction, /\['lines',\s+'Casualty & property'\]/);
+  assert.match(interaction, /var RISE =[^;]*\.dots-chart/s);
 });
 
 // Under the edit layer's DOM-index fallback (when its one-time migration refuses), one
