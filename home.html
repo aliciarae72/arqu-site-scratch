@@ -321,82 +321,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   .sdot i,.sdot b,.spine-ln::after{transition:none}
 }
 
-/* ---- risk narrative: a slideshow, one visual on the left, the read on the right ---- */
-.rn{padding-top:34px;margin-top:10px}
-.rn-head{max-width:62ch;margin-bottom:28px}
-.rn-head h3{font-size:clamp(23px,2.4vw,29px);line-height:1.1;font-weight:400;font-style:italic;letter-spacing:-.02em;margin:8px 0 10px}
-.rn-lede{color:var(--ink-2);font-size:16px}
-.rn-show{position:relative;outline:none}
-.rn-show:focus-visible{outline:1px solid var(--purple-deep);outline-offset:10px;border-radius:22px}
-.rn-slides{display:grid}
-.rn-slide{grid-area:1/1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(24px,4vw,60px);align-items:center;
-  opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility 0s .4s}
-.rn-slide.is-on{opacity:1;visibility:visible;transition:opacity .55s var(--ease) .06s,visibility 0s}
-.rn-vis{position:relative;aspect-ratio:4/3;background:var(--surface);border:1px solid var(--line-2);border-radius:18px;overflow:hidden;
-  box-shadow:0 1px 2px rgba(34,31,32,.05),0 22px 44px -32px rgba(34,31,32,.35);
-  transform:translateX(-18px);transition:transform .8s var(--ease)}
-.rn-say{transform:translateX(18px);transition:transform .8s var(--ease)}
-.rn-slide.is-on .rn-vis,.rn-slide.is-on .rn-say{transform:none}
-.rn-vis svg{display:block;width:100%;height:100%;touch-action:pan-y;cursor:crosshair}
-.rn-vis text{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;fill:var(--ink-3);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
-.rn-vis text.hand{font-family:var(--font-hand);font-size:19px;letter-spacing:0;fill:var(--ink-2)}
-.rn-vis .ring{fill:none;stroke:var(--line-2);stroke-width:1;transform-box:fill-box;transform-origin:center;transform:scale(.2);opacity:0;
-  transition:transform 1s var(--ease),opacity .6s var(--ease)}
-.rn-vis .grow{transform-box:fill-box;transform-origin:50% 100%;transform:scaleY(0);opacity:0;transition:transform .9s var(--spring),opacity .4s var(--ease)}
-.rn-vis.in .ring,.rn-vis.in .grow{transform:none;opacity:1}
-.rn-vis .site{fill:var(--purple-deep)}
-.rn-vis .pulse{fill:none;stroke:var(--purple-deep);transform-box:fill-box;transform-origin:center;animation:rnpulse 2.4s var(--ease) infinite}
-@keyframes rnpulse{from{transform:scale(1);opacity:.7}to{transform:scale(5);opacity:0}}
-.rn-vis .live{fill:none;stroke:var(--ink-3);stroke-dasharray:3 4;opacity:0;transition:opacity .25s}
-.rn-vis.probe .live{opacity:1}
-.rn-vis .reveal-late{opacity:0;transition:opacity .6s var(--ease) 1.2s}
-.rn-vis.in .reveal-late{opacity:1}
-.rn-live{position:absolute;left:16px;right:16px;bottom:12px;display:flex;justify-content:space-between;gap:12px;pointer-events:none;
-  font-family:var(--font-mono);font-size:9.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
-.rn-live b{font-weight:400;color:var(--purple-deep)}
-.rn-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-deep)}
-.rn-title{font-family:var(--font-display);font-size:clamp(24px,2.5vw,33px);line-height:1.12;letter-spacing:-.02em;margin:14px 0}
-.rn-read{color:var(--ink-2);font-size:16px}
-.rn-facts{margin:22px 0 0}
-.rn-facts div{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:10px 0;border-top:1px solid var(--line)}
-.rn-facts dt{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-.rn-facts dd{margin:0;font-style:italic;color:var(--ink);text-align:right;transition:opacity .22s var(--ease)}
-.rn-swap{opacity:0}
-/* loss history bars are the controls themselves */
-.rn-bars{position:absolute;inset:22px 22px 44px;display:flex;align-items:flex-end;gap:12px}
-.rn-bar{appearance:none;flex:1;height:100%;border:0;background:transparent;padding:0;cursor:pointer;position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch}
-.rn-bar i{display:block;border-radius:6px 6px 2px 2px;background:var(--line-2);height:0;min-height:3px;
-  transition:height .9s var(--spring),background .25s var(--ease)}
-.rn-vis.in .rn-bar i{height:calc(var(--h) * 1%)}
-.rn-bar:nth-child(2) i{transition-delay:.06s}.rn-bar:nth-child(3) i{transition-delay:.12s}
-.rn-bar:nth-child(4) i{transition-delay:.18s}.rn-bar:nth-child(5) i{transition-delay:.24s}
-.rn-bar:hover i{background:var(--ink-3)}
-.rn-bar[aria-pressed="true"] i{background:var(--purple-deep)}
-.rn-bar span{position:absolute;left:0;right:0;bottom:-26px;text-align:center;font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;color:var(--ink-3)}
-.rn-bar[aria-pressed="true"] span{color:var(--purple-deep)}
-.rn-bar:focus-visible{outline:1px solid var(--purple-deep);outline-offset:4px;border-radius:6px}
-.rn-figs{display:flex;gap:clamp(24px,4vw,48px);margin:20px 0 6px}
-.rn-fig{display:flex;flex-direction:column;gap:4px}
-.rn-fig b{font-size:clamp(24px,2.4vw,30px);font-weight:400;font-style:italic;letter-spacing:-.02em;color:var(--ink)}
-.rn-fig i{font-family:var(--font-mono);font-style:normal;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-.rn-nav{display:flex;align-items:center;gap:14px;margin-top:28px}
-.rn-arrow{appearance:none;width:46px;height:46px;border-radius:50%;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);
-  cursor:pointer;font:16px/1 var(--font-sans);transition:border-color .25s var(--ease),color .25s var(--ease),transform .4s var(--spring)}
-.rn-arrow:hover{border-color:var(--purple-deep);color:var(--purple-deep);transform:translateY(-2px)}
-.rn-pips{display:flex;align-items:center;gap:8px;padding:0 4px}
-.rn-pip{appearance:none;border:0;padding:0;width:7px;height:7px;border-radius:4px;background:var(--line-2);cursor:pointer;
-  transition:width .5s var(--spring),background .3s var(--ease)}
-.rn-pip:hover{background:var(--ink-3)}
-.rn-pip[aria-selected="true"]{width:36px;background:var(--purple-deep)}
-.rn-count{margin-left:auto;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-.rn-foot{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:22px}
-@media (max-width:820px){.rn-slide{grid-template-columns:1fr;align-items:start}.rn-vis,.rn-say{transform:none}.rn-live{flex-direction:column;gap:3px;bottom:10px}}
-@media (prefers-reduced-motion:reduce){
-  .rn-slide,.rn-vis,.rn-say,.rn-vis .ring,.rn-bar i,.rn-pip,.rn-facts dd{transition:none}
-  .rn-vis .pulse{animation:none}
-  .rn-swap{opacity:1}
-}
-
 /* ══ STICKIES LAYER — 2026-09-16 ═══════════════════════════════════════════════
    The ambient field and the hand-drawn overlay. Both are aria-hidden, never take
    the pointer, and add no element the edit layer's data-selector matches. */
@@ -404,6 +328,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 #hand{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;z-index:5;pointer-events:none}
 #hand path,.hand-motif path{stroke-linecap:round;stroke-linejoin:round}
 </style>
+<link rel="stylesheet" href="home-risk-narrative.css">
+<link rel="stylesheet" href="home-lines.css">
 </head>
 <body>
 
@@ -663,6 +589,55 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     </div>
   </section>
 
+  <section id="lines" class="lines-sec" aria-labelledby="lines-title">
+    <div class="wrap">
+      <div class="g-head">
+        <div class="g-kicker">Casualty and property</div>
+        <div class="g-title" id="lines-title" role="heading" aria-level="2">Read the risk from the record, not the headline.</div>
+      </div>
+
+      <div class="lines-panel">
+        <div>
+          <div class="lines-kicker">Casualty &middot; Energy</div>
+          <div class="lines-lede">Pipelines take the blame for wildfires. Put the federal records side by side:</div>
+          <ul class="lines-points">
+            <li>Since 2010, 1,349 pipeline incidents have involved an ignition.</li>
+            <li>3,324 wildfires were recorded within 10 miles of those incidents.</li>
+            <li><b>Only one</b> of those wildfires, the Pollard Creek Gas Fire in Fritch, Texas, in 2023, ties directly to a pipeline ignition. It was held to 0.65 acres.</li>
+          </ul>
+        </div>
+        <figure class="dots-chart">
+          <figcaption class="dots-head">
+            <span class="dots-title">Pipeline ignitions vs. wildfire activity</span>
+            <span class="dots-sub">Incidents, 2010 to present &middot; one dot, one incident</span>
+          </figcaption>
+          <div class="dots-cols">
+            <div class="dots-stack" data-count="1349"><span class="dots-n">1,349</span></div>
+            <span class="dots-label">Pipeline ignition incidents</span>
+            <div class="dots-stack" data-count="3324"><span class="dots-n">3,324</span></div>
+            <span class="dots-label">Wildfires within 10 miles</span>
+            <div class="dots-stack" data-count="1" data-punchline><span class="dots-n">1</span></div>
+            <span class="dots-label">Wildfires directly caused</span>
+          </div>
+          <div class="dots-source">Sources: Pipeline and Hazardous Materials Safety Administration (PHMSA) incident data; National Interagency Fire Center</div>
+        </figure>
+      </div>
+
+      <div class="lines-panel">
+        <div>
+          <div class="lines-kicker">Property &middot; Hail</div>
+          <div class="lines-lede">Hail severity, mapped from NOAA records.</div>
+        </div>
+        <figure class="hail-frame">
+          <div class="hail-map">
+            <iframe src="vendor/flourish-hail-map/index.html" title="Hail severity map" loading="lazy" scrolling="no" data-id="visualisation/26638881"
+                    sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe>
+          </div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <section id="human" class="globe-sec" aria-labelledby="globe-title">
     <div class="wrap">
       <div class="g-head">
@@ -798,6 +773,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     ['top',     'Start'],
     ['values',  'Values'],
     ['ways',    'Ways to work'],
+    ['lines',   'Casualty & property'],
     ['human',   'Human-centered'],
     ['contact', 'Get in touch'],
     ['careers', 'Careers']
@@ -1588,6 +1564,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   size();
 })();
 </script>
+<script src="home-lines.js"></script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
         data-selector="h1, h2, .lead, .eyebrow, .hint, .val h3, .val p, .way-kicker, .way-title, .way-desc, .node h3, .node p, .wins b, .wins span, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
         data-key="arqu-copy-home-v3"
