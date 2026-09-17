@@ -118,6 +118,8 @@ function flourishGlobal(html, name) {
   return JSON.parse(line.slice(line.indexOf('{'), line.lastIndexOf('}') + 1));
 }
 
+const INSURED_COLUMNS = new Set(['name', 'address', 'city', 'zip', 'tiv', 'latitude', 'longitude']);
+
 test('vendor/flourish-hail-map carries no insured property data and no data download', () => {
   const html = readFileSync(join(ROOT, 'vendor/flourish-hail-map/index.html'), 'utf8');
   const data = flourishGlobal(html, '_Flourish_data');
@@ -126,9 +128,18 @@ test('vendor/flourish-hail-map carries no insured property data and no data down
     if (name !== 'regions_map') assert.deepEqual(rows, [], `${name} carries rows`);
   });
   assert.ok(data.regions_map.length > 0);
-  // the column bindings name the book's own fields (NAME, ADDRESS, ZIP, TIV), so they go too
-  assert.deepEqual(flourishGlobal(html, '_Flourish_data_column_names').events, {});
-  assert.equal(flourishGlobal(html, '_Flourish_settings')['layout.footer_note_secondary'], '');
+  // a binding still names a column of the book after its rows are gone, in any dataset
+  Object.entries(flourishGlobal(html, '_Flourish_data_column_names')).forEach(([dataset, binding]) => {
+    Object.values(binding)
+      .flat()
+      .forEach((column) => {
+        assert.ok(!INSURED_COLUMNS.has(String(column).toLowerCase()), `${dataset} binds ${column}`);
+      });
+  });
+  // Flourish draws a download button from whichever footer note carries this token
+  Object.entries(flourishGlobal(html, '_Flourish_settings'))
+    .filter(([key]) => key.startsWith('layout.footer_note'))
+    .forEach(([key, note]) => assert.doesNotMatch(String(note), /download_data/, `${key} offers the data download`));
 });
 
 test('home.html pins its remote scripts with an integrity hash', () => {
