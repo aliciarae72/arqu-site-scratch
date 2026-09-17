@@ -19,6 +19,16 @@ function scriptTags(html) {
   return [...html.matchAll(/<script\b[^>]*\bsrc="([^"]+)"[^>]*>/g)].map((m) => ({ tag: m[0], src: m[1] }));
 }
 
+function stylesheetHrefs(html) {
+  return [...html.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"/g)].map((m) => m[1]);
+}
+
+function assertLocalFilesExist(page, refs) {
+  refs
+    .filter((ref) => !/^https?:/.test(ref))
+    .forEach((ref) => assert.ok(existsSync(join(ROOT, ref)), `${page} loads missing ${ref}`));
+}
+
 test('serves at least the home page', () => {
   assert.ok(PAGES.includes('home.html'));
 });
@@ -33,31 +43,39 @@ for (const page of PAGES) {
   });
 
   test(`${page}: every local script file exists`, () => {
-    scriptTags(html)
-      .filter((s) => !/^https?:/.test(s.src))
-      .forEach((s) => assert.ok(existsSync(join(ROOT, s.src)), `${page} loads missing ${s.src}`));
+    assertLocalFilesExist(
+      page,
+      scriptTags(html).map((s) => s.src),
+    );
   });
 
   test(`${page}: every local stylesheet exists`, () => {
-    [...html.matchAll(/<link\b[^>]*\brel="stylesheet"[^>]*\bhref="([^"]+)"/g)]
-      .map((m) => m[1])
-      .filter((href) => !/^https?:/.test(href))
-      .forEach((href) => assert.ok(existsSync(join(ROOT, href)), `${page} loads missing ${href}`));
+    assertLocalFilesExist(page, stylesheetHrefs(html));
   });
 }
 
 const HOME = readFileSync(join(ROOT, 'home.html'), 'utf8');
-const LINES = HOME.slice(HOME.indexOf('<section id="lines"'), HOME.indexOf('<section id="human"'));
 
-test('home.html: #lines sits between #ways and #human, and the spine lists it', () => {
+function sectionOf(html, id) {
+  const open = html.indexOf(`<section id="${id}"`);
+  return open < 0 ? '' : html.slice(open, html.indexOf('</section>', open));
+}
+
+const LINES = sectionOf(HOME, 'lines');
+
+test('home.html: #lines sits between #ways and #human, and the page wires it up', () => {
   assert.ok(HOME.indexOf('<section id="ways"') < HOME.indexOf('<section id="lines"'));
-  assert.ok(LINES.length > 0 && LINES.lastIndexOf('</section>') > 0);
+  assert.ok(HOME.indexOf('<section id="lines"') < HOME.indexOf('<section id="human"'));
+  assert.ok(LINES.includes('lines-panel'));
   assert.match(HOME, /\['lines',\s+'Casualty & property'\]/);
+  // the chart fills on .seen, which the page's own reveal pass adds
+  assert.match(HOME, /var RISE = [^;]*\.dots-chart/s);
 });
 
-// The edit layer keys saved copy by index into querySelectorAll(data-selector), so one
-// matching element above the footer moves every saved edit onto the wrong words. No
-// ancestor of #lines matches a selector's first part, so checking that part is enough.
+// The edit layer keys saved copy by element text, and falls back to DOM index when its
+// one-time migration refuses (data-migrate-nodes). Under that fallback one added element
+// matching data-selector moves saved edits onto the wrong words. No ancestor of #lines
+// matches a selector's first compound, so checking that compound is enough.
 test('home.html: #lines adds nothing the edit layer selects', () => {
   const selector = HOME.match(/id="arqu-edit-layer"[^>]*data-selector="([^"]+)"/)[1];
   const classes = new Set([...LINES.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)));
@@ -71,50 +89,34 @@ test('home.html: #lines adds nothing the edit layer selects', () => {
 });
 
 test('home.html: each printed count in the dot matrix equals its data-count', () => {
-  const stacks = [...LINES.matchAll(/data-count="(\d+)"[^>]*><span class="dots-n">([\d,]+)</g)];
+  const stacks = [...LINES.matchAll(/<div class="dots-stack"[^>]*>[\s\S]*?<\/div>/g)].map((m) => ({
+    count: m[0].match(/data-count="(\d+)"/)[1],
+    printed: m[0].match(/class="dots-n">([\d,]+)</)[1],
+  }));
   assert.deepEqual(
-    stacks.map((m) => [m[1], m[2]]),
-    [
-      ['1349', '1,349'],
-      ['3324', '3,324'],
-      ['1', '1'],
-    ],
+    stacks.map((s) => s.count),
+    ['1349', '3324', '1'],
   );
-  stacks.forEach((m) => assert.equal(Number(m[1]).toLocaleString('en-US'), m[2]));
+  stacks.forEach((s) => assert.equal(Number(s.count).toLocaleString('en-US'), s.printed));
 });
 
 test('home.html: the casualty chart names both sources, and the hail map is the self-hosted copy', () => {
-  assert.match(
-    LINES,
-    /class="dots-source">Sources: Pipeline and Hazardous Materials Safety Administration \(PHMSA\) incident data; National Interagency Fire Center</,
-  );
+  const source = LINES.match(/class="fig-source">([^<]+)</)[1];
+  assert.match(source, /Pipeline and Hazardous Materials Safety Administration/);
+  assert.match(source, /National Interagency Fire Center/);
   const src = LINES.match(/<iframe src="([^"]+)"[^>]*data-id="visualisation\/26638881"/)[1];
   assert.equal(src, 'vendor/flourish-hail-map/index.html');
   assert.ok(existsSync(join(ROOT, src)));
-  assert.match(HOME, /<script src="home-lines\.js"><\/script>/);
+  assert.ok(scriptTags(HOME).some((tag) => tag.src === 'home-lines.js'));
 });
 
 // The Flourish export carries its datasets inline, and this repo publishes to a public
 // GitHub Pages site. A re-export must not bring insured property rows or a data download.
-function stringEnd(html, quote) {
-  for (let i = quote + 1; i < html.length; i++) {
-    if (html[i] === '\\') i++;
-    else if (html[i] === '"') return i;
-  }
-  return html.length;
-}
-
+// The export writes each global on one line. A re-export that does not throws here.
 function flourishGlobal(html, name) {
-  const at = html.search(new RegExp(`\\b${name}\\s*=\\s*\\{`));
-  if (at < 0) throw new Error(`${name} is not in the export`);
-  const start = html.indexOf('{', at);
-  let depth = 0;
-  for (let i = start; i < html.length; i++) {
-    if (html[i] === '"') i = stringEnd(html, i);
-    else if (html[i] === '{') depth++;
-    else if (html[i] === '}' && --depth === 0) return JSON.parse(html.slice(start, i + 1));
-  }
-  throw new Error(`${name} never closes`);
+  const line = html.split('\n').find((l) => l.includes(`${name} = {`));
+  if (!line) throw new Error(`${name} is not in the export`);
+  return JSON.parse(line.slice(line.indexOf('{'), line.lastIndexOf('}') + 1));
 }
 
 test('vendor/flourish-hail-map carries no insured property rows and no data download', () => {
@@ -126,8 +128,7 @@ test('vendor/flourish-hail-map carries no insured property rows and no data down
 });
 
 test('home.html pins its remote scripts with an integrity hash', () => {
-  const html = readFileSync(join(ROOT, 'home.html'), 'utf8');
-  const remote = scriptTags(html).filter((s) => /^https?:/.test(s.src));
+  const remote = scriptTags(HOME).filter((s) => /^https?:/.test(s.src));
   assert.ok(remote.length > 0);
   remote.forEach((s) => assert.match(s.tag, /\bintegrity="sha(256|384|512)-/, `home.html loads ${s.src} unpinned`));
 });

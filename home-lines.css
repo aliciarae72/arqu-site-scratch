@@ -1,8 +1,5 @@
-/* #lines: one panel per line of business, the read on the left and the visual on
-   the right, stacked under 860px. No element here may match the edit layer's
-   data-selector, so the heads use .g-kicker and .g-title like the handshake section. */
-.lines-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
-.lines-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
+/* The section heads use .g-kicker and .g-title, never .eyebrow or h2: nothing here may
+   match the edit layer's data-selector (test/site.test.mjs holds that line). */
 .lines-panel{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr);gap:clamp(24px,4vw,60px);align-items:center}
 .lines-panel + .lines-panel{margin-top:clamp(48px,7vw,88px)}
 .lines-kicker{font-family:var(--font-mono);font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--purple-deep)}
@@ -15,8 +12,8 @@
   box-shadow:0 1px 2px rgba(34,31,32,.05),0 22px 44px -32px rgba(34,31,32,.35)}
 .dots-head{display:flex;flex-direction:column;gap:6px;margin-bottom:24px}
 .dots-title{font-family:var(--font-display);font-style:italic;font-size:clamp(19px,1.9vw,23px);line-height:1.15}
-.dots-sub,.dots-label,.dots-source{font-family:var(--font-mono);font-size:9.5px;line-height:1.5;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
-.dots-source{margin-top:20px}
+.dots-sub,.dots-label,.fig-source{font-family:var(--font-mono);font-size:9.5px;line-height:1.5;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.fig-source{margin-top:20px}
 
 /* stack, label, stack, label, stack, label: two rows, filled a column at a time */
 .dots-cols{display:grid;grid-template-rows:auto auto;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:10px clamp(12px,2.4vw,28px)}
@@ -25,13 +22,12 @@
 .dots-n{font-family:var(--font-display);font-weight:400;font-style:italic;font-size:clamp(20px,2.2vw,28px);line-height:1;text-align:center;font-variant-numeric:lining-nums tabular-nums}
 .dots-label{text-align:center}
 /* the full columns fill from the bottom up; the lone dot arrives last, as the punchline */
-.dots-stack svg{display:block;width:100%;height:auto;overflow:visible;
-  clip-path:inset(100% 0 0 0);transition:clip-path 1.6s var(--ease)}
-.dots-chart.in .dots-stack svg{clip-path:inset(0 0 0 0)}
-.dots-stack:nth-child(3) svg{transition-delay:.2s}
-.dots-stack[data-punchline] svg,.dots-chart.in .dots-stack[data-punchline] svg{clip-path:none}
+.dots-stack svg{display:block;width:100%;height:auto;overflow:visible}
+.dots-stack:not([data-punchline]) svg{clip-path:inset(100% 0 0 0);transition:clip-path 1.6s var(--ease)}
+.dots-chart.seen .dots-stack:not([data-punchline]) svg{clip-path:inset(0 0 0 0)}
+.dots-stack:nth-of-type(2) svg{transition-delay:.2s}
 .dots-stack[data-punchline] svg{opacity:0;transition:opacity .8s var(--ease) 1.5s}
-.dots-chart.in .dots-stack[data-punchline] svg{opacity:1}
+.dots-chart.seen .dots-stack[data-punchline] svg{opacity:1}
 .dots{fill:none;stroke:var(--ink-3);stroke-width:6.4;stroke-linecap:round}
 .dots-stack[data-punchline]{gap:20px}
 .dots-stack[data-punchline] .dots-n{color:var(--purple-deep)}
@@ -46,5 +42,5 @@
   .hail-map{aspect-ratio:1/1}
 }
 @media (prefers-reduced-motion:reduce){
-  .dots-stack svg,.dots-stack[data-punchline] svg{transition:none}
+  .dots-stack svg,.dots-stack:not([data-punchline]) svg{transition:none}
 }

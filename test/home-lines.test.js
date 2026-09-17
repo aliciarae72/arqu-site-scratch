@@ -1,5 +1,5 @@
-// Unit checks for home-lines.js. The browser is the boundary: the document and
-// IntersectionObserver are small stand-ins, and every function under test is the real one.
+// Unit checks for home-lines.js. The document is a small stand-in for the browser's,
+// and every function under test is the real one.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
@@ -10,9 +10,6 @@ class Element {
     this.tag = tag;
     this.attrs = new Map(Object.entries(attrs));
     this.children = [];
-    this.classes = new Set();
-    this.classList = { add: (name) => this.classes.add(name) };
-    this.found = {};
   }
   setAttribute(key, value) {
     this.attrs.set(key, String(value));
@@ -27,14 +24,9 @@ class Element {
     this.children.push(child);
     return child;
   }
-  querySelectorAll(selector) {
-    return this.found[selector] || [];
-  }
 }
 
-const doc = {
-  createElementNS: (ns, tag) => Object.assign(new Element(tag), { ns }),
-};
+const doc = { createElementNS: (_ns, tag) => new Element(tag) };
 
 function dotsOf(path) {
   return [...path.matchAll(/M(\d+) (\d+)h0/g)].map((m) => [Number(m[1]), Number(m[2])]);
@@ -89,51 +81,16 @@ test('buildColumn rings the lone dot of the punchline column, centred in its col
   assert.deepEqual([ring.getAttribute('cx'), ring.getAttribute('cy')], ['180', '5']);
 });
 
-test('revealOnView fills the chart only once it scrolls into view', () => {
-  const chart = new Element('figure');
-  let observer;
-  class IntersectionObserver {
-    constructor(callback) {
-      this.callback = callback;
-      observer = this;
-    }
-    observe(el) {
-      this.target = el;
-    }
-    disconnect() {
-      this.disconnected = true;
-    }
-  }
-  lines.revealOnView({ IntersectionObserver }, chart);
-  assert.equal(observer.target, chart);
-  observer.callback([{ isIntersecting: false }]);
-  assert.equal(chart.classes.has('in'), false);
-  observer.callback([{ isIntersecting: true }]);
-  assert.equal(chart.classes.has('in'), true);
-  assert.equal(observer.disconnected, true);
-});
-
-test('revealOnView fills the chart at once without IntersectionObserver', () => {
-  const chart = new Element('figure');
-  lines.revealOnView({}, chart);
-  assert.equal(chart.classes.has('in'), true);
-});
-
-test('mount draws every column and fills the chart', () => {
+test('mount draws every column of the chart', () => {
   const stacks = ['1349', '3324', '1'].map((count) => new Element('div', { 'data-count': count }));
-  const chart = Object.assign(new Element('figure'), { found: { '.dots-stack[data-count]': stacks } });
-  const page = Object.assign(Object.create(doc), {
-    querySelector: (selector) => (selector === '.dots-chart' ? chart : null),
-  });
-  lines.mount(page, {});
+  const chart = Object.assign(new Element('figure'), { querySelectorAll: () => stacks });
+  lines.mount({ ...doc, querySelector: (selector) => (selector === '.dots-chart' ? chart : null) });
   assert.deepEqual(
     stacks.map((s) => dotsOf(s.children[0].children[0].getAttribute('d')).length),
     [1349, 3324, 1],
   );
-  assert.equal(chart.classes.has('in'), true);
 });
 
 test('mount fails loudly when the section markup is missing', () => {
-  const page = Object.assign(Object.create(doc), { querySelector: () => null });
-  assert.throws(() => lines.mount(page, {}), /\.dots-chart is missing from the page/);
+  assert.throws(() => lines.mount({ ...doc, querySelector: () => null }), /\.dots-chart is missing from the page/);
 });

@@ -289,8 +289,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 .sdot:focus-visible{outline:1px solid var(--purple-deep);outline-offset:2px}
 
 /* ── the human-centered section: the handshake ─────────────────────────────── */
-.globe-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
-.globe-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
+.globe-sec,.lines-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
+.globe-sec .g-head,.lines-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
 .g-kicker{font:600 11px/1 var(--font-mono);letter-spacing:.17em;text-transform:uppercase;
   color:var(--purple-deep);margin-bottom:14px}
 .g-title{font-family:var(--font-display);font-weight:400;font-size:clamp(28px,4.4vw,46px);
@@ -619,7 +619,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
             <div class="dots-stack" data-count="1" data-punchline><span class="dots-n">1</span></div>
             <span class="dots-label">Wildfires directly caused</span>
           </div>
-          <div class="dots-source">Sources: Pipeline and Hazardous Materials Safety Administration (PHMSA) incident data; National Interagency Fire Center</div>
+          <div class="fig-source">Sources: Pipeline and Hazardous Materials Safety Administration (PHMSA) incident data; National Interagency Fire Center</div>
         </figure>
       </div>
 
@@ -633,7 +633,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
             <iframe src="vendor/flourish-hail-map/index.html" title="Hail severity map" loading="lazy" scrolling="no" data-id="visualisation/26638881"
                     sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe>
           </div>
-          <figcaption class="dots-source">Sources: NOAA Storm Events Database; NOAA Severe Weather Data Inventory</figcaption>
+          <figcaption class="fig-source">Sources: NOAA Storm Events Database; NOAA Severe Weather Data Inventory</figcaption>
         </figure>
       </div>
     </div>
@@ -848,7 +848,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 
   /* ── 3. reveals. JS applies the attribute, so with JS off nothing is hidden. ── */
   var RISE = '.hero > div, .motif, .val, .way-grid, .node, .steps li, .wins, .close > div, ' +
-             '.g-head, .globe-stage, .g-say, .g-note';
+             '.g-head, .globe-stage, .g-say, .g-note, .dots-chart';
   function reveals() {
     var els = Array.prototype.slice.call(document.querySelectorAll(RISE));
     if (!els.length) return;

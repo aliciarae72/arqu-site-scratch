@@ -1,11 +1,7 @@
 /* The casualty dot matrix in the #lines section. One dot is one record, and every
    column shares one pitch and one width, so the columns compare by area and the
    drop to a single dot reads true. */
-((root, build) => {
-  const api = build();
-  if (typeof module === 'object' && module.exports) module.exports = api;
-  if (root?.document) api.mount(root.document, root);
-})(typeof window === 'undefined' ? null : window, () => {
+(() => {
   const SVG_NS = 'http://www.w3.org/2000/svg';
   const PER_ROW = 36;
   const PITCH = 10;
@@ -17,8 +13,7 @@
   }
 
   /* bottom-up, left to right; the part row on top is centred, so a lone dot sits under its count */
-  function dotPosition(index, count) {
-    const rows = dotGrid(count).rows;
+  function dotPosition(index, count, rows = dotGrid(count).rows) {
     const row = Math.floor(index / PER_ROW);
     const inRow = row === rows - 1 ? count - row * PER_ROW : PER_ROW;
     return {
@@ -29,9 +24,10 @@
 
   /* a zero-length segment with a round cap draws one dot, so a column is one path */
   function dotPath(count) {
+    const { rows } = dotGrid(count);
     const parts = [];
     for (let i = 0; i < count; i++) {
-      const dot = dotPosition(i, count);
+      const dot = dotPosition(i, count, rows);
       parts.push(`M${dot.x} ${dot.y}h0`);
     }
     return parts.join('');
@@ -56,28 +52,15 @@
     return svg;
   }
 
-  function revealOnView(win, el) {
-    if (!win.IntersectionObserver) {
-      el.classList.add('in');
-      return;
-    }
-    const observer = new win.IntersectionObserver(
-      (entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        el.classList.add('in');
-        observer.disconnect();
-      },
-      { threshold: 0.25 },
-    );
-    observer.observe(el);
-  }
-
-  function mount(doc, win) {
+  /* The page's own reveal pass (home.html, RISE) adds .seen to .dots-chart, and
+     carries the failsafe that shows every reveal when the observer never fires. */
+  function mount(doc) {
     const chart = doc.querySelector('.dots-chart');
     if (!chart) throw new Error('home-lines: .dots-chart is missing from the page');
     for (const stack of chart.querySelectorAll('.dots-stack[data-count]')) buildColumn(doc, stack);
-    revealOnView(win, chart);
   }
 
-  return { dotGrid, dotPath, buildColumn, revealOnView, mount };
-});
+  const api = { dotGrid, dotPath, buildColumn, mount };
+  if (typeof module === 'object' && module.exports) module.exports = api;
+  else api.mount(document);
+})();
