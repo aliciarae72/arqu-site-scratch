@@ -264,30 +264,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
    elements. That is why the human section uses .g-* divs, not h2/.lead/.eyebrow.
    Lives at the END of the stylesheet on purpose — source order decides ties. */
 
-/* ── the spine: a full-height rail. Each dot sits where its section sits on the
-   page, so the rail doubles as a map, and the ink fills down it as you scroll. ── */
-.spine{position:fixed;left:max(16px,calc(var(--gutter) * .40));top:var(--spine-top,112px);bottom:28px;width:24px;
-  z-index:60;display:none;pointer-events:none;transition:top .2s linear}
-@media (min-width:1080px){.spine{display:block}}
-.spine-ln{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--line-2);transform:translateX(-50%)}
-.spine-ln::after{content:"";position:absolute;left:0;top:0;width:1px;background:var(--purple-deep);
-  height:var(--spine-p,0%);transition:height .16s linear}
-.sdots{position:absolute;inset:0;pointer-events:none}
-.sdot{appearance:none;border:0;background:transparent;padding:0;margin:0;cursor:pointer;position:absolute;left:0;
-  top:var(--y,0px);transform:translateY(-50%);width:24px;height:24px;display:flex;align-items:center;justify-content:center;
-  pointer-events:auto;transition:top .3s var(--ease)}
-.sdot i{display:block;width:7px;height:7px;border-radius:50%;background:var(--line-2);
-  transition:background .3s var(--ease),transform .3s var(--ease)}
-.sdot.past i{background:var(--purple-deep);opacity:.42}
-.sdot[aria-current="true"] i{background:var(--purple-deep);opacity:1;transform:scale(1.85)}
-.sdot b{position:absolute;left:calc(100% + 13px);white-space:nowrap;
-  font:600 10px/1 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);
-  opacity:0;transform:translateX(-4px);pointer-events:none;
-  transition:opacity .25s var(--ease),transform .25s var(--ease)}
-.sdot:hover b,.sdot:focus-visible b,.sdot[aria-current="true"] b{opacity:1;transform:none}
-.sdot[aria-current="true"] b{color:var(--purple-deep)}
-.sdot:focus-visible{outline:1px solid var(--purple-deep);outline-offset:2px}
-
 /* ── the human-centered section: the handshake ─────────────────────────────── */
 .globe-sec,.lines-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
 .globe-sec .g-head,.lines-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
@@ -322,6 +298,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 }
 
 </style>
+<link rel="stylesheet" href="home-spine.css">
 <link rel="stylesheet" href="home-hand.css">
 <link rel="stylesheet" href="home-risk-narrative.css">
 <link rel="stylesheet" href="home-lines.css">
@@ -684,6 +661,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
       <a href="#top">Privacy policy</a>
       <a href="#top">Terms of service</a>
     </nav>
+    <p class="f-note">This page loads type from Google Fonts (fonts.googleapis.com, fonts.gstatic.com) and one drawing library from jsDelivr (cdn.jsdelivr.net), so opening it shows your address to those three. The hail map reaches four more, named under the map.</p>
   </div>
 </footer>
 
