@@ -127,9 +127,21 @@ const MAP_HOSTS = [
   'openmaptiles.github.io',
 ];
 
+function disclosedHosts(html) {
+  return [...html.matchAll(/class="(?:fig-note|f-note)">([^<]+)</g)].map((m) => m[1]).join(' ');
+}
+
 test('home.html: the hail panel names every third party the map reaches', () => {
   const note = LINES.match(/class="fig-note">([^<]+)</)[1];
   MAP_HOSTS.forEach((host) => assert.ok(note.includes(host), `the note omits ${host}`));
+});
+
+// The map's hosts live inside the vendored export, so they are listed above. These are the
+// ones home.html asks for itself, and a new one has to arrive with a word to the visitor.
+test('home.html: every off-origin host in its own markup is named in a note', () => {
+  const hosts = new Set([...HOME.matchAll(/(?:src|href)="(https?:\/\/[^"]+)"/g)].map((m) => new URL(m[1]).host));
+  const notes = disclosedHosts(HOME);
+  hosts.forEach((host) => assert.ok(notes.includes(host), `home.html loads ${host}, and no note names it`));
 });
 
 const INSURED_COLUMNS = new Set(['name', 'address', 'city', 'zip', 'tiv', 'latitude', 'longitude']);
