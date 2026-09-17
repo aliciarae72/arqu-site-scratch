@@ -63,7 +63,7 @@
     });
   }
 
-  /* the rail starts under the sticky header wherever the header currently is */
+  /* the header is sticky and its height changes with the viewport, so the rail measures it */
   var header = document.querySelector('.top');
   function spineTop() {
     if (spine && header)
