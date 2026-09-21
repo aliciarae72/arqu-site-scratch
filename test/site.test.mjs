@@ -63,6 +63,7 @@ function sectionOf(html, id) {
 
 // The casualty/property material now rides the open-market carousel rather than
 // its own #lines section, so these assertions read the carousel block.
+const HAIL = JSON.parse(readFileSync(join(ROOT, 'data/hail-severity.json'), 'utf8'));
 const LINES = HOME.slice(HOME.indexOf('<div class="rn reveal"'), HOME.indexOf('<div class="how reveal"'));
 
 test('home.html: the casualty material rides the open-market carousel, and the page wires it up', () => {
@@ -111,24 +112,48 @@ test('home.html: each printed count in the dot matrix equals its data-count', ()
   stacks.forEach((s) => assert.equal(Number(s.count).toLocaleString('en-US'), s.printed));
 });
 
-test('home.html: the casualty chart names both sources, and the hail map is the self-hosted copy', () => {
+test('home.html: the casualty chart names both sources, and the hail map is drawn from this repo', () => {
   const source = LINES.match(/class="fig-source">([^<]+)</)[1];
   assert.match(source, /Pipeline and Hazardous Materials Safety Administration/);
   assert.match(source, /National Interagency Fire Center/);
-  const src = LINES.match(/<iframe src="([^"]+)"[^>]*data-id="visualisation\/26638881"/)[1];
-  assert.equal(src, 'vendor/flourish-hail-map/index.html');
-  assert.ok(existsSync(join(ROOT, src)));
+  const src = LINES.match(/<img src="(hail-severity\.svg)"/)[1];
+  assert.ok(existsSync(join(ROOT, src)), 'the map SVG ships with the site');
   assert.ok(scriptTags(HOME).some((tag) => tag.src === 'home-lines.js'));
 });
 
-// The Flourish export carries its datasets inline, and this repo publishes to a public
-// GitHub Pages site. A re-export must not bring insured property rows or a data download.
-// The export writes each global on one line. A re-export that does not throws here.
-function flourishGlobal(html, name) {
-  const line = html.split('\n').find((l) => l.includes(`${name} = {`));
-  if (!line) throw new Error(`${name} is not in the export`);
-  return JSON.parse(line.slice(line.indexOf('{'), line.lastIndexOf('}') + 1));
-}
+// The map is markup now, not an opaque embed, so its parts can be asserted the way
+// the casualty chart's are.
+test('home.html: the hail slide\'s counts match the data it ships', () => {
+  const fig = LINES.slice(LINES.indexOf('02 &middot; Property'));
+  const tally = {};
+  HAIL.cells.forEach(([c]) => {
+    tally[HAIL.categories[c]] = (tally[HAIL.categories[c]] || 0) + 1;
+  });
+  const shown = (n) => assert.ok(fig.includes(n.toLocaleString('en-US')), `the slide does not say ${n}`);
+  shown(HAIL.cells.length);
+  ['Very Low', 'Low', 'Moderate'].forEach((c) => shown(tally[c]));
+  // The two that carry the point are spelled out rather than numeric.
+  assert.equal(tally.High, 40);
+  assert.match(fig, /Forty cells rate High, and one rates Very High/);
+  assert.equal(tally['Very High'], 1);
+});
+
+test('home.html: the hail figure carries a caption, a legend and its sources', () => {
+  const fig = LINES.slice(LINES.indexOf('<figure class="hail-frame">'));
+  assert.match(fig, /class="dots-title">Hail severity, Colorado</);
+  assert.match(fig, /class="dots-sub">NOAA storm records/);
+  // One legend row per severity class the data actually carries, same order.
+  const swatches = [...fig.matchAll(/class="hail-key"[\s\S]*?<\/ul>/g)][0][0];
+  const labels = [...swatches.matchAll(/<\/i>([^<]+)</g)].map((m) => m[1].trim().toLowerCase());
+  assert.deepEqual(labels, HAIL.categories.map((c) => c.toLowerCase()));
+  const source = [...fig.matchAll(/class="fig-source">([^<]+)</g)].at(-1)[1];
+  assert.match(source, /NOAA Storm Events Database/);
+  assert.match(source, /NOAA Severe Weather Data Inventory/);
+  // The alt text has to carry the finding, not just name the file.
+  const alt = fig.match(/alt="([^"]+)"/)[1];
+  assert.match(alt, /11,963/);
+  assert.match(alt, /Very High/i);
+});
 
 // Rendering the map fetches tiles and fonts from these four at run time, measured in Chrome.
 // The page says so, so a host added to the frame without a word to the visitor fails here.
@@ -143,9 +168,18 @@ function disclosedHosts(html) {
   return [...html.matchAll(/class="(?:fig-note|f-note)">([^<]+)</g)].map((m) => m[1]).join(' ');
 }
 
-test('home.html: the footer names every third party the map reaches', () => {
+// The map used to fetch tiles and fonts from these four at render time. It is drawn
+// from this repo now, so the guarantee flips: they must appear NOWHERE, and the
+// footer must not keep promising a visitor that it reaches them.
+test('home.html: the hail map reaches none of the hosts the embed used to', () => {
+  const svg = readFileSync(join(ROOT, 'hail-severity.svg'), 'utf8');
+  MAP_HOSTS.forEach((host) => {
+    assert.ok(!HOME.includes(host), `home.html still reaches ${host}`);
+    assert.ok(!svg.includes(host), `the map SVG still reaches ${host}`);
+  });
+  assert.doesNotMatch(svg, /<(script|image|use\s+[^>]*href="http)/, 'the map SVG pulls something in');
   const note = HOME.match(/class="f-note">([^<]+)</)[1];
-  MAP_HOSTS.forEach((host) => assert.ok(note.includes(host), `the footer note omits ${host}`));
+  assert.match(note, /hail map is drawn from this site and reaches nobody/);
 });
 
 // The map's hosts live inside the vendored export, so they are listed above. These are the
@@ -158,26 +192,24 @@ test('home.html: every off-origin host in its own markup is named in a note', ()
 
 const INSURED_COLUMNS = new Set(['name', 'address', 'city', 'zip', 'tiv', 'latitude', 'longitude']);
 
-test('vendor/flourish-hail-map carries no insured property data and no data download', () => {
-  const html = readFileSync(join(ROOT, 'vendor/flourish-hail-map/index.html'), 'utf8');
-  const data = flourishGlobal(html, '_Flourish_data');
-  // regions_map is the NOAA hail-severity grid; every other dataset held the book
-  Object.entries(data).forEach(([name, rows]) => {
-    if (name !== 'regions_map') assert.deepEqual(rows, [], `${name} carries rows`);
+// The vendored export carried the whole book inline and had to be frisked for insured
+// rows on every re-export. The extracted data is the same guarantee on a far smaller
+// surface: severity plus geometry, nothing else, and it is readable in one glance.
+test('data/hail-severity.json carries severity and geometry, nothing about an insured', () => {
+  assert.deepEqual(Object.keys(HAIL).sort(), ['categories', 'cells']);
+  assert.deepEqual(HAIL.categories, ['Very Low', 'Low', 'Moderate', 'High', 'Very High']);
+  assert.equal(HAIL.cells.length, 11963);
+  HAIL.cells.forEach(([category, ring], i) => {
+    assert.ok(Number.isInteger(category) && HAIL.categories[category], `cell ${i} has no severity`);
+    assert.equal(ring.length >= 3, true, `cell ${i} is not a polygon`);
+    ring.forEach(([lon, lat]) => {
+      assert.equal(typeof lon === 'number' && typeof lat === 'number', true, `cell ${i} is not numeric`);
+    });
   });
-  assert.ok(data.regions_map.length > 0);
-  // a binding still names a column of the book after its rows are gone, in any dataset
-  Object.entries(flourishGlobal(html, '_Flourish_data_column_names')).forEach(([dataset, binding]) => {
-    Object.values(binding)
-      .flat()
-      .forEach((column) => {
-        assert.ok(!INSURED_COLUMNS.has(String(column).toLowerCase()), `${dataset} binds ${column}`);
-      });
-  });
-  // Flourish draws a download button from whichever footer note carries this token
-  Object.entries(flourishGlobal(html, '_Flourish_settings'))
-    .filter(([key]) => key.startsWith('layout.footer_note'))
-    .forEach(([key, note]) => assert.doesNotMatch(String(note), /download_data/, `${key} offers the data download`));
+  // A cell is a two-slot array. An insured column could only arrive as a third.
+  HAIL.cells.forEach((cell, i) => assert.equal(cell.length, 2, `cell ${i} carries an extra field`));
+  const raw = readFileSync(join(ROOT, 'data/hail-severity.json'), 'utf8').toLowerCase();
+  INSURED_COLUMNS.forEach((column) => assert.ok(!raw.includes(`"${column}"`), `the data names ${column}`));
 });
 
 test('home.html pins its remote scripts with an integrity hash', () => {

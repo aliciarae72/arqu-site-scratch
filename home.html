@@ -487,14 +487,30 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
                   <div class="rn-say">
                     <span class="rn-kicker">02 &middot; Property &middot; Hail</span>
                     <p class="rn-title">Hail severity, mapped from NOAA records.</p>
+                    <ul class="lines-points">
+                      <li>11,963 grid cells carry a severity rating. 10,544 of them rate Very Low.</li>
+                      <li>1,202 rate Low and 176 Moderate, almost all of them along the Front Range and out onto the eastern plains.</li>
+                      <li><b>Forty cells rate High, and one rates Very High</b> &mdash; near Colorado Springs. Severity is not spread across the state; it sits in a corridor.</li>
+                    </ul>
                   </div>
                   <div class="rn-vis rn-vis--figure">
                     <figure class="hail-frame">
+                      <figcaption class="dots-head">
+                        <span class="dots-title">Hail severity, Colorado</span>
+                        <span class="dots-sub">NOAA storm records &middot; one cell, one grid square</span>
+                      </figcaption>
                       <div class="hail-map">
-                        <iframe src="vendor/flourish-hail-map/index.html" title="Hail severity map" loading="lazy" scrolling="no" data-id="visualisation/26638881"
-                                sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe>
+                        <img src="hail-severity.svg" width="1000" height="892" loading="lazy" decoding="async"
+                             alt="Hail severity across Colorado from NOAA storm records. Nearly all of the 11,963 grid cells rate Very Low; the Low, Moderate and High cells crowd the Front Range and the eastern plains, and a single Very High cell sits near Colorado Springs.">
                       </div>
-                      <figcaption class="fig-source">Sources: NOAA Storm Events Database; NOAA Severe Weather Data Inventory</figcaption>
+                      <ul class="hail-key">
+                        <li><i style="background:#e9e4dc"></i>Very low</li>
+                        <li><i style="background:#b9b1f5"></i>Low</li>
+                        <li><i style="background:#8c82fa"></i>Moderate</li>
+                        <li><i style="background:#5e54c8"></i>High</li>
+                        <li><i style="background:#221f20"></i>Very high</li>
+                      </ul>
+                      <div class="fig-source">Sources: NOAA Storm Events Database; NOAA Severe Weather Data Inventory</div>
                     </figure>
                   </div>
                 </div>
@@ -604,7 +620,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
       <a href="#top">Privacy policy</a>
       <a href="#top">Terms of service</a>
     </nav>
-    <p class="f-note">This page loads type from Google Fonts (fonts.googleapis.com, fonts.gstatic.com) and one drawing library from jsDelivr (cdn.jsdelivr.net). The hail map adds Esri (server.arcgisonline.com), Flourish (tiles.flourish.studio, public.flourish.studio) and OpenMapTiles (openmaptiles.github.io). Opening this page shows your address to all seven.</p>
+    <p class="f-note">This page loads type from Google Fonts (fonts.googleapis.com, fonts.gstatic.com) and one drawing library from jsDelivr (cdn.jsdelivr.net), so opening it shows your address to those three. The hail map is drawn from this site and reaches nobody.</p>
   </div>
 </footer>
 
