@@ -441,63 +441,61 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
           </div>
           <div class="rn reveal" style="--i:3" data-rn>
             <div class="rn-head">
-              <p class="eyebrow">Inside the submission</p>
-              <h3>What an underwriter sees in 93 seconds</h3>
-              <p class="rn-lede">Every submission we send carries a risk narrative: a short slideshow, one visual and one plain-English read per slide, built from the documents you already sent us.</p>
+              <p class="eyebrow">Casualty and property</p>
+              <h3>Read the risk from the record, not the headline.</h3>
+              <p class="rn-lede">Two reads from the federal record, one per slide: what the file actually says once you put the sources side by side.</p>
             </div>
 
-            <div class="rn-show" data-rn-show role="region" aria-roledescription="carousel" aria-label="Risk narrative" tabindex="0">
+            <div class="rn-show" data-rn-show role="region" aria-roledescription="carousel" aria-label="Casualty and property" tabindex="0">
               <div class="rn-slides">
-                <!-- Wildfire and Seismic are the two perils the risk-narrative export actually
-                     supports. Both read as a named hazard class plus the distance/date evidence
-                     beside it, grounded in a real (anonymized) submission — never a synthesized
-                     0-100 score. Do not add other perils here without a real data source. -->
-                <div class="rn-slide is-on" role="group" aria-roledescription="slide" aria-label="1 of 3, Wildfire">
-                  <div class="rn-vis" data-vis="wildfire"></div>
+                <div class="rn-slide is-on" role="group" aria-roledescription="slide" aria-label="1 of 2, Casualty and energy">
                   <div class="rn-say">
-                    <span class="rn-kicker">01 &middot; Wildfire</span>
-                    <p class="rn-title">Moderately Low burn probability, on a very defensible site.</p>
-                    <p class="rn-read">Suppression difficulty rates Lowest Difficulty (0&ndash;10). The closest historical fire, 2019&rsquo;s McKay Butte, stopped roughly 2.5 miles out.</p>
-                    <dl class="rn-facts">
-                      <div><dt>Burn probability</dt><dd>Moderately Low</dd></div>
-                      <div><dt>Suppression difficulty</dt><dd>Lowest Difficulty (0&ndash;10)</dd></div>
-                      <div><dt>Closest fire on record</dt><dd>McKay Butte, 2019 &middot; ~2.5 mi</dd></div>
-                    </dl>
+                    <span class="rn-kicker">01 &middot; Casualty &middot; Energy</span>
+                    <p class="rn-title">Pipelines take the blame for wildfires. Put the federal records side by side:</p>
+                    <ul class="lines-points">
+                      <li>Since 2010, 1,349 pipeline incidents have involved an ignition.</li>
+                      <li>3,324 wildfires were recorded within 10 miles of those incidents.</li>
+                      <li><b>Only one</b> of those wildfires, the Pollard Creek Gas Fire in Fritch, Texas, in 2023, ties directly to a pipeline ignition. It was held to 0.65 acres.</li>
+                    </ul>
+                  </div>
+                  <div class="rn-vis">
+                    <figure class="dots-chart">
+                      <figcaption class="dots-head">
+                        <span class="dots-title">Pipeline ignitions vs. wildfire activity</span>
+                        <span class="dots-sub">Incidents, 2010 to present &middot; one dot, one incident</span>
+                      </figcaption>
+                      <div class="dots-cols">
+                        <div class="dots-col">
+                          <div class="dots-stack" data-count="1349"><span class="dots-n">1,349</span></div>
+                          <span class="dots-label">Pipeline ignition incidents</span>
+                        </div>
+                        <div class="dots-col">
+                          <div class="dots-stack" data-count="3324"><span class="dots-n">3,324</span></div>
+                          <span class="dots-label">Wildfires within 10 miles</span>
+                        </div>
+                        <div class="dots-col">
+                          <div class="dots-stack" data-count="1" data-punchline><span class="dots-n">1</span></div>
+                          <span class="dots-label">Wildfires directly caused</span>
+                        </div>
+                      </div>
+                      <div class="fig-source">Sources: Pipeline and Hazardous Materials Safety Administration (PHMSA) incident data; National Interagency Fire Center</div>
+                    </figure>
                   </div>
                 </div>
 
-                <div class="rn-slide" role="group" aria-roledescription="slide" aria-label="2 of 3, Seismic">
-                  <div class="rn-vis" data-vis="seismic"></div>
+                <div class="rn-slide" role="group" aria-roledescription="slide" aria-label="2 of 2, Property and hail">
                   <div class="rn-say">
-                    <span class="rn-kicker">02 &middot; Seismic</span>
-                    <p class="rn-title">Background seismicity, not an active-fault concern.</p>
-                    <p class="rn-read">Over 20+ years of records, the largest nearby seismic event measured M2.43 against a mean of M1.42.</p>
-                    <dl class="rn-facts">
-                      <div><dt>Largest nearby event</dt><dd>M2.43</dd></div>
-                      <div><dt>Mean event</dt><dd>M1.42</dd></div>
-                      <div><dt>Record</dt><dd>20+ years</dd></div>
-                    </dl>
+                    <span class="rn-kicker">02 &middot; Property &middot; Hail</span>
+                    <p class="rn-title">Hail severity, mapped from NOAA records.</p>
                   </div>
-                </div>
-
-                <div class="rn-slide" role="group" aria-roledescription="slide" aria-label="3 of 3, Loss history">
-                  <div class="rn-vis" data-vis="loss">
-                    <div class="rn-bars" data-rn-bars>
-                      <button class="rn-bar" type="button" data-year="2021" data-incurred="0" data-claims="0" data-note="Clean year. No reported claims."><i></i><span>2021</span></button>
-                      <button class="rn-bar" type="button" data-year="2022" data-incurred="48000" data-claims="2" data-note="Two small water-damage claims, both closed."><i></i><span>2022</span></button>
-                      <button class="rn-bar" type="button" data-year="2023" data-incurred="212000" data-claims="3" data-note="One equipment loss drives the year. Reserves closed out at 78 percent of the original figure."><i></i><span>2023</span></button>
-                      <button class="rn-bar" type="button" data-year="2024" data-incurred="96000" data-claims="1" data-note="Single subcontractor liability claim, still open at reserve." data-start><i></i><span>2024</span></button>
-                      <button class="rn-bar" type="button" data-year="2025" data-incurred="12000" data-claims="1" data-note="Minor property claim. Loss ratio back inside target."><i></i><span>2025</span></button>
-                    </div>
-                  </div>
-                  <div class="rn-say">
-                    <span class="rn-kicker">03 &middot; Loss history</span>
-                    <p class="rn-title" data-rn-loss-title>Five years of losses, incurred.</p>
-                    <div class="rn-figs">
-                      <span class="rn-fig"><b data-rn-incurred>$96,000</b><i data-rn-year>2024 incurred</i></span>
-                      <span class="rn-fig"><b data-rn-claims>1</b><i>Claims</i></span>
-                    </div>
-                    <p class="rn-read" data-rn-year-note>Single subcontractor liability claim, still open at reserve.</p>
+                  <div class="rn-vis">
+                    <figure class="hail-frame">
+                      <div class="hail-map">
+                        <iframe src="vendor/flourish-hail-map/index.html" title="Hail severity map" loading="lazy" scrolling="no" data-id="visualisation/26638881"
+                                sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe>
+                      </div>
+                      <figcaption class="fig-source">Sources: NOAA Storm Events Database; NOAA Severe Weather Data Inventory</figcaption>
+                    </figure>
                   </div>
                 </div>
               </div>
@@ -505,15 +503,14 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
               <div class="rn-nav">
                 <button class="rn-arrow" type="button" data-rn-prev aria-label="Previous slide">&larr;</button>
                 <div class="rn-pips" role="tablist" aria-label="Slides">
-                  <button class="rn-pip" type="button" role="tab" aria-selected="true" aria-label="Wildfire"></button>
-                  <button class="rn-pip" type="button" role="tab" aria-selected="false" aria-label="Seismic"></button>
-                  <button class="rn-pip" type="button" role="tab" aria-selected="false" aria-label="Loss history"></button>
+                  <button class="rn-pip" type="button" role="tab" aria-selected="true" aria-label="Casualty and energy"></button>
+                  <button class="rn-pip" type="button" role="tab" aria-selected="false" aria-label="Property and hail"></button>
                 </div>
                 <button class="rn-arrow" type="button" data-rn-next aria-label="Next slide">&rarr;</button>
-                <span class="rn-count" data-rn-count aria-live="polite">01 / 03 &middot; Wildfire</span>
+                <span class="rn-count" data-rn-count aria-live="polite">01 / 02 &middot; Casualty &middot; Energy</span>
               </div>
             </div>
-            <p class="rn-foot">Wildfire and seismic reads are drawn from an actual submission's risk narrative, anonymized. Loss history is representative of the format, not any one account.</p>
+            <p class="rn-foot">Both reads are drawn from the federal record, not from any one account.</p>
           </div>
 
           <div class="how reveal" style="--i:4">
@@ -557,60 +554,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
             <div class="center reveal" style="--i:3"><a class="go" href="#contact">Talk to us about a program &rarr;</a></div>
           </div>
         </div>
-      </div>
-    </div>
-  </section>
-
-  <section id="lines" class="lines-sec" aria-labelledby="lines-title">
-    <div class="wrap">
-      <div class="g-head">
-        <div class="g-kicker">Casualty and property</div>
-        <div class="g-title" id="lines-title" role="heading" aria-level="2">Read the risk from the record, not the headline.</div>
-      </div>
-
-      <div class="lines-panel">
-        <div>
-          <div class="lines-kicker">Casualty &middot; Energy</div>
-          <div class="lines-lede">Pipelines take the blame for wildfires. Put the federal records side by side:</div>
-          <ul class="lines-points">
-            <li>Since 2010, 1,349 pipeline incidents have involved an ignition.</li>
-            <li>3,324 wildfires were recorded within 10 miles of those incidents.</li>
-            <li><b>Only one</b> of those wildfires, the Pollard Creek Gas Fire in Fritch, Texas, in 2023, ties directly to a pipeline ignition. It was held to 0.65 acres.</li>
-          </ul>
-        </div>
-        <figure class="dots-chart">
-          <figcaption class="dots-head">
-            <span class="dots-title">Pipeline ignitions vs. wildfire activity</span>
-            <span class="dots-sub">Incidents, 2010 to present &middot; one dot, one incident</span>
-          </figcaption>
-          <div class="dots-cols">
-            <div class="dots-stack" data-count="1349"><span class="dots-n">1,349</span></div>
-            <span class="dots-label">Pipeline ignition incidents</span>
-            <div class="dots-stack" data-count="3324"><span class="dots-n">3,324</span></div>
-            <span class="dots-label">Wildfires within 10 miles</span>
-            <div class="dots-stack" data-count="1" data-punchline><span class="dots-n">1</span></div>
-            <span class="dots-label">Wildfires directly caused</span>
-          </div>
-          <div class="fig-source">Sources: Pipeline and Hazardous Materials Safety Administration (PHMSA) incident data; National Interagency Fire Center</div>
-        </figure>
-      </div>
-
-      <div class="lines-panel">
-        <div>
-          <div class="lines-kicker">Property &middot; Hail</div>
-          <div class="lines-lede">Hail severity, mapped from NOAA records.</div>
-        </div>
-        <figure class="hail-frame">
-          <!-- The hail data ships from this repo, the basemap under it does not: the frame
-               fetches tiles and fonts from four third parties at render time. The note below
-               says so, because a visitor's IP reaches all four. -->
-          <div class="hail-map">
-            <iframe src="vendor/flourish-hail-map/index.html" title="Hail severity map" loading="lazy" scrolling="no" data-id="visualisation/26638881"
-                    sandbox="allow-same-origin allow-scripts allow-popups allow-popups-to-escape-sandbox allow-top-navigation-by-user-activation"></iframe>
-          </div>
-          <figcaption class="fig-source">Sources: NOAA Storm Events Database; NOAA Severe Weather Data Inventory</figcaption>
-          <p class="fig-note">The hail data is served from this site. The basemap under it is not: it loads from Esri (server.arcgisonline.com), Flourish (tiles.flourish.studio, public.flourish.studio) and OpenMapTiles (openmaptiles.github.io). Opening this page shows your address to those four.</p>
-        </figure>
       </div>
     </div>
   </section>
@@ -661,7 +604,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
       <a href="#top">Privacy policy</a>
       <a href="#top">Terms of service</a>
     </nav>
-    <p class="f-note">This page loads type from Google Fonts (fonts.googleapis.com, fonts.gstatic.com) and one drawing library from jsDelivr (cdn.jsdelivr.net), so opening it shows your address to those three. The hail map reaches four more, named under the map.</p>
+    <p class="f-note">This page loads type from Google Fonts (fonts.googleapis.com, fonts.gstatic.com) and one drawing library from jsDelivr (cdn.jsdelivr.net). The hail map adds Esri (server.arcgisonline.com), Flourish (tiles.flourish.studio, public.flourish.studio) and OpenMapTiles (openmaptiles.github.io). Opening this page shows your address to all seven.</p>
   </div>
 </footer>
 
@@ -751,7 +694,6 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     ['top',     'Start'],
     ['values',  'Values'],
     ['ways',    'Ways to work'],
-    ['lines',   'Casualty & property'],
     ['human',   'Human-centered'],
     ['contact', 'Get in touch'],
     ['careers', 'Careers']
@@ -1209,11 +1151,10 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   /* ── page marks ─────────────────────────────────────────────────────────── */
   var layer = document.getElementById('hand');
   var MARKS = [
-    { sel: '#hero-title', text: 'beyond', kind: 'circle', seed: 9, wait: 1100 },
     { sel: '.val:nth-child(2) h3', text: 'Human touch', kind: 'underline', seed: 27, wait: 800 },
     { sel: '.way-grid .or', text: 'or', kind: 'circle', seed: 5, wait: 700, ink: true },
     { sel: '[data-rn] .rn-head h3', text: '93 seconds', kind: 'underline', seed: 12, wait: 1300 },
-    { sel: '#close-title + p', text: 'A broker', kind: 'underline', seed: 31, wait: 700 }
+    { sel: '#close-title + p', text: 'A broker', kind: 'underline', seed: 31, wait: 700, calm: true }
   ];
 
   function phraseRect(el, text) {
@@ -1238,6 +1179,12 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
         b.w * (big ? 1.08 : 1.3) + (big ? 18 : 22), b.h * (big ? 1.0 : 1.35) + 8, o);
     }
     var y = b.y + b.h + 2;
+    if (m.calm) {
+      // Two points and almost no bowing: still drawn by hand, but it reads as
+      // an underline rather than a scribble over the word.
+      o.roughness = 0.6; o.bowing = 0.6;
+      return rc.linearPath([[b.x - 2, y + 2], [b.x + b.w + 3, y + 1]], o);
+    }
     o.roughness = 1.3; o.bowing = 2.2;
     return rc.linearPath([[b.x - 4, y + 2], [b.x + b.w * 0.4, y + 4], [b.x + b.w * 0.75, y], [b.x + b.w + 6, y + 3]], o);
   }
@@ -1286,12 +1233,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     var svg = document.querySelector('.hand-motif');
     if (!svg) return;
     var rc = rough.svg(svg), g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    var fig = { stroke: INK, strokeWidth: 2.1, roughness: 0.9, bowing: 1 };
     var ask = rc.ellipse(136, 251, 156, 150, opts(3, { stroke: INK, strokeWidth: 1.5, roughness: 1.5 }));
-    [rc.circle(40, 316, 27, opts(21, fig)), rc.linearPath([[40, 330], [41, 378]], opts(22, fig)),
-     rc.linearPath([[41, 378], [28, 413]], opts(23, fig)), rc.linearPath([[41, 378], [55, 412]], opts(24, fig)),
-     rc.linearPath([[40, 344], [26, 372]], opts(25, fig)),
-     rc.linearPath([[40, 343], [61, 326], [81, 306]], opts(26, fig))].forEach(function (n) { g.appendChild(n); });
     var arrow = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     var a = { stroke: INK, strokeWidth: 1.3, roughness: 1, bowing: 1 };
     arrow.appendChild(rc.curve([[182, 350], [174, 337], [158, 330]], opts(40, a)));

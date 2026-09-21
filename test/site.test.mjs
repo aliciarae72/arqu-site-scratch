@@ -61,13 +61,19 @@ function sectionOf(html, id) {
   return open < 0 ? '' : html.slice(open, html.indexOf('</section>', open));
 }
 
-const LINES = sectionOf(HOME, 'lines');
+// The casualty/property material now rides the open-market carousel rather than
+// its own #lines section, so these assertions read the carousel block.
+const LINES = HOME.slice(HOME.indexOf('<div class="rn reveal"'), HOME.indexOf('<div class="how reveal"'));
 
-test('home.html: #lines sits between #ways and #human, and the page wires it up', () => {
-  assert.ok(HOME.indexOf('<section id="ways"') < HOME.indexOf('<section id="lines"'));
-  assert.ok(HOME.indexOf('<section id="lines"') < HOME.indexOf('<section id="human"'));
-  assert.ok(LINES.includes('lines-panel'));
-  assert.match(HOME, /\['lines',\s+'Casualty & property'\]/);
+test('home.html: the casualty material rides the open-market carousel, and the page wires it up', () => {
+  // It sits inside #ways now, above "How it works" and below the three verticals.
+  assert.ok(HOME.indexOf('<div class="branches">') < HOME.indexOf('<div class="rn reveal"'));
+  assert.ok(HOME.indexOf('<div class="rn reveal"') < HOME.indexOf('<div class="how reveal"'));
+  assert.ok(!HOME.includes('<section id="lines"'), 'the standalone #lines section is gone');
+  assert.ok(!/\['lines',/.test(HOME), 'the spine no longer points at a section that does not exist');
+  // The slides and pagination she asked to keep still carry it.
+  assert.equal((LINES.match(/class="rn-slide[ "]/g) || []).length, 2);
+  assert.equal((LINES.match(/class="rn-pip"/g) || []).length, 2);
   // the chart fills on .seen, which the page's own reveal pass adds
   assert.match(HOME, /var RISE = [^;]*\.dots-chart/s);
 });
@@ -75,20 +81,26 @@ test('home.html: #lines sits between #ways and #human, and the page wires it up'
 // Under the edit layer's DOM-index fallback (when its one-time migration refuses), one
 // added element matching data-selector moves saved edits onto the wrong words. No ancestor
 // of #lines matches a selector's first compound, so checking that compound is enough.
-test('home.html: #lines adds nothing the edit layer selects', () => {
+// Scoped to the two figures, not the whole carousel: the carousel's head carried
+// an .eyebrow long before this material moved in, and the guard is about what the
+// move ADDS, not about re-litigating the block it landed in.
+const MOVED = [...LINES.matchAll(/<div class="rn-vis">[\s\S]*?<\/figure>/g)].map((m) => m[0]).join('\n');
+
+test('home.html: the moved casualty material adds nothing the edit layer selects', () => {
   const selector = HOME.match(/id="arqu-edit-layer"[^>]*data-selector="([^"]+)"/)[1];
-  const classes = new Set([...LINES.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)));
+  const classes = new Set([...MOVED.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)));
+  assert.ok(MOVED.includes('dots-chart') && MOVED.includes('hail-frame'), 'both figures are in scope');
   selector
     .split(',')
     .map((s) => s.trim().split(/\s+/)[0])
     .forEach((head) => {
-      if (head.startsWith('.')) assert.ok(!classes.has(head.slice(1)), `#lines uses ${head}`);
-      else assert.doesNotMatch(LINES, new RegExp(`<${head}\\b`), `#lines uses <${head}>`);
+      if (head.startsWith('.')) assert.ok(!classes.has(head.slice(1)), `the moved material uses ${head}`);
+      else assert.doesNotMatch(MOVED, new RegExp(`<${head}\\b`), `the moved material uses <${head}>`);
     });
 });
 
 test('home.html: each printed count in the dot matrix equals its data-count', () => {
-  const stacks = [...LINES.matchAll(/<div class="dots-stack"[^>]*>[\s\S]*?<\/div>/g)].map((m) => ({
+  const stacks = [...LINES.matchAll(/<div class="dots-stack"[^>]*>[\s\S]*?<\/span>/g)].map((m) => ({
     count: m[0].match(/data-count="(\d+)"/)[1],
     printed: m[0].match(/class="dots-n">([\d,]+)</)[1],
   }));
@@ -131,9 +143,9 @@ function disclosedHosts(html) {
   return [...html.matchAll(/class="(?:fig-note|f-note)">([^<]+)</g)].map((m) => m[1]).join(' ');
 }
 
-test('home.html: the hail panel names every third party the map reaches', () => {
-  const note = LINES.match(/class="fig-note">([^<]+)</)[1];
-  MAP_HOSTS.forEach((host) => assert.ok(note.includes(host), `the note omits ${host}`));
+test('home.html: the footer names every third party the map reaches', () => {
+  const note = HOME.match(/class="f-note">([^<]+)</)[1];
+  MAP_HOSTS.forEach((host) => assert.ok(note.includes(host), `the footer note omits ${host}`));
 });
 
 // The map's hosts live inside the vendored export, so they are listed above. These are the

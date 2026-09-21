@@ -19,8 +19,9 @@
 .f-note{flex-basis:100%;margin:18px 0 0;max-width:86ch;color:var(--ink-3);font-size:13px;line-height:1.5}
 
 /* stack, label, stack, label, stack, label: two rows, filled a column at a time */
-.dots-cols{display:grid;grid-template-rows:auto auto;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:10px clamp(12px,2.4vw,28px)}
-.dots-stack{display:flex;flex-direction:column;justify-content:flex-end;gap:8px}
+.dots-cols{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(0,1fr);gap:10px clamp(12px,2.4vw,28px);align-items:end}
+.dots-col{display:grid;grid-template-rows:auto 1fr auto;gap:10px;min-width:0}
+.dots-stack{display:flex;flex-direction:column;justify-content:flex-end;gap:8px;min-width:0}
 /* lining figures: the display serif's old-style 1 reads as a capital I */
 .dots-n{font-family:var(--font-display);font-weight:400;font-style:italic;font-size:clamp(20px,2.2vw,28px);line-height:1;text-align:center;font-variant-numeric:lining-nums tabular-nums}
 .dots-label{text-align:center}
@@ -28,7 +29,7 @@
 .dots-stack svg{display:block;width:100%;height:auto;overflow:visible}
 .dots-stack:not([data-punchline]) svg{clip-path:inset(100% 0 0 0);transition:clip-path 1.6s var(--ease)}
 .dots-chart.seen .dots-stack:not([data-punchline]) svg{clip-path:inset(0 0 0 0)}
-.dots-stack:nth-of-type(2) svg{transition-delay:.2s}
+.dots-col:nth-of-type(2) .dots-stack svg{transition-delay:.2s}
 .dots-stack[data-punchline] svg{opacity:0;transition:opacity .8s var(--ease) 1.5s}
 .dots-chart.seen .dots-stack[data-punchline] svg{opacity:1}
 .dots{fill:none;stroke:var(--ink-3);stroke-width:6.4;stroke-linecap:round}
@@ -37,7 +38,7 @@
 .dots-stack[data-punchline] .dots{stroke:var(--purple-deep)}
 .dots-ring{fill:none;stroke:var(--purple-deep);stroke-width:1;vector-effect:non-scaling-stroke}
 
-.hail-map{position:relative;aspect-ratio:4/3;border-radius:10px;overflow:hidden;background:var(--bg)}
+.hail-map{position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;background:var(--bg);border:1px solid var(--line-2)}
 .hail-map iframe{position:absolute;inset:0;width:100%;height:100%;border:0}
 
 @media (max-width:860px){
