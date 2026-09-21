@@ -84,7 +84,7 @@ test('home.html: the casualty material rides the open-market carousel, and the p
 // Scoped to the two figures, not the whole carousel: the carousel's head carried
 // an .eyebrow long before this material moved in, and the guard is about what the
 // move ADDS, not about re-litigating the block it landed in.
-const MOVED = [...LINES.matchAll(/<div class="rn-vis">[\s\S]*?<\/figure>/g)].map((m) => m[0]).join('\n');
+const MOVED = [...LINES.matchAll(/<div class="rn-vis[^"]*">[\s\S]*?<\/figure>/g)].map((m) => m[0]).join('\n');
 
 test('home.html: the moved casualty material adds nothing the edit layer selects', () => {
   const selector = HOME.match(/id="arqu-edit-layer"[^>]*data-selector="([^"]+)"/)[1];
