@@ -1,12 +1,12 @@
 /* ---- risk narrative: a slideshow, one visual on the left, the read on the right ---- */
 .rn{padding-top:34px;margin-top:10px}
 .rn-head{max-width:62ch;margin-bottom:28px}
-.rn-head h3{font-size:clamp(23px,2.4vw,29px);line-height:1.1;font-weight:400;font-style:italic;letter-spacing:-.02em;margin:8px 0 10px}
+.rn-head h3{font-family:var(--font-display);font-size:clamp(28px,4.4vw,46px);line-height:1.06;font-weight:400;font-style:normal;letter-spacing:-.02em;margin:8px 0 12px;max-width:18ch}
 .rn-lede{color:var(--ink-2);font-size:16px}
 .rn-show{position:relative;outline:none}
 .rn-show:focus-visible{outline:1px solid var(--purple-deep);outline-offset:10px;border-radius:22px}
 .rn-slides{display:grid}
-.rn-slide{grid-area:1/1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(24px,4vw,60px);align-items:center;
+.rn-slide{grid-area:1/1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(24px,4vw,60px);align-items:start;
   opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility 0s .4s}
 .rn-slide.is-on{opacity:1;visibility:visible;transition:opacity .55s var(--ease) .06s,visibility 0s}
 .rn-vis{position:relative;aspect-ratio:4/3;background:var(--surface);border:1px solid var(--line-2);border-radius:18px;overflow:hidden;
@@ -14,6 +14,8 @@
   transform:translateX(-18px);transition:transform .8s var(--ease)}
 .rn-say{transform:translateX(18px);transition:transform .8s var(--ease)}
 .rn-slide.is-on .rn-vis,.rn-slide.is-on .rn-say{transform:none}
+.rn-vis--figure{aspect-ratio:auto;background:none;border:0;border-radius:0;overflow:visible}
+.rn-vis--figure > figure{height:100%}
 .rn-vis svg{display:block;width:100%;height:100%;touch-action:pan-y;cursor:crosshair}
 .rn-vis text{font-family:var(--font-mono);font-size:9px;letter-spacing:.12em;fill:var(--ink-3);paint-order:stroke;stroke:var(--surface);stroke-width:5px;stroke-linejoin:round}
 .rn-vis text.hand{font-family:var(--font-hand);font-size:19px;letter-spacing:0;fill:var(--ink-2)}
@@ -65,7 +67,7 @@
   transition:width .5s var(--spring),background .3s var(--ease)}
 .rn-pip:hover{background:var(--ink-3)}
 .rn-pip[aria-selected="true"]{width:36px;background:var(--purple-deep)}
-.rn-count{margin-left:auto;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rn-count{margin-left:10px;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
 .rn-foot{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-top:22px}
 @media (max-width:820px){.rn-slide{grid-template-columns:1fr;align-items:start}.rn-vis,.rn-say{transform:none}.rn-live{flex-direction:column;gap:3px;bottom:10px}}
 @media (prefers-reduced-motion:reduce){
