@@ -265,8 +265,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
    Lives at the END of the stylesheet on purpose — source order decides ties. */
 
 /* ── the human-centered section: the handshake ─────────────────────────────── */
-.globe-sec,.lines-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
-.globe-sec .g-head,.lines-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
+.globe-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
+.globe-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
 .g-kicker{font:600 11px/1 var(--font-mono);letter-spacing:.17em;text-transform:uppercase;
   color:var(--purple-deep);margin-bottom:14px}
 .g-title{font-family:var(--font-display);font-weight:400;font-size:clamp(28px,4.4vw,46px);
@@ -961,12 +961,18 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   var slides = Array.prototype.slice.call(rn.querySelectorAll('.rn-slide'));
   var pips = Array.prototype.slice.call(rn.querySelectorAll('.rn-pip'));
   var count = rn.querySelector('[data-rn-count]');
-  var NAMES = ['Wildfire', 'Seismic', 'Loss history'];
+  // Read off the pips so the slide count can never name a slide that is not there.
+  var NAMES = pips.map(function (p) { return p.getAttribute('aria-label') || ''; });
+  function inertView() { return { move: function () {}, leave: function () {}, enter: function () {} }; }
   var views = slides.map(function (s) {
-    var host = s.querySelector('.rn-vis'), v = BUILD[host.getAttribute('data-vis')](host, s);
-    host.addEventListener('pointermove', v.move, { passive: true });
-    host.addEventListener('pointerleave', v.leave);
-    v.host = host;
+    var host = s.querySelector('.rn-vis');
+    var build = host && BUILD[host.getAttribute('data-vis')];
+    var v = build ? build(host, s) : inertView();
+    if (host) {
+      host.addEventListener('pointermove', v.move, { passive: true });
+      host.addEventListener('pointerleave', v.leave);
+    }
+    v.host = host || s;
     return v;
   });
   var cur = 0, started = false;
@@ -1232,15 +1238,14 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   function heroMotif() {
     var svg = document.querySelector('.hand-motif');
     if (!svg) return;
-    var rc = rough.svg(svg), g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    var rc = rough.svg(svg);
     var ask = rc.ellipse(136, 251, 156, 150, opts(3, { stroke: INK, strokeWidth: 1.5, roughness: 1.5 }));
     var arrow = document.createElementNS('http://www.w3.org/2000/svg', 'g');
     var a = { stroke: INK, strokeWidth: 1.3, roughness: 1, bowing: 1 };
     arrow.appendChild(rc.curve([[182, 350], [174, 337], [158, 330]], opts(40, a)));
     arrow.appendChild(rc.linearPath([[166, 324], [157, 330], [167, 336]], opts(41, a)));
-    svg.appendChild(ask); svg.appendChild(g); svg.appendChild(arrow);
+    svg.appendChild(ask); svg.appendChild(arrow);
     ink(ask, 750, 0.6);
-    ink(g, 1150, 0.35);
     ink(arrow, 2050, 0.4);
   }
   heroMotif();
