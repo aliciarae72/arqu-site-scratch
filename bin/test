@@ -2,4 +2,8 @@
 # Run the static-site checks. No dependencies beyond Node's built-in test runner.
 set -euo pipefail
 cd "$(dirname "$0")/.."
+# The committed SVG is what the page deploys, so it has to match the data it is
+# generated from. --check writes nothing and fails when it has drifted.
+node scripts/build-hail-map.mjs --check
+
 exec node --test "test/*.test.mjs" "test/*.test.js"

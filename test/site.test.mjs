@@ -131,7 +131,9 @@ test('home.html: the hail slide\'s counts match the data it ships', () => {
   });
   const shown = (n) => assert.ok(fig.includes(n.toLocaleString('en-US')), `the slide does not say ${n}`);
   shown(HAIL.cells.length);
-  ['Very Low', 'Low', 'Moderate'].forEach((c) => shown(tally[c]));
+  ['Very Low', 'Low', 'Moderate'].forEach((c) => {
+    shown(tally[c]);
+  });
   // The two that carry the point are spelled out rather than numeric.
   assert.equal(tally.High, 40);
   assert.match(fig, /Forty cells rate High, and one rates Very High/);
@@ -207,9 +209,13 @@ test('data/hail-severity.json carries severity and geometry, nothing about an in
     });
   });
   // A cell is a two-slot array. An insured column could only arrive as a third.
-  HAIL.cells.forEach((cell, i) => assert.equal(cell.length, 2, `cell ${i} carries an extra field`));
+  HAIL.cells.forEach((cell, i) => {
+    assert.equal(cell.length, 2, `cell ${i} carries an extra field`);
+  });
   const raw = readFileSync(join(ROOT, 'data/hail-severity.json'), 'utf8').toLowerCase();
-  INSURED_COLUMNS.forEach((column) => assert.ok(!raw.includes(`"${column}"`), `the data names ${column}`));
+  INSURED_COLUMNS.forEach((column) => {
+    assert.ok(!raw.includes(`"${column}"`), `the data names ${column}`);
+  });
 });
 
 test('home.html pins its remote scripts with an integrity hash', () => {

@@ -103,5 +103,30 @@ ${layers}
 <path fill="none" stroke="#8d8785" stroke-width="1.6" d="${border}"/>
 </svg>
 `;
-writeFileSync(new URL('../hail-severity.svg', import.meta.url), svg);
-console.log(`hail-severity.svg  ${W}x${H}  ${(svg.length / 1024).toFixed(0)} KiB  ${CELLS.length} cells`);
+const OUT = new URL('../hail-severity.svg', import.meta.url);
+const summary = `${W}x${H}  ${(svg.length / 1024).toFixed(0)} KiB  ${CELLS.length} cells`;
+
+// --check verifies the committed SVG is what this data and this generator produce,
+// and writes nothing. home.html deploys the committed file, so without this a change
+// to the data or the ramp leaves a stale map on the page with every test still green.
+if (process.argv.includes('--check')) {
+  let current = null;
+  try {
+    current = readFileSync(OUT, 'utf8');
+  } catch {
+    console.error('hail-severity.svg is missing — run: node scripts/build-hail-map.mjs');
+    process.exit(1);
+  }
+  if (current !== svg) {
+    console.error(
+      `hail-severity.svg is stale against data/hail-severity.json ` +
+        `(committed ${current.length} bytes, regenerates to ${svg.length}). ` +
+        `Run: node scripts/build-hail-map.mjs`,
+    );
+    process.exit(1);
+  }
+  console.log(`hail-severity.svg is current  ${summary}`);
+} else {
+  writeFileSync(OUT, svg);
+  console.log(`hail-severity.svg  ${summary}`);
+}
