@@ -4,7 +4,7 @@
       {
         "path": "home.html",
         "category": "declarative",
-        "reason": "The page GitHub Pages serves: 357 lines of markup, 290 in one inline <style>, 875 in inline <script>. Extracting every inline block into the home-*.css and home-*.js siblings the repo already uses leaves about 360 lines of markup, and a static site with no build step cannot split markup further, so the 300-line cap is not reachable by refactoring. Tracked at https://github.com/aliciarae72/arqu-site-scratch/issues/30"
+        "reason": "The page GitHub Pages serves: 357 lines of markup, 290 in one inline <style>, 875 in inline <script>. Extracting every inline block into the home-*.css and home-*.js siblings the repo already uses leaves about 360 lines of markup, and a static site with no build step cannot split markup further, so the 300-line cap is not reachable by refactoring. This entry is that issue's own option 2, recorded rather than skipped on every push. Tracked at https://github.com/aliciarae72/arqu-site-scratch/issues/3"
       }
     ]
   }
