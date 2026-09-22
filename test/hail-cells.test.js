@@ -1,5 +1,5 @@
-// Unit checks for scripts/hail-cells.js, the ring geometry the generator draws by and the
-// other tests count by. Every case runs against the shipped NOAA extract, not a fixture.
+// Unit checks for scripts/hail-cells.js. The counts come from the shipped NOAA extract
+// rather than a fixture, so a re-extract that moves them fails here.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { readFileSync } = require('node:fs');
