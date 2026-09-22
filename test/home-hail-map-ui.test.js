@@ -41,6 +41,21 @@ test('hovering a cell names its severity and its position, inside the box', () =
   assert.ok(Number.parseFloat(app.tip.style.top) + app.tip.offsetHeight <= BOX.height);
 });
 
+// The map does not sit at the top left of the window. A pointer event carries window
+// coordinates, so the box offset has to come off them before the cell is worked out.
+test('a real pointer event is read against the box, not the window', () => {
+  const app = harness();
+  const at = pointOnACell();
+  app.map.listeners.get('pointermove')(event(at));
+  const throughTheEvent = app.read.textContent;
+  ui.hover(app, at);
+  assert.equal(throughTheEvent, app.read.textContent, 'the event path and the box path disagree');
+  assert.notEqual(throughTheEvent, '');
+  // Reading the same event without taking the offset off lands somewhere else entirely.
+  ui.hover(app, { x: at.x + BOX.left, y: at.y + BOX.top });
+  assert.notEqual(app.read.textContent, throughTheEvent, 'the offset makes no difference to the cell');
+});
+
 test('hovering a square with no record under it says nothing', () => {
   const app = harness();
   ui.hover(app, EMPTY_POINT);
@@ -79,6 +94,8 @@ test('a drag pans the map and never lets the carousel page underneath it', () =>
   app.map.listeners.get('pointerdown')(down);
   assert.equal(down.stopped, 1);
   assert.equal(app.map.attrs.has('data-grabbing'), true);
+  // Without the capture, a drag that leaves the map stops moving it mid-gesture.
+  assert.equal(app.map.hasPointerCapture(1), true, 'the drag never took the pointer');
   app.map.listeners.get('pointermove')(event({ x: 260, y: 200 }));
   assert.equal(app.view.x, zoomed.x - 40);
   assert.equal(app.view.y, zoomed.y - 20);

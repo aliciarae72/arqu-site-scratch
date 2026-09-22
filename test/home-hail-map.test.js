@@ -48,6 +48,29 @@ test('the grid holds one square per cell the map draws, and no more', () => {
   assert.ok(squares.size > 10000, 'the grid is populated');
 });
 
+// A cell centre sits exactly on a lattice centre, so every distance metric agrees there and
+// a test that only probes centres proves nothing about the metric. These points come from
+// the source rings, so the ring is the oracle rather than the lattice, and they sit at 0.84
+// of the way out to each vertex: far enough that dropping the cos(latitude) factor moves
+// 4,286 of them to a neighbouring cell, and inside the reach where the lookup is exact.
+const REACH = 0.84;
+
+test('a point far off-centre inside a cell still resolves to that cell', () => {
+  const whole = drawn.filter(([, ring]) => ring.length === 6);
+  assert.ok(whole.length > 10000, 'not enough whole hexagons to sample');
+  const missed = [];
+  for (const [severity, ring] of whole) {
+    const [cx, cy] = centreOf(ring);
+    const square = hail.squareAt(GRID, cx, cy);
+    for (const [vx, vy] of ring) {
+      const at = hail.squareAt(GRID, cx + (vx - cx) * REACH, cy + (vy - cy) * REACH);
+      const same = at && at.col === square.col && at.row === square.row;
+      if (!same) missed.push({ cx, cy, vx, vy, severity, got: at, want: square });
+    }
+  }
+  assert.deepEqual(missed.slice(0, 3), [], `${missed.length} off-centre points land outside their own cell`);
+});
+
 test('a square resolves back to a point inside itself', () => {
   for (const [, ring] of drawn.slice(0, 500)) {
     const square = hail.squareAt(GRID, ...centreOf(ring));

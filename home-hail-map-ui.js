@@ -213,7 +213,9 @@
     return ui;
   }
 
-  const api = { mount, wire, load, show, hide, hover, wheel, key, moveCursor, restCursor, boxOf, apply };
+  // The page calls mount. A test drives the map the way a reader does, through the four
+  // gestures it answers, so nothing below them needs to be reachable from outside.
+  const api = { mount, load, hover, wheel, key };
   if (typeof module === 'object' && module.exports) module.exports = api;
   else mount(document, (url) => fetch(url));
 })();

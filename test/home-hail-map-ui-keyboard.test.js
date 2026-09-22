@@ -34,15 +34,33 @@ test('the pointer takes the mark off the drawing, and an empty square takes both
   assert.equal(app.tip.hidden, true);
 });
 
-test('arrow keys walk the cursor, and each step lands on a cell', () => {
+// A step is a step. When the square next door is empty the cursor takes the nearest filled
+// one, and "nearest" has to mean nearest — a search that gave up on that would teleport the
+// cursor across the state on one key press.
+test('arrow keys walk the cursor one square at a time, and each step lands on a cell', () => {
   const app = harness();
-  const seen = [];
+  press(app, 'ArrowRight');
+  let from = app.cursor;
   for (const key of ['ArrowRight', 'ArrowRight', 'ArrowUp', 'ArrowLeft', 'ArrowDown']) {
     press(app, key);
-    seen.push(`${app.cursor.col},${app.cursor.row}`);
+    const moved = Math.max(Math.abs(app.cursor.col - from.col), Math.abs(app.cursor.row - from.row));
+    assert.ok(moved <= 2, `${key} moved the cursor ${moved} squares`);
     assert.notEqual(model.severityAt(GRID, app.cursor), model.EMPTY);
+    from = app.cursor;
   }
-  assert.ok(new Set(seen).size > 1, 'the cursor never moved');
+});
+
+test('a step into empty ground takes the nearest filled square, not any filled square', () => {
+  const app = harness();
+  // Walk west until the cursor is at the rim of the coverage, where the next square is empty.
+  press(app, 'ArrowLeft');
+  for (let i = 0; i < 60; i++) {
+    const before = app.cursor;
+    press(app, 'ArrowLeft');
+    const moved = Math.max(Math.abs(app.cursor.col - before.col), Math.abs(app.cursor.row - before.row));
+    assert.ok(moved <= 2, `a step west moved the cursor ${moved} squares`);
+  }
+  assert.notEqual(model.severityAt(GRID, app.cursor), model.EMPTY);
 });
 
 test('the keyboard zooms about the middle and zero puts the state back in frame', () => {

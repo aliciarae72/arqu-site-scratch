@@ -2,10 +2,16 @@
    carry a hover of its own; what the pointer lands on is worked out from the grid the
    generator ships beside it.
 
-   The NOAA cells sit on a flat-top hexagonal lattice. A hexagonal lattice is its own
-   Voronoi diagram, so the cell under a point is the cell whose centre is nearest — which
-   makes the lookup nine distance comparisons rather than a search through 11,026 rings,
-   and keeps the payload at a couple of kilobytes instead of a third of a megabyte. */
+   The NOAA cells sit on a flat-top hexagonal lattice, so the cell under a point is taken to
+   be the cell whose centre is nearest. That makes the lookup nine distance comparisons
+   rather than a search through 11,026 rings, and keeps the payload at a couple of kilobytes
+   instead of a third of a megabyte.
+
+   It is an approximation, and the limit is measured. Nearest-centre is exact over the inner
+   84% of a cell; in the outermost sliver, out by the vertices, it can name a neighbour,
+   because this lattice is a few percent off regular in the projected frame and its Voronoi
+   cell is therefore not quite the source hexagon. A cell draws about seven pixels across at
+   rest, so that sliver is sub-pixel, and the exact version wants every ring on the wire. */
 (() => {
   const EMPTY = -1;
   const MAX_ZOOM = 8;
