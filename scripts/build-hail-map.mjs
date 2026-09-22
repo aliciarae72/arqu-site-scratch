@@ -1,5 +1,5 @@
 // Renders data/hail-severity.json into hail-severity.svg in the site's palette, and
-// into hail-grid.json, the index home-hail-map.js answers a hover from.
+// into hail-grid.js, the index home-hail-map.js answers a hover from.
 //
 // The source is the NOAA hail-severity grid that shipped inside the vendored
 // Flourish export: same cells, same categories, same geometry. Only the drawing
@@ -26,21 +26,11 @@ const FILL = {
 // ARE the state outline, not a simplification of it.
 const CO = { west: -109.05, east: -102.05, south: 37.0, north: 41.0 };
 
-function boxOf(ring) {
-  const lon = ring.map((p) => p[0]);
-  const lat = ring.map((p) => p[1]);
-  const west = Math.min(...lon);
-  const east = Math.max(...lon);
-  const south = Math.min(...lat);
-  const north = Math.max(...lat);
-  return { width: east - west, height: north - south, lon: (west + east) / 2, lat: (south + north) / 2 };
-}
-
-// The extract runs past the state line to the north and the south-west. The figure is
-// Colorado, so a cell centred outside it is neither drawn nor counted, and the ones that
-// straddle the line are trimmed by the clip rather than dropped.
-const inCO = (box) => box.lon >= CO.west && box.lon <= CO.east && box.lat >= CO.south && box.lat <= CO.north;
-const CELLS = SRC.cells.filter(([, ring]) => inCO(boxOf(ring)));
+// squareAt comes from the browser's own module, so placement here and the hover there can
+// never drift. The ring geometry is build-time only and lives beside this file.
+const hail = (await import('../home-hail-map.js')).default;
+const { boxOf, drawnCells } = (await import('./hail-cells.js')).default;
+const CELLS = drawnCells(CO, SRC.cells);
 
 const W = 1000;
 // Equirectangular with a cos(lat) correction: over a 5-degree span at this
@@ -89,12 +79,19 @@ function pathFor(catIndex) {
 // rather than writing four constants here means a re-extract cannot leave the hover
 // reading the wrong square while every test stays green.
 function latticeOf(boxes) {
+  // Bucketed on the rounded extent, and the ROUNDED value is what the lattice step is
+  // derived from: the source coordinates carry a digit of noise that would otherwise ride
+  // into dlon and dlat.
   const tally = new Map();
   for (const b of boxes) {
-    const key = `${b.width.toFixed(4)} ${b.height.toFixed(4)}`;
-    tally.set(key, (tally.get(key) || 0) + 1);
+    const width = Number(b.width.toFixed(4));
+    const height = Number(b.height.toFixed(4));
+    const key = `${width} ${height}`;
+    const seen = tally.get(key) || { count: 0, width, height };
+    seen.count++;
+    tally.set(key, seen);
   }
-  const [width, height] = [...tally].sort((a, b) => b[1] - a[1])[0][0].split(' ').map(Number);
+  const { width, height } = [...tally.values()].reduce((a, b) => (b.count > a.count ? b : a));
   const whole = boxes.filter((b) => Math.abs(b.width - width) < width / 50 && Math.abs(b.height - height) < height / 50);
   // A flat-top hexagon is 2R across and stands one row high; columns step 1.5R.
   const dlon = width * 0.75;
@@ -121,35 +118,28 @@ function encodeRuns(symbols) {
 // Places every drawn cell on the lattice, reading the placement back out of the browser's
 // own squareAt so the two cannot drift. Bounds are unknown until the last cell lands, so
 // placement runs against a grid wide enough to hold anything and the extent is measured
-// from the result. A cell the source clipped into two pieces lands on one square twice;
-// the two pieces always carry the same severity, which test/hail-map.test.js pins.
-function placeCells(hail, lattice) {
+// from the result. A cell the source clipped into two pieces lands on one square twice, and
+// the two pieces always carry the same severity.
+function placeCells(lattice) {
   const open = { frame: CO, lattice, kx, bounds: { col: -1e6, row: -1e6, cols: 2e6, rows: 2e6 } };
   const found = new Map();
+  const span = { west: Infinity, east: -Infinity, south: Infinity, north: -Infinity };
   for (const [severity, ring] of CELLS) {
     const box = boxOf(ring);
-    const square = hail.squareAt(open, box.lon, box.lat);
-    found.set(`${square.col},${square.row}`, severity);
+    const { col, row } = hail.squareAt(open, box.lon, box.lat);
+    found.set(`${col},${row}`, severity);
+    span.west = Math.min(span.west, col);
+    span.east = Math.max(span.east, col);
+    span.south = Math.min(span.south, row);
+    span.north = Math.max(span.north, row);
   }
-  return found;
+  const bounds = { col: span.west, row: span.south, cols: span.east - span.west + 1, rows: span.north - span.south + 1 };
+  return { found, bounds };
 }
 
-function boundsOf(found) {
-  const at = [...found.keys()].map((key) => key.split(',').map(Number));
-  const cols = at.map(([col]) => col);
-  const rows = at.map(([, row]) => row);
-  return {
-    col: Math.min(...cols),
-    row: Math.min(...rows),
-    cols: Math.max(...cols) - Math.min(...cols) + 1,
-    rows: Math.max(...rows) - Math.min(...rows) + 1,
-  };
-}
-
-function gridOf(hail) {
+function gridOf() {
   const lattice = latticeOf(CELLS.map(([, ring]) => boxOf(ring)));
-  const found = placeCells(hail, lattice);
-  const bounds = boundsOf(found);
+  const { found, bounds } = placeCells(lattice);
   const symbols = [];
   // Column-major, which is the order home-hail-map.js indexes the decoded grid in.
   for (let col = bounds.col; col < bounds.col + bounds.cols; col++) {
@@ -189,11 +179,18 @@ ${layers}
 </svg>
 `;
 
-const hail = (await import('../home-hail-map.js')).default;
-const grid = `${JSON.stringify(gridOf(hail), null, 0)}\n`;
+// Shipped as a script rather than as JSON the page fetches: the payload is three kilobytes
+// of constant, and a fetch of a relative URL is blocked on file://, which left the hover
+// silently dead whenever the page was opened from disk. Same dual-export tail as the other
+// two hail files, so a test can require it.
+const grid =
+  `/* Generated by scripts/build-hail-map.mjs. Do not edit. */\n` +
+  `(() => {\n  const doc = ${JSON.stringify(gridOf())};\n` +
+  `  if (typeof module === 'object' && module.exports) module.exports = doc;\n` +
+  `  else window.hailGrid = doc;\n})();\n`;
 const ARTIFACTS = [
   { name: 'hail-severity.svg', at: new URL('../hail-severity.svg', import.meta.url), want: svg },
-  { name: 'hail-grid.json', at: new URL('../hail-grid.json', import.meta.url), want: grid },
+  { name: 'hail-grid.js', at: new URL('../hail-grid.js', import.meta.url), want: grid },
 ];
 const summary = `${W}x${H}  ${(svg.length / 1024).toFixed(0)} KiB  ${CELLS.length} cells  ` +
   `grid ${(grid.length / 1024).toFixed(1)} KiB`;
@@ -218,8 +215,8 @@ if (process.argv.includes('--check')) {
       process.exit(1);
     }
   }
-  console.log(`hail-severity.svg and hail-grid.json are current  ${summary}`);
+  console.log(`hail-severity.svg and hail-grid.js are current  ${summary}`);
 } else {
   for (const { at, want } of ARTIFACTS) writeFileSync(at, want);
-  console.log(`hail-severity.svg + hail-grid.json  ${summary}`);
+  console.log(`hail-severity.svg + hail-grid.js  ${summary}`);
 }

@@ -60,6 +60,7 @@
     const { west, south, dlon, dlat } = grid.lattice;
     const nearCol = Math.round((lon - west) / dlon);
     let best = null;
+    let least = Infinity;
     for (let col = nearCol - 1; col <= nearCol + 1; col++) {
       const nearRow = Math.round((lat - south) / dlat - rowOffset(col));
       for (let row = nearRow - 1; row <= nearRow + 1; row++) {
@@ -68,10 +69,13 @@
         const dx = (lon - centre[0]) * grid.kx;
         const dy = lat - centre[1];
         const away = dx * dx + dy * dy;
-        if (!best || away < best.away) best = { col, row, away };
+        if (away < least) {
+          least = away;
+          best = { col, row };
+        }
       }
     }
-    return best && { col: best.col, row: best.row };
+    return best;
   }
 
   function severityAt(grid, square) {

@@ -84,15 +84,15 @@ test('a key the map does not use is left to the page', () => {
   assert.equal(app.cursor, null);
 });
 
-// The carousel that holds this map pages on ArrowLeft and ArrowRight, so a key that walks
-// the cursor must not also reach it.
-test('a key the map answers never reaches the carousel underneath it', () => {
+// The carousel that holds this map pages on ArrowLeft and ArrowRight, and skips a key whose
+// default is already prevented. Marking every key the map answers is what keeps the slide
+// still, so it is asserted for all of them rather than only the two the carousel reads.
+test('the map marks every key it answers as handled', () => {
   const app = harness();
   for (const key of ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', '+', '-', '0']) {
     const e = event({ x: 0, y: 0 }, { key });
     ui.key(app, e);
-    assert.equal(e.stopped, 1, `${key} bubbled out of the map`);
-    assert.equal(e.prevented, 1, `${key} was left to the browser`);
+    assert.equal(e.prevented, 1, `${key} was left unmarked`);
   }
 });
 

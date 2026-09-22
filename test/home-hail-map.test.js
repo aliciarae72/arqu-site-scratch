@@ -7,21 +7,17 @@ const { readFileSync } = require('node:fs');
 const { join } = require('node:path');
 
 const hail = require('../home-hail-map.js');
+const cells = require('../scripts/hail-cells.js');
 
 const ROOT = join(__dirname, '..');
-const GRID = hail.decodeGrid(JSON.parse(readFileSync(join(ROOT, 'hail-grid.json'), 'utf8')));
+const GRID = hail.decodeGrid(require('../hail-grid.js'));
 const DATA = JSON.parse(readFileSync(join(ROOT, 'data/hail-severity.json'), 'utf8'));
 
 const centreOf = (ring) => {
-  const lon = ring.map((p) => p[0]);
-  const lat = ring.map((p) => p[1]);
-  return [(Math.min(...lon) + Math.max(...lon)) / 2, (Math.min(...lat) + Math.max(...lat)) / 2];
+  const box = cells.boxOf(ring);
+  return [box.lon, box.lat];
 };
-const drawn = DATA.cells.filter(([, ring]) => {
-  const [lon, lat] = centreOf(ring);
-  const f = GRID.frame;
-  return lon >= f.west && lon <= f.east && lat >= f.south && lat <= f.north;
-});
+const drawn = cells.drawnCells(GRID.frame, DATA.cells);
 
 test('the shipped grid names the same severities as the data, in the same order', () => {
   assert.deepEqual(GRID.categories, DATA.categories);

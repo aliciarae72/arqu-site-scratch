@@ -1,10 +1,17 @@
 // What home-hail-map-ui.js does with a pointer: the readout, the wheel, and the drag.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { readFileSync } = require('node:fs');
-const { join } = require('node:path');
-
-const { model, ui, GRID, BOX, harness, pointOnACell, event, EMPTY_POINT } = require('./home-hail-map-harness.js');
+const {
+  model,
+  ui,
+  GRID,
+  BOX,
+  Element,
+  harness,
+  pointOnACell,
+  event,
+  EMPTY_POINT,
+} = require('./home-hail-map-harness.js');
 
 test('mount refuses a page with no map on it', () => {
   assert.throws(() => ui.mount({ querySelector: () => null }, () => {}), /\[data-hail-map\] is missing/);
@@ -16,7 +23,7 @@ test('mount starts framed, with nothing said and no cursor', () => {
   assert.equal(app.cursor, null);
   assert.equal(app.drag, null);
   assert.equal(app.read.textContent, '');
-  // Every gesture the map answers is wired before the grid it needs has arrived.
+  // Every gesture the map answers is wired by mount.
   assert.deepEqual([...app.map.listeners.keys()].sort(), [
     'blur',
     'keydown',
@@ -63,10 +70,12 @@ test('hovering a square with no record under it says nothing', () => {
   assert.equal(app.read.textContent, '');
 });
 
-test('the readout waits for the grid rather than guessing', () => {
-  const app = harness({ grid: null });
-  ui.hover(app, pointOnACell());
-  assert.equal(app.tip.hidden, true);
+// hail-grid.js loads before this file, so a missing grid means the page's script order
+// broke. Saying which file is missing beats a null read three calls later.
+test('mount refuses to wire a map with no grid behind it', () => {
+  const map = new Element('[data-hail-map]');
+  const doc = { querySelector: () => map };
+  assert.throws(() => ui.mount(doc, null), /hail-grid\.js has to load before this file/);
 });
 
 test('a wheel over the map zooms about the pointer and takes the gesture', () => {
@@ -86,22 +95,18 @@ test('a wheel that cannot zoom leaves the scroll to the page', () => {
   assert.equal(e.prevented, 0);
 });
 
-test('a drag pans the map and never lets the carousel page underneath it', () => {
+test('a drag pans the map by exactly the distance dragged', () => {
   const app = harness();
   ui.wheel(app, event({ x: 300, y: 220 }, { deltaY: -400 }));
   const zoomed = app.view;
-  const down = event({ x: 300, y: 220 });
-  app.map.listeners.get('pointerdown')(down);
-  assert.equal(down.stopped, 1);
+  app.map.listeners.get('pointerdown')(event({ x: 300, y: 220 }));
   assert.equal(app.map.attrs.has('data-grabbing'), true);
   // Without the capture, a drag that leaves the map stops moving it mid-gesture.
   assert.equal(app.map.hasPointerCapture(1), true, 'the drag never took the pointer');
   app.map.listeners.get('pointermove')(event({ x: 260, y: 200 }));
   assert.equal(app.view.x, zoomed.x - 40);
   assert.equal(app.view.y, zoomed.y - 20);
-  const up = event({ x: 260, y: 200 });
-  app.map.listeners.get('pointerup')(up);
-  assert.equal(up.stopped, 1);
+  app.map.listeners.get('pointerup')(event({ x: 260, y: 200 }));
   assert.equal(app.map.attrs.has('data-grabbing'), false);
   assert.equal(app.map.hasPointerCapture(1), false);
 });
@@ -115,11 +120,12 @@ test('a drag cannot open a gap at the edge of the box', () => {
   assert.equal(app.view.y, 0);
 });
 
-test('a pointer up with no drag under it is not an end of drag', () => {
+test('a pointer up with no drag under it moves nothing', () => {
   const app = harness();
-  const up = event({ x: 10, y: 10 });
-  app.map.listeners.get('pointerup')(up);
-  assert.equal(up.stopped, 0);
+  app.map.listeners.get('pointerup')(event({ x: 10, y: 10 }));
+  assert.equal(app.drag, null);
+  assert.deepEqual(app.view, { scale: 1, x: 0, y: 0 });
+  assert.equal(app.map.attrs.has('data-grabbing'), false);
 });
 
 test('leaving the map with no cursor says nothing', () => {
@@ -128,13 +134,8 @@ test('leaving the map with no cursor says nothing', () => {
   assert.equal(app.tip.hidden, true);
 });
 
-test('load reads the shipped grid, and names the status when the file is not served', async () => {
-  const app = harness({ grid: null });
-  const doc = JSON.parse(readFileSync(join(__dirname, '..', 'hail-grid.json'), 'utf8'));
-  await ui.load(app, () => Promise.resolve({ ok: true, json: () => Promise.resolve(doc) }));
+test('the map answers from the grid the site ships, decoded whole', () => {
+  const app = harness();
   assert.equal(model.filledSquares(app.grid), model.filledSquares(GRID));
-  await assert.rejects(
-    () => ui.load(app, () => Promise.resolve({ ok: false, status: 404 })),
-    /hail-grid\.json answered 404/,
-  );
+  assert.ok(model.filledSquares(app.grid) > 10000, 'the shipped grid is populated');
 });

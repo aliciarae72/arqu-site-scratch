@@ -8,6 +8,8 @@ import { dirname, join } from 'node:path';
 import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
+import hailGrid from '../hail-grid.js';
+import cells from './../scripts/hail-cells.js';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const PAGES = readdirSync(ROOT).filter((f) => f.endsWith('.html') && !f.startsWith('.'));
@@ -125,16 +127,11 @@ test('home.html: the casualty chart names both sources, and the hail map is draw
 // casualty chart's are. It draws Colorado, so the copy counts what it draws: a cell whose
 // centre falls inside the state line. The extract runs past that line to the north and the
 // south-west, and those cells are neither drawn nor counted.
-const COLORADO = { west: -109.05, east: -102.05, south: 37.0, north: 41.0 };
-const centreOf = (ring) => {
-  const lon = ring.map((p) => p[0]);
-  const lat = ring.map((p) => p[1]);
-  return [(Math.min(...lon) + Math.max(...lon)) / 2, (Math.min(...lat) + Math.max(...lat)) / 2];
-};
-const DRAWN = HAIL.cells.filter(([, ring]) => {
-  const [lon, lat] = centreOf(ring);
-  return lon >= COLORADO.west && lon <= COLORADO.east && lat >= COLORADO.south && lat <= COLORADO.north;
-});
+// The frame and the rule both come from the shipped grid and the module that reads it, so
+// a re-extract with a different span cannot leave this test counting the old box while the
+// map draws the new one.
+const GRID = hailGrid;
+const DRAWN = cells.drawnCells(GRID.frame, HAIL.cells);
 
 test("home.html: the hail slide's counts match the data it ships", () => {
   const fig = LINES.slice(LINES.indexOf('02 &middot; Property'));
@@ -182,15 +179,17 @@ test('home.html: the map takes a pointer and a keyboard, and ships the grid it a
     assert.ok(map.includes(hook), `the map markup has no ${hook}`);
   });
   assert.match(map, /data-hail-read[^>]*aria-live="polite"/, 'the readout is not announced');
-  ['home-hail-map.js', 'home-hail-map-ui.js'].forEach((src) => {
+  ['hail-grid.js', 'home-hail-map.js', 'home-hail-map-ui.js'].forEach((src) => {
     assert.ok(
       scriptTags(HOME).some((tag) => tag.src === src),
       `home.html does not load ${src}`,
     );
   });
-  // The wiring reads the arithmetic off a global, so the model has to load first.
+  // The wiring reads the grid and the arithmetic off globals, so both load ahead of it.
+  assert.ok(HOME.indexOf('hail-grid.js') < HOME.indexOf('home-hail-map-ui.js'));
   assert.ok(HOME.indexOf('home-hail-map.js') < HOME.indexOf('home-hail-map-ui.js'));
-  assert.ok(existsSync(join(ROOT, 'hail-grid.json')), 'the grid the readout needs does not ship');
+  // Shipped as a script, not fetched: a fetch is blocked on file:// and the readout dies.
+  assert.doesNotMatch(readFileSync(join(ROOT, 'home-hail-map-ui.js'), 'utf8'), /\bfetch\s*\(/);
 });
 
 // The image tag has to declare the size the generator drew, or the figure reflows once

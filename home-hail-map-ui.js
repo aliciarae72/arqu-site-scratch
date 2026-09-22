@@ -1,21 +1,21 @@
-/* Wires the hail map's readout, zoom and pan onto the page. The arithmetic all lives in
-   home-hail-map.js, which this file reads off `window.hailMap`; a script-tag page has no
-   module system, so the pair loads in that order and shares one named global. */
+/* Wires the hail map's readout, zoom and pan onto the page. The arithmetic lives in
+   home-hail-map.js and the grid in hail-grid.js, both read off a named global. Classic
+   scripts rather than modules, to match the rest of the page and because a module and a
+   fetch both need HTTP — the map has to answer the pointer when the file is opened from
+   disk too. home.html loads all three in order. */
 (() => {
   const model = typeof module === 'object' && module.exports ? require('./home-hail-map.js') : window.hailMap;
   const HOME = { scale: 1, x: 0, y: 0 };
   const WHEEL_RATE = 0.0016;
   const STEPS = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
-  const ZOOMS = { '+': model.ZOOM_STEP, '=': model.ZOOM_STEP, '-': 1 / model.ZOOM_STEP, _: 1 / model.ZOOM_STEP };
+  // Zero reframes, which is why this is read with hasOwn rather than for truthiness.
+  const ZOOMS = { '+': model.ZOOM_STEP, '=': model.ZOOM_STEP, '-': 1 / model.ZOOM_STEP, _: 1 / model.ZOOM_STEP, 0: 0 };
 
   const boxOf = (ui) => {
     const rect = ui.map.getBoundingClientRect();
     return { width: rect.width, height: rect.height, left: rect.left, top: rect.top };
   };
-  const pointAt = (ui, event) => {
-    const box = boxOf(ui);
-    return { x: event.clientX - box.left, y: event.clientY - box.top };
-  };
+  const pointIn = (box, event) => ({ x: event.clientX - box.left, y: event.clientY - box.top });
 
   function apply(ui) {
     ui.pan.style.transform = `translate(${ui.view.x}px, ${ui.view.y}px) scale(${ui.view.scale})`;
@@ -23,16 +23,21 @@
 
   /* The readout is pinned inside the map, so a cell at the right or bottom edge does not
      push it out over the figure's caption. */
-  function show(ui, readout, at) {
-    const box = boxOf(ui);
-    ui.label.textContent = readout.label;
-    ui.place.textContent = readout.place;
-    ui.read.textContent = `${readout.label}, ${readout.place}`;
+  function show(ui, readout, at, box) {
+    const said = `${readout.label}, ${readout.place}`;
+    // Rewriting the text on every move would re-announce the same cell to a screen reader,
+    // and reading offsetWidth back after the write forces a layout. Both only when it moved.
+    if (said !== ui.read.textContent) {
+      ui.label.textContent = readout.label;
+      ui.place.textContent = readout.place;
+      ui.read.textContent = said;
+      ui.tip.hidden = false;
+      ui.tipSize = { width: ui.tip.offsetWidth, height: ui.tip.offsetHeight };
+    }
     ui.tip.hidden = false;
-    const width = ui.tip.offsetWidth;
-    const height = ui.tip.offsetHeight;
-    ui.tip.style.left = `${Math.max(0, Math.min(at.x + 14, box.width - width))}px`;
-    ui.tip.style.top = `${Math.max(0, Math.min(at.y + 14, box.height - height))}px`;
+    ui.tip.style.left = `${Math.max(0, Math.min(at.x + 14, box.width - ui.tipSize.width))}px`;
+    ui.tip.style.top = `${Math.max(0, Math.min(at.y + 14, box.height - ui.tipSize.height))}px`;
+    ui.dot.hidden = true;
   }
 
   function hide(ui) {
@@ -49,69 +54,63 @@
     ui.dot.hidden = false;
   }
 
-  function readoutAtPoint(ui, at) {
-    if (!ui.grid) return null;
-    const box = boxOf(ui);
+  /* Where a square renders in the box right now. */
+  function viewPointOf(ui, square, box) {
+    const [lon, lat] = model.squareCentre(ui.grid, square);
+    return model.imageToView(ui.view, model.imageOf(ui.grid, lon, lat), box);
+  }
+
+  function readoutAtPoint(ui, at, box) {
     const uv = model.viewToImage(ui.view, at, box);
     return model.readoutAt(ui.grid, uv.u, uv.v);
   }
 
-  function hover(ui, at) {
-    const readout = readoutAtPoint(ui, at);
+  function hover(ui, at, box = boxOf(ui)) {
+    const readout = readoutAtPoint(ui, at, box);
     if (!readout) return hide(ui);
-    show(ui, readout, at);
-    ui.dot.hidden = true;
+    show(ui, readout, at, box);
   }
 
   /* Whatever the pointer was doing, the keyboard cursor is what the map still holds when
      the pointer leaves. With no cursor there is nothing to say. */
-  function restCursor(ui) {
-    if (!ui.grid || !ui.cursor) return hide(ui);
+  function restCursor(ui, box = boxOf(ui)) {
+    if (!ui.cursor) return hide(ui);
     const readout = model.readoutFor(ui.grid, ui.cursor);
     if (!readout) return hide(ui);
-    const [lon, lat] = model.squareCentre(ui.grid, ui.cursor);
-    const at = model.imageToView(ui.view, model.imageOf(ui.grid, lon, lat), boxOf(ui));
-    show(ui, readout, at);
+    const at = viewPointOf(ui, ui.cursor, box);
+    show(ui, readout, at, box);
     mark(ui, at);
   }
 
-  function wheel(ui, event) {
-    const at = pointAt(ui, event);
-    const next = model.zoomAt(ui.view, at, Math.exp(-event.deltaY * WHEEL_RATE), boxOf(ui));
+  function wheel(ui, event, box = boxOf(ui)) {
+    const at = pointIn(box, event);
+    const next = model.zoomAt(ui.view, at, Math.exp(-event.deltaY * WHEEL_RATE), box);
     // An unchanged view means the gesture cannot zoom — at rest, or already as close as it
     // goes. The page keeps the scroll rather than the map swallowing it.
     if (next === ui.view) return;
     event.preventDefault();
     ui.view = next;
     apply(ui);
-    hover(ui, at);
+    hover(ui, at, box);
   }
 
   function startDrag(ui, event) {
-    // The carousel around this map turns a touch drag into a slide change. Panning the map
-    // is not paging the carousel, so the gesture stops here.
-    event.stopPropagation();
-    ui.drag = { from: pointAt(ui, event), view: ui.view };
+    const box = boxOf(ui);
+    ui.drag = { box, from: pointIn(box, event), view: ui.view };
     ui.map.setPointerCapture(event.pointerId);
     ui.map.setAttribute('data-grabbing', '');
   }
 
   function moveDrag(ui, event) {
-    const at = pointAt(ui, event);
-    ui.view = model.clampView(
-      {
-        scale: ui.drag.view.scale,
-        x: ui.drag.view.x + at.x - ui.drag.from.x,
-        y: ui.drag.view.y + at.y - ui.drag.from.y,
-      },
-      boxOf(ui),
-    );
+    // The box cannot change mid-drag: the pointer is captured.
+    const { box, from, view } = ui.drag;
+    const at = pointIn(box, event);
+    ui.view = model.clampView({ scale: view.scale, x: view.x + at.x - from.x, y: view.y + at.y - from.y }, box);
     apply(ui);
   }
 
   function endDrag(ui, event) {
     if (!ui.drag) return;
-    event.stopPropagation();
     ui.drag = null;
     ui.map.removeAttribute('data-grabbing');
     if (ui.map.hasPointerCapture(event.pointerId)) ui.map.releasePointerCapture(event.pointerId);
@@ -119,55 +118,55 @@
 
   /* Pans only when the cursor has left the box, so walking around the middle of a zoomed
      map does not drag the whole drawing under the reader. */
-  function keepInView(ui, square) {
-    const box = boxOf(ui);
-    const [lon, lat] = model.squareCentre(ui.grid, square);
-    const at = model.imageToView(ui.view, model.imageOf(ui.grid, lon, lat), box);
+  function keepInView(ui, square, box) {
+    const at = viewPointOf(ui, square, box);
     if (at.x >= 0 && at.x <= box.width && at.y >= 0 && at.y <= box.height) return;
     const centred = { scale: ui.view.scale, x: ui.view.x + box.width / 2 - at.x, y: ui.view.y + box.height / 2 - at.y };
     ui.view = model.clampView(centred, box);
     apply(ui);
   }
 
-  function moveCursor(ui, step) {
-    if (!ui.grid) return;
-    const box = boxOf(ui);
-    const middle = model.viewToImage(ui.view, { x: box.width / 2, y: box.height / 2 }, box);
-    const from = ui.cursor || model.squareAt(ui.grid, ...model.lonLatAt(ui.grid, middle.u, middle.v));
-    const wanted = ui.cursor ? { col: from.col + step[0], row: from.row + step[1] } : from;
+  const middleOf = (box) => ({ x: box.width / 2, y: box.height / 2 });
+
+  /* The first press puts the cursor on the square nearest the middle of what is on screen
+     rather than stepping, so there is always something to read out. */
+  function moveCursor(ui, step, box) {
+    const middle = model.viewToImage(ui.view, middleOf(box), box);
+    const wanted = ui.cursor
+      ? { col: ui.cursor.col + step[0], row: ui.cursor.row + step[1] }
+      : model.squareAt(ui.grid, ...model.lonLatAt(ui.grid, middle.u, middle.v));
     const landed = model.nearestFilled(ui.grid, wanted);
     if (!landed) return;
     ui.cursor = landed;
-    keepInView(ui, landed);
-    restCursor(ui);
+    keepInView(ui, landed, box);
+    restCursor(ui, box);
   }
 
-  function zoomKey(ui, factor) {
-    const box = boxOf(ui);
-    ui.view = factor ? model.zoomAt(ui.view, { x: box.width / 2, y: box.height / 2 }, factor, box) : HOME;
+  function zoomKey(ui, factor, box) {
+    ui.view = factor ? model.zoomAt(ui.view, middleOf(box), factor, box) : HOME;
     apply(ui);
-    restCursor(ui);
+    restCursor(ui, box);
   }
 
-  function key(ui, event) {
+  function key(ui, event, box = boxOf(ui)) {
     if (STEPS[event.key]) {
-      moveCursor(ui, STEPS[event.key]);
-    } else if (ZOOMS[event.key]) {
-      zoomKey(ui, ZOOMS[event.key]);
-    } else if (event.key === '0') {
-      zoomKey(ui, 0);
+      moveCursor(ui, STEPS[event.key], box);
+    } else if (Object.hasOwn(ZOOMS, event.key)) {
+      zoomKey(ui, ZOOMS[event.key], box);
     } else {
       return;
     }
+    // The carousel reads defaultPrevented, so this is also what stops the slide paging.
     event.preventDefault();
-    // The carousel around this map pages on the arrow keys. Walking the cursor is not
-    // paging the carousel, so a key the map has answered stops here.
-    event.stopPropagation();
   }
 
   function wire(ui) {
     const on = (name, handler, options) => ui.map.addEventListener(name, handler, options);
-    on('pointermove', (e) => (ui.drag ? moveDrag(ui, e) : hover(ui, pointAt(ui, e))));
+    on('pointermove', (e) => {
+      if (ui.drag) return moveDrag(ui, e);
+      const box = boxOf(ui);
+      hover(ui, pointIn(box, e), box);
+    });
     on('pointerleave', () => restCursor(ui));
     on('pointerdown', (e) => startDrag(ui, e));
     on('pointerup', (e) => endDrag(ui, e));
@@ -180,21 +179,11 @@
     });
   }
 
-  function load(ui, fetcher) {
-    return fetcher('hail-grid.json')
-      .then((res) => {
-        if (!res.ok) throw new Error(`home-hail-map: hail-grid.json answered ${res.status}`);
-        return res.json();
-      })
-      .then((doc) => {
-        ui.grid = model.decodeGrid(doc);
-        return ui;
-      });
-  }
-
-  function mount(doc, fetcher) {
+  function mount(doc, grid) {
     const map = doc.querySelector('[data-hail-map]');
     if (!map) throw new Error('home-hail-map: [data-hail-map] is missing from the page');
+    // The page loads hail-grid.js first. Say so rather than failing later on a null read.
+    if (!grid) throw new Error('home-hail-map: hail-grid.js has to load before this file');
     const ui = {
       map,
       pan: map.querySelector('[data-hail-pan]'),
@@ -204,18 +193,18 @@
       place: map.querySelector('[data-hail-place]'),
       read: map.querySelector('[data-hail-read]'),
       view: HOME,
-      grid: null,
+      grid,
+      tipSize: { width: 0, height: 0 },
       cursor: null,
       drag: null,
     };
     wire(ui);
-    load(ui, fetcher);
     return ui;
   }
 
   // The page calls mount. A test drives the map the way a reader does, through the four
   // gestures it answers, so nothing below them needs to be reachable from outside.
-  const api = { mount, load, hover, wheel, key };
+  const api = { mount, hover, wheel, key };
   if (typeof module === 'object' && module.exports) module.exports = api;
-  else mount(document, (url) => fetch(url));
+  else mount(document, model.decodeGrid(window.hailGrid));
 })();

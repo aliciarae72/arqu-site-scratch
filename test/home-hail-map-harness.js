@@ -1,12 +1,9 @@
 // A stand-in for the browser's document, small enough to read in one sitting, mounted
 // with the grid the site ships. Every function the hail-map tests call is the real one.
-const { readFileSync } = require('node:fs');
-const { join } = require('node:path');
-
 const model = require('../home-hail-map.js');
 const ui = require('../home-hail-map-ui.js');
 
-const GRID = model.decodeGrid(JSON.parse(readFileSync(join(__dirname, '..', 'hail-grid.json'), 'utf8')));
+const GRID = model.decodeGrid(require('../hail-grid.js'));
 const BOX = { width: 600, height: 440, left: 40, top: 20 };
 
 class Element {
@@ -49,14 +46,10 @@ class Element {
   }
 }
 
-// The fetch never settles, so mount's own load cannot land on top of the grid a test sets.
-// load is exercised on its own in home-hail-map-ui.test.js.
 function harness({ grid = GRID } = {}) {
   const map = new Element('[data-hail-map]');
   const doc = { querySelector: (s) => (s === '[data-hail-map]' ? map : null) };
-  const mounted = ui.mount(doc, () => new Promise(() => {}));
-  mounted.grid = grid;
-  return mounted;
+  return ui.mount(doc, grid);
 }
 
 // A point in the box that lands on a cell carrying a severity, found from the grid itself.
@@ -89,4 +82,4 @@ const event = (at, extra = {}) => ({
 // Somewhere on the drawing with no NOAA record under it: the far south-west of the frame.
 const EMPTY_POINT = { x: 4, y: BOX.height - 4 };
 
-module.exports = { model, ui, GRID, BOX, harness, pointOnACell, event, EMPTY_POINT };
+module.exports = { model, ui, GRID, BOX, Element, harness, pointOnACell, event, EMPTY_POINT };
