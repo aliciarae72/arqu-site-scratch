@@ -123,10 +123,14 @@
     apply(ui);
   }
 
-  function endDrag(ui, event) {
-    if (!ui.drag) return;
+  function stopDrag(ui) {
     ui.drag = null;
     ui.map.removeAttribute('data-grabbing');
+  }
+
+  function endDrag(ui, event) {
+    if (!ui.drag) return;
+    stopDrag(ui);
     if (ui.map.hasPointerCapture(event.pointerId)) ui.map.releasePointerCapture(event.pointerId);
   }
 
@@ -177,6 +181,9 @@
   /* A box that has shrunk can leave the old translation outside the new clamp range, and
      the drawing then stops covering it. */
   function refit(ui) {
+    // A drag is anchored on the box and the view it started from. A resize invalidates both,
+    // so the gesture ends here rather than resuming against numbers it never began with.
+    stopDrag(ui);
     const box = boxOf(ui);
     ui.view = model.clampView(ui.view, box);
     apply(ui);

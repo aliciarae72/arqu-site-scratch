@@ -158,6 +158,24 @@ test('refit pulls a zoomed view back inside a box that has shrunk', () => {
   assert.notDeepEqual(app.view, wide, 'refit changed nothing');
 });
 
+// moveDrag is anchored on the box and the view captured at pointerdown. A resize clamps
+// ui.view underneath it, so a gesture that carried on would snap the map to numbers it
+// never started from.
+test('a resize mid-drag ends the drag rather than letting it resume on stale anchors', () => {
+  const app = harness();
+  ui.wheel(app, event({ x: 300, y: 220 }, { deltaY: -600 }));
+  app.map.listeners.get('pointerdown')(event({ x: 300, y: 220 }));
+  assert.ok(app.drag, 'the drag did not start');
+  app.map.getBoundingClientRect = () => ({ ...BOX, width: BOX.width / 2, height: BOX.height / 2 });
+  ui.refit(app);
+  assert.equal(app.drag, null, 'the drag survived the resize');
+  assert.equal(app.map.attrs.has('data-grabbing'), false);
+  // A move after the resize is a hover, and leaves the refitted view alone.
+  const settled = app.view;
+  app.map.listeners.get('pointermove')(event({ x: 100, y: 100 }));
+  assert.deepEqual(app.view, settled, 'a move after the resize moved the map');
+});
+
 test('a drag cannot open a gap at the edge of the box', () => {
   const app = harness();
   ui.wheel(app, event({ x: 300, y: 220 }, { deltaY: -400 }));
