@@ -1,8 +1,7 @@
-/* Source-ring geometry. The generator draws from it and the tests count by it; the browser
-   never sees a ring, only the encoded grid, so this stays out of what the page downloads.
-   CommonJS because both an ESM generator and a CommonJS test have to read it. */
+/* Source-ring geometry, kept out of what the page downloads: the browser is served the
+   encoded grid and never sees a ring. CommonJS, because an ESM generator and a CommonJS
+   test both have to read it. */
 
-/* One cell's ring reduced to its extent and its centre. */
 function boxOf(ring) {
   const lon = ring.map((p) => p[0]);
   const lat = ring.map((p) => p[1]);

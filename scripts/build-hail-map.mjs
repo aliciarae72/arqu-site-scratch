@@ -1,10 +1,8 @@
 // Renders data/hail-severity.json into hail-severity.svg in the site's palette, and
 // into hail-grid.js, the index home-hail-map.js answers a hover from.
 //
-// The source is the NOAA hail-severity grid that shipped inside the vendored
-// Flourish export: same cells, same categories, same geometry. Only the drawing
-// changed. Re-run with `node scripts/build-hail-map.mjs` after editing the data
-// or the ramp.
+// The source is the NOAA hail-severity grid. Re-run with `node scripts/build-hail-map.mjs`
+// after editing the data or the ramp; bin/test fails when the committed artifacts drift.
 import { readFileSync, writeFileSync } from 'node:fs';
 
 const SRC = JSON.parse(readFileSync(new URL('../data/hail-severity.json', import.meta.url), 'utf8'));
@@ -26,8 +24,7 @@ const FILL = {
 // ARE the state outline, not a simplification of it.
 const CO = { west: -109.05, east: -102.05, south: 37.0, north: 41.0 };
 
-// squareAt comes from the browser's own module, so placement here and the hover there can
-// never drift. The ring geometry is build-time only and lives beside this file.
+// Placement calls the same squareAt the page answers a hover with, so the two cannot drift.
 const hail = (await import('../home-hail-map.js')).default;
 const { boxOf, drawnCells } = (await import('./hail-cells.js')).default;
 const CELLS = drawnCells(CO, SRC.cells);
@@ -66,9 +63,8 @@ function pathFor(catIndex) {
       first = false;
     }
     d += 'z';
-    // `z` returns the pen to the SUBPATH START, not to the last point drawn, so
-    // the next relative `m` has to be measured from there. Tracking the last
-    // point instead makes every following cell drift by the ring's own extent.
+    // `z` returns the pen to the SUBPATH START, not to the last point drawn, so the next
+    // relative `m` is measured from there.
     cx = sx;
     cy = sy;
   }
@@ -79,9 +75,8 @@ function pathFor(catIndex) {
 // rather than writing four constants here means a re-extract cannot leave the hover
 // reading the wrong square while every test stays green.
 function latticeOf(boxes) {
-  // Bucketed on the rounded extent, and the ROUNDED value is what the lattice step is
-  // derived from: the source coordinates carry a digit of noise that would otherwise ride
-  // into dlon and dlat.
+  // The lattice step comes from the ROUNDED extent: the source coordinates carry a digit
+  // of noise, and dlon and dlat must not inherit it.
   const tally = new Map();
   for (const b of boxes) {
     const width = Number(b.width.toFixed(4));

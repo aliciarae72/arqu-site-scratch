@@ -8,7 +8,7 @@
   const HOME = { scale: 1, x: 0, y: 0 };
   const WHEEL_RATE = 0.0016;
   const STEPS = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
-  // Zero reframes, which is why this is read with hasOwn rather than for truthiness.
+  // Zero reframes, so this map is read with hasOwn.
   const ZOOMS = { '+': model.ZOOM_STEP, '=': model.ZOOM_STEP, '-': 1 / model.ZOOM_STEP, _: 1 / model.ZOOM_STEP, 0: 0 };
 
   const boxOf = (ui) => {
@@ -25,8 +25,8 @@
      push it out over the figure's caption. */
   function show(ui, readout, at, box) {
     const said = `${readout.label}, ${readout.place}`;
-    // Rewriting the text on every move would re-announce the same cell to a screen reader,
-    // and reading offsetWidth back after the write forces a layout. Both only when it moved.
+    // Write only on a change: the live region announces each write, and measuring the
+    // tooltip back forces a layout.
     if (said !== ui.read.textContent) {
       ui.label.textContent = readout.label;
       ui.place.textContent = readout.place;
@@ -54,7 +54,6 @@
     ui.dot.hidden = false;
   }
 
-  /* Where a square renders in the box right now. */
   function viewPointOf(ui, square, box) {
     const [lon, lat] = model.squareCentre(ui.grid, square);
     return model.imageToView(ui.view, model.imageOf(ui.grid, lon, lat), box);
@@ -202,8 +201,6 @@
     return ui;
   }
 
-  // The page calls mount. A test drives the map the way a reader does, through the four
-  // gestures it answers, so nothing below them needs to be reachable from outside.
   const api = { mount, hover, wheel, key };
   if (typeof module === 'object' && module.exports) module.exports = api;
   else mount(document, model.decodeGrid(window.hailGrid));
