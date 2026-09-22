@@ -111,6 +111,53 @@ test('a drag pans the map by exactly the distance dragged', () => {
   assert.equal(app.map.hasPointerCapture(1), false);
 });
 
+// deltaY is in whatever unit deltaMode names. Firefox reports lines for a mouse wheel, so
+// a pixel reading of the same gesture zooms by almost nothing.
+test('a wheel notch zooms the same whether it arrives in pixels, lines or pages', () => {
+  const at = pointOnACell();
+  const scaleAfter = (extra) => {
+    const app = harness();
+    ui.wheel(app, event(at, extra));
+    return app.view.scale;
+  };
+  const pixels = scaleAfter({ deltaY: -240, deltaMode: 0 });
+  const lines = scaleAfter({ deltaY: -15, deltaMode: 1 });
+  const pages = scaleAfter({ deltaY: -240 / BOX.height, deltaMode: 2 });
+  assert.ok(pixels > 1, `a pixel wheel did not zoom: ${pixels}`);
+  assert.ok(Math.abs(lines - pixels) < 1e-9, `lines zoomed to ${lines}, pixels to ${pixels}`);
+  assert.ok(Math.abs(pages - pixels) < 1e-9, `pages zoomed to ${pages}, pixels to ${pixels}`);
+  // Read as raw pixels, fifteen lines would be a rounding error rather than a zoom.
+  assert.equal(ui.wheelPixels({ deltaY: -15, deltaMode: 1 }, BOX), -240);
+  assert.equal(ui.wheelPixels({ deltaY: -2, deltaMode: 2 }, BOX), -2 * BOX.height);
+  assert.equal(ui.wheelPixels({ deltaY: -240, deltaMode: 0 }, BOX), -240);
+});
+
+test('starting a drag drops the readout, which no longer names what is under the pointer', () => {
+  const app = harness();
+  ui.hover(app, pointOnACell());
+  assert.equal(app.tip.hidden, false);
+  app.map.listeners.get('pointerdown')(event({ x: 300, y: 220 }));
+  assert.equal(app.tip.hidden, true, 'the tooltip survived the start of a drag');
+  assert.equal(app.read.textContent, '');
+});
+
+// A box that shrinks while the map is zoomed and pushed against an edge can leave the old
+// translation outside the new clamp range, uncovering part of the box.
+test('refit pulls a zoomed view back inside a box that has shrunk', () => {
+  const app = harness();
+  ui.wheel(app, event({ x: BOX.width, y: BOX.height }, { deltaY: -600 }));
+  assert.ok(app.view.scale > 1);
+  assert.ok(app.view.x < 0, 'the view is pushed against an edge');
+  const wide = app.view;
+  app.map.getBoundingClientRect = () => ({ ...BOX, width: BOX.width / 3, height: BOX.height / 3 });
+  ui.refit(app);
+  const narrow = { width: BOX.width / 3, height: BOX.height / 3 };
+  assert.ok(app.view.x <= 0 && app.view.y <= 0, 'a gap opened at the top left');
+  assert.ok(app.view.x + narrow.width * app.view.scale >= narrow.width - 1e-9, 'a gap opened on the right');
+  assert.ok(app.view.y + narrow.height * app.view.scale >= narrow.height - 1e-9, 'a gap opened at the bottom');
+  assert.notDeepEqual(app.view, wide, 'refit changed nothing');
+});
+
 test('a drag cannot open a gap at the edge of the box', () => {
   const app = harness();
   ui.wheel(app, event({ x: 300, y: 220 }, { deltaY: -400 }));

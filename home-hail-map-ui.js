@@ -7,6 +7,16 @@
   const model = typeof module === 'object' && module.exports ? require('./home-hail-map.js') : window.hailMap;
   const HOME = { scale: 1, x: 0, y: 0 };
   const WHEEL_RATE = 0.0016;
+  // A wheel notch in line mode is worth about this many pixels; page mode is a boxful.
+  const LINE_PIXELS = 16;
+
+  /* deltaY is measured in whatever deltaMode says — pixels, lines or pages. Firefox reports
+     lines for a mouse wheel, which read as a near-zero zoom step when taken as pixels. */
+  function wheelPixels(event, box) {
+    if (event.deltaMode === 1) return event.deltaY * LINE_PIXELS;
+    if (event.deltaMode === 2) return event.deltaY * box.height;
+    return event.deltaY;
+  }
   const STEPS = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowUp: [0, 1], ArrowDown: [0, -1] };
   // Zero reframes, so this map is read with hasOwn.
   const ZOOMS = { '+': model.ZOOM_STEP, '=': model.ZOOM_STEP, '-': 1 / model.ZOOM_STEP, _: 1 / model.ZOOM_STEP, 0: 0 };
@@ -85,7 +95,7 @@
 
   function wheel(ui, event, box = boxOf(ui)) {
     const at = pointIn(box, event);
-    const next = model.zoomAt(ui.view, at, Math.exp(-event.deltaY * WHEEL_RATE), box);
+    const next = model.zoomAt(ui.view, at, Math.exp(-wheelPixels(event, box) * WHEEL_RATE), box);
     // An unchanged view means the gesture cannot zoom — at rest, or already as close as it
     // goes. The page keeps the scroll rather than the map swallowing it.
     if (next === ui.view) return;
@@ -98,6 +108,9 @@
   function startDrag(ui, event) {
     const box = boxOf(ui);
     ui.drag = { box, from: pointIn(box, event), view: ui.view };
+    // The drawing is about to move under the pointer, so whatever the readout names stops
+    // being what is beneath it.
+    hide(ui);
     ui.map.setPointerCapture(event.pointerId);
     ui.map.setAttribute('data-grabbing', '');
   }
@@ -161,8 +174,18 @@
     event.preventDefault();
   }
 
+  /* A box that has shrunk can leave the old translation outside the new clamp range, and
+     the drawing then stops covering it. */
+  function refit(ui) {
+    const box = boxOf(ui);
+    ui.view = model.clampView(ui.view, box);
+    apply(ui);
+    restCursor(ui, box);
+  }
+
   function wire(ui) {
     const on = (name, handler, options) => ui.map.addEventListener(name, handler, options);
+    if (typeof ResizeObserver === 'function') new ResizeObserver(() => refit(ui)).observe(ui.map);
     on('pointermove', (e) => {
       if (ui.drag) return moveDrag(ui, e);
       const box = boxOf(ui);
@@ -203,7 +226,7 @@
     return ui;
   }
 
-  const api = { mount, hover, wheel, key };
+  const api = { mount, hover, wheel, key, refit, wheelPixels };
   if (typeof module === 'object' && module.exports) module.exports = api;
   else mount(document, model.decodeGrid(window.hailGrid));
 })();
