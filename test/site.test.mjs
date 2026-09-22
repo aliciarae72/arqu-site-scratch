@@ -179,6 +179,9 @@ test('home.html: the map takes a pointer and a keyboard, and ships the grid it a
     assert.ok(map.includes(hook), `the map markup has no ${hook}`);
   });
   assert.match(map, /data-hail-read[^>]*aria-live="polite"/, 'the readout is not announced');
+  // The carousel skips a touch that starts on a control with gestures of its own. Without
+  // this attribute a drag across the map pages the slide instead of panning.
+  assert.match(map, /\bdata-owns-pointer\b/, 'the map does not claim its own gestures');
   ['hail-grid.js', 'home-hail-map.js', 'home-hail-map-ui.js'].forEach((src) => {
     assert.ok(
       scriptTags(HOME).some((tag) => tag.src === src),
@@ -194,6 +197,20 @@ test('home.html: the map takes a pointer and a keyboard, and ships the grid it a
 
 // The image tag has to declare the size the generator drew, or the figure reflows once
 // the SVG arrives and the pointer lands on the wrong cell until it settles.
+// The carousel must not claim input a slide's own control has taken: arrows that something
+// inside already answered, and touches that start on a control which owns its gestures.
+test('home.html: the carousel yields the keys and touches its slides have claimed', () => {
+  const carousel = HOME.slice(HOME.indexOf("show.addEventListener('keydown'"), HOME.indexOf('go(0);'));
+  assert.match(carousel, /if \(e\.defaultPrevented\) return;/, 'the carousel pages on a handled key');
+  assert.match(
+    carousel,
+    /closest\('\[data-owns-pointer\]'\)/,
+    'the carousel swipes from a control that owns the pointer',
+  );
+  // It still swipes from the rest of the slide, which is most of what a thumb can reach.
+  assert.doesNotMatch(carousel, /e\.target === show/, 'only the carousel background can swipe');
+});
+
 test('home.html: the map image declares the size the SVG was drawn at', () => {
   const svg = readFileSync(join(ROOT, 'hail-severity.svg'), 'utf8');
   const [, width, height] = svg.match(/viewBox="0 0 (\d+) (\d+)"/);

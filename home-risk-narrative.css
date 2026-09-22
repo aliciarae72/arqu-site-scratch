@@ -3,7 +3,10 @@
 .rn-head{max-width:62ch;margin-bottom:28px}
 .rn-head h3{font-family:var(--font-display);font-size:clamp(28px,4.4vw,46px);line-height:1.06;font-weight:400;font-style:normal;letter-spacing:-.02em;margin:8px 0 12px;max-width:18ch}
 .rn-lede{color:var(--ink-2);font-size:16px}
-.rn-show{position:relative;outline:none}
+/* pan-y keeps the page scrolling vertically while leaving the horizontal drag to the
+   carousel. Without it the browser claims the sideways gesture and cancels the pointer,
+   so the swipe never completes. */
+.rn-show{position:relative;outline:none;touch-action:pan-y}
 .rn-show:focus-visible{outline:1px solid var(--purple-deep);outline-offset:10px;border-radius:22px}
 .rn-slides{display:grid}
 .rn-slide{grid-area:1/1;display:grid;grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:clamp(24px,4vw,60px);align-items:start;

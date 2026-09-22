@@ -499,7 +499,7 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
                         <span class="dots-title">Hail severity, Colorado</span>
                         <span class="dots-sub">NOAA storm records &middot; one cell, one grid square</span>
                       </figcaption>
-                      <div class="hail-map" data-hail-map tabindex="0" role="group"
+                      <div class="hail-map" data-hail-map data-owns-pointer tabindex="0" role="group"
                            aria-label="Hail severity map of Colorado. Arrow keys read out a cell, plus and minus zoom, zero reframes the state.">
                         <div class="hail-pan" data-hail-pan>
                           <img src="hail-severity.svg" width="1000" height="735" loading="lazy" decoding="async"
@@ -1018,15 +1018,25 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
   rn.querySelector('[data-rn-prev]').addEventListener('click', function () { go(cur - 1); });
   rn.querySelector('[data-rn-next]').addEventListener('click', function () { go(cur + 1); });
   pips.forEach(function (p, k) { p.addEventListener('click', function () { go(k); }); });
-  // A slide can hold something that answers the arrows itself, so the carousel pages only
-  // on a key nothing inside it has taken, and swipes only from its own background.
+  // A slide can hold a control with gestures of its own. The carousel pages on a key
+  // nothing inside it has taken, and swipes from anywhere except such a control, which
+  // declares itself with data-owns-pointer.
   show.addEventListener('keydown', function (e) {
     if (e.defaultPrevented) return;
     if (e.key === 'ArrowRight') { go(cur + 1); e.preventDefault(); }
     if (e.key === 'ArrowLeft') { go(cur - 1); e.preventDefault(); }
   });
   var sx = null;
-  show.addEventListener('pointerdown', function (e) { if (e.pointerType === 'touch' && e.target === show) sx = e.clientX; }, { passive: true });
+  show.addEventListener('pointerdown', function (e) {
+    // Any new touch invalidates the last one, including a gesture this handler declines and
+    // one the browser cancelled: a start position left behind gets spent by the next
+    // pointerup, which is not the gesture that set it.
+    sx = null;
+    if (e.pointerType !== 'touch') return;
+    if (e.target.closest && e.target.closest('[data-owns-pointer]')) return;
+    sx = e.clientX;
+  }, { passive: true });
+  show.addEventListener('pointercancel', function () { sx = null; }, { passive: true });
   show.addEventListener('pointerup', function (e) {
     if (sx === null) return;
     var dx = e.clientX - sx; sx = null;

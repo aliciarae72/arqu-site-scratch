@@ -31,10 +31,12 @@
       ui.label.textContent = readout.label;
       ui.place.textContent = readout.place;
       ui.read.textContent = said;
+      // Unhidden before it is measured: a hidden element has no offsetWidth. hide() clears
+      // the readout text, so a hidden tooltip never matches and always comes back through
+      // this branch.
       ui.tip.hidden = false;
       ui.tipSize = { width: ui.tip.offsetWidth, height: ui.tip.offsetHeight };
     }
-    ui.tip.hidden = false;
     ui.tip.style.left = `${Math.max(0, Math.min(at.x + 14, box.width - ui.tipSize.width))}px`;
     ui.tip.style.top = `${Math.max(0, Math.min(at.y + 14, box.height - ui.tipSize.height))}px`;
     ui.dot.hidden = true;
