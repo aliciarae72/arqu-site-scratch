@@ -1,10 +1,11 @@
 // Static checks for the pages GitHub Pages serves from this repo. There is no
 // build step, so a syntax error in an inline <script> or a missing sibling file
 // only shows up as a broken page in someone's browser. These catch both first.
-import { test } from 'node:test';
+
 import assert from 'node:assert/strict';
-import { readFileSync, readdirSync, existsSync } from 'node:fs';
-import { join, dirname } from 'node:path';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { dirname, join } from 'node:path';
+import { test } from 'node:test';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
 
@@ -26,7 +27,9 @@ function stylesheetHrefs(html) {
 function assertLocalFilesExist(page, refs) {
   refs
     .filter((ref) => !/^https?:/.test(ref))
-    .forEach((ref) => assert.ok(existsSync(join(ROOT, ref)), `${page} loads missing ${ref}`));
+    .forEach((ref) => {
+      assert.ok(existsSync(join(ROOT, ref)), `${page} loads missing ${ref}`);
+    });
 }
 
 test('serves at least the home page', () => {
@@ -55,11 +58,6 @@ for (const page of PAGES) {
 }
 
 const HOME = readFileSync(join(ROOT, 'home.html'), 'utf8');
-
-function sectionOf(html, id) {
-  const open = html.indexOf(`<section id="${id}"`);
-  return open < 0 ? '' : html.slice(open, html.indexOf('</section>', open));
-}
 
 // The casualty/property material now rides the open-market carousel rather than
 // its own #lines section, so these assertions read the carousel block.
@@ -109,7 +107,9 @@ test('home.html: each printed count in the dot matrix equals its data-count', ()
     stacks.map((s) => s.count),
     ['1349', '3324', '1'],
   );
-  stacks.forEach((s) => assert.equal(Number(s.count).toLocaleString('en-US'), s.printed));
+  stacks.forEach((s) => {
+    assert.equal(Number(s.count).toLocaleString('en-US'), s.printed);
+  });
 });
 
 test('home.html: the casualty chart names both sources, and the hail map is drawn from this repo', () => {
@@ -121,16 +121,30 @@ test('home.html: the casualty chart names both sources, and the hail map is draw
   assert.ok(scriptTags(HOME).some((tag) => tag.src === 'home-lines.js'));
 });
 
-// The map is markup now, not an opaque embed, so its parts can be asserted the way
-// the casualty chart's are.
-test('home.html: the hail slide\'s counts match the data it ships', () => {
+// The map is markup now, not an opaque embed, so its parts can be asserted the way the
+// casualty chart's are. It draws Colorado, so the copy counts what it draws: a cell whose
+// centre falls inside the state line. The extract runs past that line to the north and the
+// south-west, and those cells are neither drawn nor counted.
+const COLORADO = { west: -109.05, east: -102.05, south: 37.0, north: 41.0 };
+const centreOf = (ring) => {
+  const lon = ring.map((p) => p[0]);
+  const lat = ring.map((p) => p[1]);
+  return [(Math.min(...lon) + Math.max(...lon)) / 2, (Math.min(...lat) + Math.max(...lat)) / 2];
+};
+const DRAWN = HAIL.cells.filter(([, ring]) => {
+  const [lon, lat] = centreOf(ring);
+  return lon >= COLORADO.west && lon <= COLORADO.east && lat >= COLORADO.south && lat <= COLORADO.north;
+});
+
+test("home.html: the hail slide's counts match the data it ships", () => {
   const fig = LINES.slice(LINES.indexOf('02 &middot; Property'));
   const tally = {};
-  HAIL.cells.forEach(([c]) => {
+  DRAWN.forEach(([c]) => {
     tally[HAIL.categories[c]] = (tally[HAIL.categories[c]] || 0) + 1;
   });
   const shown = (n) => assert.ok(fig.includes(n.toLocaleString('en-US')), `the slide does not say ${n}`);
-  shown(HAIL.cells.length);
+  assert.ok(DRAWN.length < HAIL.cells.length, 'the extract runs past the state line');
+  shown(DRAWN.length);
   ['Very Low', 'Low', 'Moderate'].forEach((c) => {
     shown(tally[c]);
   });
@@ -147,14 +161,46 @@ test('home.html: the hail figure carries a caption, a legend and its sources', (
   // One legend row per severity class the data actually carries, same order.
   const swatches = [...fig.matchAll(/class="hail-key"[\s\S]*?<\/ul>/g)][0][0];
   const labels = [...swatches.matchAll(/<\/i>([^<]+)</g)].map((m) => m[1].trim().toLowerCase());
-  assert.deepEqual(labels, HAIL.categories.map((c) => c.toLowerCase()));
+  assert.deepEqual(
+    labels,
+    HAIL.categories.map((c) => c.toLowerCase()),
+  );
   const source = [...fig.matchAll(/class="fig-source">([^<]+)</g)].at(-1)[1];
   assert.match(source, /NOAA Storm Events Database/);
   assert.match(source, /NOAA Severe Weather Data Inventory/);
   // The alt text has to carry the finding, not just name the file.
   const alt = fig.match(/alt="([^"]+)"/)[1];
-  assert.match(alt, /11,963/);
+  assert.ok(alt.includes(DRAWN.length.toLocaleString('en-US')), `the alt text does not say ${DRAWN.length}`);
   assert.match(alt, /Very High/i);
+});
+
+test('home.html: the map takes a pointer and a keyboard, and ships the grid it answers from', () => {
+  const map = LINES.match(/<div class="hail-map"[\s\S]*?<\/div>\s*<\/div>/)[0];
+  assert.match(map, /\btabindex="0"/, 'the map cannot be reached from the keyboard');
+  assert.match(map, /\baria-label="[^"]*[Aa]rrow keys[^"]*"/, 'the label does not say what the keys do');
+  ['data-hail-map', 'data-hail-pan', 'data-hail-tip', 'data-hail-dot', 'data-hail-read'].forEach((hook) => {
+    assert.ok(map.includes(hook), `the map markup has no ${hook}`);
+  });
+  assert.match(map, /data-hail-read[^>]*aria-live="polite"/, 'the readout is not announced');
+  ['home-hail-map.js', 'home-hail-map-ui.js'].forEach((src) => {
+    assert.ok(
+      scriptTags(HOME).some((tag) => tag.src === src),
+      `home.html does not load ${src}`,
+    );
+  });
+  // The wiring reads the arithmetic off a global, so the model has to load first.
+  assert.ok(HOME.indexOf('home-hail-map.js') < HOME.indexOf('home-hail-map-ui.js'));
+  assert.ok(existsSync(join(ROOT, 'hail-grid.json')), 'the grid the readout needs does not ship');
+});
+
+// The image tag has to declare the size the generator drew, or the figure reflows once
+// the SVG arrives and the pointer lands on the wrong cell until it settles.
+test('home.html: the map image declares the size the SVG was drawn at', () => {
+  const svg = readFileSync(join(ROOT, 'hail-severity.svg'), 'utf8');
+  const [, width, height] = svg.match(/viewBox="0 0 (\d+) (\d+)"/);
+  const img = LINES.match(/<img src="hail-severity\.svg"[^>]*>/)[0];
+  assert.match(img, new RegExp(`width="${width}"`));
+  assert.match(img, new RegExp(`height="${height}"`));
 });
 
 // Rendering the map fetches tiles and fonts from these four at run time, measured in Chrome.
@@ -189,7 +235,9 @@ test('home.html: the hail map reaches none of the hosts the embed used to', () =
 test('home.html: every off-origin host in its own markup is named in a note', () => {
   const hosts = new Set([...HOME.matchAll(/(?:src|href)="(https?:\/\/[^"]+)"/g)].map((m) => new URL(m[1]).host));
   const notes = disclosedHosts(HOME);
-  hosts.forEach((host) => assert.ok(notes.includes(host), `home.html loads ${host}, and no note names it`));
+  hosts.forEach((host) => {
+    assert.ok(notes.includes(host), `home.html loads ${host}, and no note names it`);
+  });
 });
 
 const INSURED_COLUMNS = new Set(['name', 'address', 'city', 'zip', 'tiv', 'latitude', 'longitude']);
@@ -221,5 +269,7 @@ test('data/hail-severity.json carries severity and geometry, nothing about an in
 test('home.html pins its remote scripts with an integrity hash', () => {
   const remote = scriptTags(HOME).filter((s) => /^https?:/.test(s.src));
   assert.ok(remote.length > 0);
-  remote.forEach((s) => assert.match(s.tag, /\bintegrity="sha(256|384|512)-/, `home.html loads ${s.src} unpinned`));
+  remote.forEach((s) => {
+    assert.match(s.tag, /\bintegrity="sha(256|384|512)-/, `home.html loads ${s.src} unpinned`);
+  });
 });

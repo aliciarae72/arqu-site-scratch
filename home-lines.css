@@ -36,8 +36,29 @@
 .dots-stack[data-punchline] .dots{stroke:var(--purple-deep)}
 .dots-ring{fill:none;stroke:var(--purple-deep);stroke-width:1;vector-effect:non-scaling-stroke}
 
-.hail-map{border-radius:12px;overflow:hidden;background:var(--bg);border:1px solid var(--line)}
-.hail-map img{display:block;width:100%;height:auto}
+/* The map answers the pointer, so it takes a pointer's affordances: a grab cursor, a
+   focus ring, and no text selection to fight the drag. */
+.hail-map{position:relative;border-radius:12px;overflow:hidden;background:var(--bg);border:1px solid var(--line);
+  cursor:grab;touch-action:pan-y;user-select:none;outline:none}
+.hail-map:focus-visible{outline:1px solid var(--purple-deep);outline-offset:3px}
+.hail-map[data-grabbing]{cursor:grabbing}
+.hail-pan{transform-origin:0 0;will-change:transform}
+.hail-map img{display:block;width:100%;height:auto;pointer-events:none}
+
+/* The readout rides above the drawing and never takes the pointer, or it would chase
+   itself off the cell it is naming. */
+.hail-tip{position:absolute;top:0;left:0;pointer-events:none;z-index:2;
+  padding:5px 9px;border-radius:7px;background:var(--ink);color:var(--surface);
+  font-family:var(--font-mono);font-size:9.5px;line-height:1.5;letter-spacing:.1em;text-transform:uppercase;
+  white-space:nowrap;box-shadow:0 6px 18px -8px rgba(34,31,32,.55)}
+.hail-tip b{font-weight:400;color:var(--tint-2);margin-right:7px}
+.hail-tip[hidden],.hail-dot[hidden]{display:none}
+/* The keyboard cursor. A pointer reader can see what they are pointing at; a keyboard
+   reader needs the cell the readout is naming marked on the drawing. */
+.hail-dot{position:absolute;z-index:1;width:15px;height:15px;margin:-8px 0 0 -8px;pointer-events:none;
+  border:1.5px solid var(--purple-deep);border-radius:50%;box-shadow:0 0 0 2px rgba(251,250,247,.9)}
+/* Same words, for a screen reader, without a second thing on screen. */
+.hail-read{position:absolute;width:1px;height:1px;margin:-1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
 /* Legend reads as a caption, not a control: same mono as every other figure label. */
 .hail-key{display:flex;flex-wrap:wrap;gap:6px 18px;list-style:none;margin:14px 0 0;padding:0;
   font-family:var(--font-mono);font-size:9.5px;line-height:1.5;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}

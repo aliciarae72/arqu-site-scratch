@@ -488,8 +488,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
                     <span class="rn-kicker">02 &middot; Property &middot; Hail</span>
                     <p class="rn-title">Hail severity, mapped from NOAA records.</p>
                     <ul class="lines-points">
-                      <li>11,963 grid cells carry a severity rating. 10,544 of them rate Very Low.</li>
-                      <li>1,202 rate Low and 176 Moderate, almost all of them along the Front Range and out onto the eastern plains.</li>
+                      <li>11,026 grid cells carry a severity rating. 9,648 of them rate Very Low.</li>
+                      <li>1,168 rate Low and 169 Moderate, almost all of them along the Front Range and out onto the eastern plains.</li>
                       <li><b>Forty cells rate High, and one rates Very High</b> &mdash; near Colorado Springs. Severity is not spread across the state; it sits in a corridor.</li>
                     </ul>
                   </div>
@@ -499,9 +499,15 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
                         <span class="dots-title">Hail severity, Colorado</span>
                         <span class="dots-sub">NOAA storm records &middot; one cell, one grid square</span>
                       </figcaption>
-                      <div class="hail-map">
-                        <img src="hail-severity.svg" width="1000" height="892" loading="lazy" decoding="async"
-                             alt="Hail severity across Colorado from NOAA storm records. Nearly all of the 11,963 grid cells rate Very Low; the Low, Moderate and High cells crowd the Front Range and the eastern plains, and a single Very High cell sits near Colorado Springs.">
+                      <div class="hail-map" data-hail-map tabindex="0" role="group"
+                           aria-label="Hail severity map of Colorado. Arrow keys read out a cell, plus and minus zoom, zero reframes the state.">
+                        <div class="hail-pan" data-hail-pan>
+                          <img src="hail-severity.svg" width="1000" height="735" loading="lazy" decoding="async"
+                               alt="Hail severity across Colorado from NOAA storm records. Nearly all of the 11,026 grid cells rate Very Low; the Low, Moderate and High cells crowd the Front Range and the eastern plains, and a single Very High cell sits near Colorado Springs.">
+                        </div>
+                        <span class="hail-dot" data-hail-dot hidden></span>
+                        <div class="hail-tip" data-hail-tip hidden><b data-hail-label></b><span data-hail-place></span></div>
+                        <span class="hail-read" data-hail-read aria-live="polite"></span>
                       </div>
                       <ul class="hail-key">
                         <li><i style="background:#e9e4dc"></i>Very low</li>
@@ -1506,6 +1512,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 })();
 </script>
 <script src="home-lines.js"></script>
+<script src="home-hail-map.js"></script>
+<script src="home-hail-map-ui.js"></script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
         data-selector="h1, h2, .lead, .eyebrow, .hint, .val h3, .val p, .way-kicker, .way-title, .way-desc, .node h3, .node p, .wins b, .wins span, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
         data-key="arqu-copy-home-v3"
