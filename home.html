@@ -18,7 +18,6 @@
 <body>
 
 <canvas class="ambient" aria-hidden="true"></canvas>
-<svg id="hand" aria-hidden="true"></svg>
 
 <div class="flag">Mockup · home v3 · scratch, not live</div>
 
@@ -130,22 +129,21 @@
 
       <div class="flows" id="flows">
         <div class="flow" id="flow-market" role="region" aria-labelledby="way-market" hidden>
-          <svg class="wire" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 56"><path vector-effect="non-scaling-stroke" d=""/></svg>
           <div class="branches">
-            <div class="node reveal" style="--i:0" data-anchor>
-              <span class="dot"></span>
+            <div class="node reveal" style="--i:0">
+              <svg class="sector-icon" data-icon="construction" viewBox="0 0 72 60" aria-hidden="true"></svg>
               <h3>Construction</h3>
               <p>New builds, renovations, modular projects, and the contractors behind them.</p>
               <div class="chips"><span class="chip">Builder's risk</span><span class="chip">Casualty</span></div>
             </div>
-            <div class="node reveal" style="--i:1" data-anchor>
-              <span class="dot"></span>
+            <div class="node reveal" style="--i:1">
+              <svg class="sector-icon" data-icon="realEstate" viewBox="0 0 72 60" aria-hidden="true"></svg>
               <h3>Real estate</h3>
               <p>Habitational buildings, condo and HOA associations, and commercial property.</p>
               <div class="chips"><span class="chip">Property</span><span class="chip">Casualty</span></div>
             </div>
-            <div class="node reveal" style="--i:2" data-anchor>
-              <span class="dot"></span>
+            <div class="node reveal" style="--i:2">
+              <svg class="sector-icon" data-icon="energy" viewBox="0 0 72 60" aria-hidden="true"></svg>
               <h3>Energy &amp; environmental</h3>
               <p>Energy projects, oil and gas contractors, and site environmental exposures.</p>
               <div class="chips"><span class="chip">Property</span><span class="chip">Casualty</span></div>
@@ -299,7 +297,7 @@
         <div class="g-title" id="globe-title" role="heading" aria-level="2">Insurance still runs on a handshake.</div>
       </div>
       <div class="globe-row">
-        <div class="globe-stage"><svg class="hs" id="hs" viewBox="0 0 640 600" role="img" aria-label="Two stick figures shake hands while a few dots circle around them"></svg></div>
+        <div class="globe-stage" data-wash><svg class="hs" id="hs" viewBox="0 0 640 600" role="img" aria-label="Two stick figures shake hands while a few dots circle around them"></svg></div>
         <div>
           <div class="g-say">Behind every submission is a retailer who knows the account and a broker who knows the market. That conversation is the part we protect.</div>
           <div class="g-say">Data, models and nearly 100 capacity partners move around that relationship. AI clears the desk so it gets more of our time, not less.</div>
@@ -309,7 +307,7 @@
     </div>
   </section>
 
-  <section id="contact" class="band" aria-labelledby="close-title">
+  <section id="contact" class="band" data-wash aria-labelledby="close-title">
     <div class="wrap close">
       <div>
         <svg class="run" viewBox="0 0 1200 10" preserveAspectRatio="none" aria-hidden="true">
@@ -351,6 +349,8 @@
 
 <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js" integrity="sha384-1NLkwxMO2sOqcq7rQkFBhIAUJtbt8ziLxhVKVgKfFGMEU8pF+GEq5LVogviveup6" crossorigin="anonymous"></script>
 <script src="home-hand.js"></script>
+<script src="home-hand-marks.js"></script>
+<script src="home-sector-icons.js"></script>
 
 <script src="home-handshake.js"></script>
 

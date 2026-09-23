@@ -2,31 +2,36 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { openHome } = require('./test/page-harness');
 
-test('opening Open market shows its flow, dims Programs, and lands the wire on the first dot', async (t) => {
+test('opening Open market shows its flow and dims Programs, with no wire into its columns', async (t) => {
   const { page, errors } = await openHome(t);
   await page.click('#way-market');
   await page.waitForTimeout(700);
+  const state = await page.evaluate(() => ({
+    expanded: document.querySelector('#way-market').getAttribute('aria-expanded'),
+    flowHidden: document.querySelector('#flow-market').hidden,
+    programsDim: document.querySelector('#way-programs').classList.contains('dim'),
+    wire: !!document.querySelector('#flow-market .wire'),
+  }));
+  assert.deepEqual(state, { expanded: 'true', flowHidden: false, programsDim: true, wire: false });
+  assert.deepEqual(errors, []);
+});
+
+test('opening Programs lands its wire on the first dot', async (t) => {
+  const { page } = await openHome(t);
+  await page.click('#way-programs');
+  await page.waitForTimeout(700);
   const state = await page.evaluate(() => {
-    const path = document.querySelector('#flow-market .wire path').getAttribute('d');
-    const box = document.querySelector('#flow-market .wire').getBoundingClientRect();
-    const node = document.querySelector('#flow-market .node').getBoundingClientRect();
+    const path = document.querySelector('#flow-programs .wire path').getAttribute('d');
+    const box = document.querySelector('#flow-programs .wire').getBoundingClientRect();
+    const node = document.querySelector('#flow-programs .node').getBoundingClientRect();
     const ends = [...path.matchAll(/H([\d.]+) V56/g)].map((m) => box.left + (+m[1] / 100) * box.width);
-    return {
-      expanded: document.querySelector('#way-market').getAttribute('aria-expanded'),
-      flowHidden: document.querySelector('#flow-market').hidden,
-      programsDim: document.querySelector('#way-programs').classList.contains('dim'),
-      firstDotX: node.left + 2.5,
-      wireEnds: ends,
-    };
+    return { firstDotX: node.left + 2.5, wireEnds: ends };
   });
-  assert.equal(state.expanded, 'true');
-  assert.equal(state.flowHidden, false);
-  assert.equal(state.programsDim, true);
+  assert.equal(state.wireEnds.length, 1);
   assert.ok(
     Math.abs(state.wireEnds[0] - state.firstDotX) < 1.5,
     `wire lands at ${state.wireEnds[0]}, dot at ${state.firstDotX}`,
   );
-  assert.deepEqual(errors, []);
 });
 
 test('clicking the open card again closes the flow', async (t) => {
