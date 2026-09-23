@@ -12,19 +12,19 @@ import { scriptTags } from './script-tags.mjs';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const HOME = readFileSync(join(ROOT, 'home.html'), 'utf8');
 
-// The casualty/property material now rides the open-market carousel rather than
-// its own #lines section, so these assertions read the carousel block.
+// The casualty/property material rides the open-market carousel, so these assertions
+// read the carousel block.
 const HAIL = JSON.parse(readFileSync(join(ROOT, 'data/hail-severity.json'), 'utf8'));
 const LINES = HOME.slice(HOME.indexOf('<div class="rn reveal"'), HOME.indexOf('<div class="how reveal"'));
 
 test('home.html: the casualty material rides the open-market carousel, and the page wires it up', () => {
-  // It sits inside #ways now, above "How it works" and below the three verticals.
+  // It sits inside #ways, above "How it works" and below the three verticals.
   assert.ok(HOME.indexOf('<div class="branches">') < HOME.indexOf('<div class="rn reveal"'));
   assert.ok(HOME.indexOf('<div class="rn reveal"') < HOME.indexOf('<div class="how reveal"'));
-  assert.ok(!HOME.includes('<section id="lines"'), 'the standalone #lines section is gone');
+  assert.ok(!HOME.includes('<section id="lines"'), 'there is no standalone #lines section');
   const interaction = readFileSync(join(ROOT, 'home-interaction.js'), 'utf8');
   assert.match(interaction, /\['ways',/, 'the spine list is read from the file that holds it');
-  assert.ok(!/\['lines',/.test(interaction), 'the spine no longer points at a section that does not exist');
+  assert.ok(!/\['lines',/.test(interaction), 'the spine points only at sections that exist');
   // The slides and pagination she asked to keep still carry it.
   assert.equal((LINES.match(/class="rn-slide[ "]/g) || []).length, 2);
   assert.equal((LINES.match(/class="rn-pip"/g) || []).length, 2);
@@ -76,7 +76,7 @@ test('home.html: the casualty chart names both sources, and the hail map is draw
   assert.ok(scriptTags(HOME).some((tag) => tag.src === 'home-lines.js'));
 });
 
-// The map is markup now, not an opaque embed, so its parts can be asserted the way the
+// The map is markup, not an opaque embed, so its parts can be asserted the way the
 // casualty chart's are. It draws Colorado, so the copy counts what it draws: a cell whose
 // centre falls inside the state line. The extract runs past that line to the north and the
 // south-west, and those cells are neither drawn nor counted.
@@ -173,8 +173,7 @@ test('home.html: the map image declares the size the SVG was drawn at', () => {
   assert.match(img, new RegExp(`height="${height}"`));
 });
 
-// Rendering the map fetches tiles and fonts from these four at run time, measured in Chrome.
-// The page says so, so a host added to the frame without a word to the visitor fails here.
+// The tile and font hosts a third-party map embed reaches at render time, measured in Chrome.
 const MAP_HOSTS = [
   'server.arcgisonline.com',
   'tiles.flourish.studio',
@@ -186,10 +185,9 @@ function disclosedHosts(html) {
   return [...html.matchAll(/class="(?:fig-note|f-note)">([^<]+)</g)].map((m) => m[1]).join(' ');
 }
 
-// The map used to fetch tiles and fonts from these four at render time. It is drawn
-// from this repo now, so the guarantee flips: they must appear NOWHERE, and the
-// footer must not keep promising a visitor that it reaches them.
-test('home.html: the hail map reaches none of the hosts the embed used to', () => {
+// The map is drawn from this repo, so none of these hosts may appear, and the footer
+// must tell a visitor that the map reaches nobody.
+test('home.html: the hail map reaches none of the embed hosts', () => {
   const svg = readFileSync(join(ROOT, 'hail-severity.svg'), 'utf8');
   MAP_HOSTS.forEach((host) => {
     assert.ok(!HOME.includes(host), `home.html still reaches ${host}`);
