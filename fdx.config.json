@@ -14,5 +14,10 @@
         "reason": "Written by scripts/build-hail-map.mjs from data/hail-severity.json — a run-length index with no logic in it. bin/test runs the generator's --check first, which regenerates in memory and fails when the committed file has drifted from the data, so the artifact is proved by the data rather than by a sibling test. test/home-hail-map.test.js resolves all 11,026 drawn cells through it."
       }
     ]
+  },
+  "commands": {
+    "security": {
+      "run": "pnpm audit --audit-level high"
+    }
   }
 }

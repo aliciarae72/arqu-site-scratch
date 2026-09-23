@@ -7,5 +7,6 @@
   },
   "devDependencies": {
     "playwright-core": "1.63.0"
-  }
+  },
+  "packageManager": "pnpm@12.4.2"
 }
