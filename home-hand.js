@@ -38,60 +38,6 @@
   }
   window.arquHand = { ink: ink, opts: opts, INK: INK, PURPLE: PURPLE };
 
-  /* ── the hero: a person holding up their ask, in front of what we bring ── */
-  var SVG_NS = 'http://www.w3.org/2000/svg';
-
-  /* the small arrow from the ask back toward the person */
-  function arrow(rc) {
-    var g = document.createElementNS(SVG_NS, 'g'),
-      pen = { stroke: INK, strokeWidth: 1.3, roughness: 1, bowing: 1 };
-    var shaft = [
-        [182, 350],
-        [174, 337],
-        [158, 330],
-      ],
-      head = [
-        [166, 324],
-        [157, 330],
-        [167, 336],
-      ];
-    g.appendChild(rc.curve(shaft, opts(40, pen)));
-    g.appendChild(rc.linearPath(head, opts(41, pen)));
-    return g;
-  }
-
-  function heroMotif() {
-    var svg = document.querySelector('.hand-motif');
-    if (!svg) return;
-    var rc = rough.svg(svg);
-    var ask = svg.appendChild(
-      rc.ellipse(136, 251, 156, 150, opts(3, { stroke: INK, strokeWidth: 1.5, roughness: 1.5 })),
-    );
-    var back = svg.appendChild(arrow(rc));
-    ink(ask, 750, 0.6);
-    ink(back, 2050, 0.4);
-  }
-  heroMotif();
-
-  /* the hero leans a few pixels toward the pointer: big circle one way, the ask the other */
-  var hero = document.querySelector('.hero'),
-    motif = document.querySelector('.motif');
-  if (hero && motif && !RM) {
-    hero.addEventListener(
-      'pointermove',
-      function (e) {
-        var r = hero.getBoundingClientRect();
-        motif.style.setProperty('--px', ((e.clientX - r.left) / r.width - 0.5).toFixed(3));
-        motif.style.setProperty('--py', ((e.clientY - r.top) / r.height - 0.5).toFixed(3));
-      },
-      { passive: true },
-    );
-    hero.addEventListener('pointerleave', function () {
-      motif.style.setProperty('--px', 0);
-      motif.style.setProperty('--py', 0);
-    });
-  }
-
   /* the card wash follows the pointer, and so does the same wash wherever [data-wash] carries it */
   Array.prototype.forEach.call(document.querySelectorAll('.way, [data-wash]'), function (card) {
     card.addEventListener(

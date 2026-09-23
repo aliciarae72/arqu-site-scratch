@@ -8,10 +8,9 @@
   /* ── 1. the spine. A full-height rail; every dot sits where its section
         sits on the page, so the rail is a map of the scroll. ─────────────── */
   var SECTIONS = [
-    ['top', 'Start'],
-    ['values', 'Values'],
-    ['ways', 'Ways to work'],
+    ['page', 'Start'],
     ['human', 'Human-centered'],
+    ['ways', 'Ways to work'],
     ['contact', 'Get in touch'],
     ['careers', 'Careers'],
   ]
@@ -92,9 +91,7 @@
   }
 
   /* ── 3. reveals. JS applies the attribute, so with JS off nothing is hidden. ── */
-  var RISE =
-    '.hero > div, .motif, .val, .way-grid, .node, .steps li, .wins, .close > div, ' +
-    '.g-head, .globe-stage, .g-say, .g-note, .dots-chart';
+  var RISE = '.way-grid, .node, .steps li, .wins, .close > div, .g-head, .globe-stage, .g-say, .g-note, .dots-chart';
   function reveals() {
     var els = Array.prototype.slice.call(document.querySelectorAll(RISE));
     if (!els.length) return;
@@ -153,10 +150,6 @@
     },
     { passive: true },
   );
-  window.addEventListener('arqu:layout', function () {
-    placeDots();
-    spineTick();
-  });
 
   window.addEventListener('load', function () {
     placeDots();

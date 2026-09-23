@@ -2,7 +2,7 @@
    home-hail-map.js and the grid in hail-grid.js, both read off a named global. Classic
    scripts rather than modules, to match the rest of the page and because a module and a
    fetch both need HTTP — the map has to answer the pointer when the file is opened from
-   disk too. home.html loads all three in order. */
+   disk too. open-market.html loads all three in order. */
 (() => {
   const model = typeof module === 'object' && module.exports ? require('./home-hail-map.js') : window.hailMap;
   const HOME = { scale: 1, x: 0, y: 0 };

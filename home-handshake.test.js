@@ -1,9 +1,9 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector } = require('./test/page-harness');
+const { openPage, scrollToSelector } = require('./test/page-harness');
 
 async function drawn(t) {
-  const opened = await openHome(t);
+  const opened = await openPage(t);
   await scrollToSelector(opened.page, '#human', 60);
   await opened.page.waitForFunction(
     () => {
@@ -89,7 +89,7 @@ test('hovering makes the two forearms shake together about their shoulders', asy
 });
 
 test('under reduced motion the orbit dots are visible, not stuck at opacity 0', async (t) => {
-  const { page } = await openHome(t);
+  const { page } = await openPage(t);
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload();
   await scrollToSelector(page, '#human', 60);

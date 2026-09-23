@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>arqu — Open market</title>
+<meta name="description" content="arqu open market mockup: one risk at a time.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap">
+<link rel="stylesheet" href="home.css">
+<link rel="stylesheet" href="home-layers.css">
+<link rel="stylesheet" href="home-spine.css">
+<link rel="stylesheet" href="home-hand.css">
+<link rel="stylesheet" href="home-risk-narrative.css">
+<link rel="stylesheet" href="home-lines.css">
+</head>
+<body>
+
+<canvas class="ambient" aria-hidden="true"></canvas>
+
+<div class="flag">Mockup · home v3 · scratch, not live</div>
+
+<nav class="spine" id="spine" aria-label="Sections">
+  <div class="spine-ln" aria-hidden="true"></div>
+  <div class="sdots" id="dots"></div>
+</nav>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="home.html" aria-label="arqu home">arqu</a>
+    <nav class="nav" aria-label="Primary">
+      <a href="open-market.html">Open market</a>
+      <a href="programs.html">Programs</a>
+      <a class="btn btn-primary" href="#contact">Get in touch</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+  <section id="page" class="ways page" aria-labelledby="page-title">
+    <div class="wrap">
+      <a class="back" href="home.html">&larr; Two ways in</a>
+      <div class="sec-head">
+        <div>
+          <p class="eyebrow">One risk at a time</p>
+          <h1 id="page-title">Open market</h1>
+          <p class="lead">See how AI and data unlock better solutions with our nearly 100 capacity partners.</p>
+        </div>
+      </div>
+      <div class="flow" id="flow-market">
+          <div class="branches">
+            <div class="node reveal" style="--i:0">
+              <svg class="sector-icon" data-icon="construction" viewBox="0 0 72 60" aria-hidden="true"></svg>
+              <h3>Construction</h3>
+              <p>Builder's risk is where we started, not where we stop. We place the contractors' casualty too, on new builds, renovations and modular projects.</p>
+              <div class="chips"><span class="chip">Builder's risk</span><span class="chip">Casualty</span></div>
+            </div>
+            <div class="node reveal" style="--i:1">
+              <svg class="sector-icon" data-icon="realEstate" viewBox="0 0 72 60" aria-hidden="true"></svg>
+              <h3>Real Estate</h3>
+              <p>Habitational buildings, condo and HOA associations, and commercial property, with direct markets for the super-regionals.</p>
+              <div class="chips"><span class="chip">Property</span><span class="chip">Casualty</span></div>
+            </div>
+            <div class="node reveal" style="--i:2">
+              <svg class="sector-icon" data-icon="energy" viewBox="0 0 72 60" aria-hidden="true"></svg>
+              <h3>Energy</h3>
+              <p>Energy projects, contractors, and operators in both conventional and renewables.</p>
+              <div class="chips"><span class="chip">Property</span><span class="chip">Casualty</span><span class="chip">Environmental</span></div>
+            </div>
+          </div>
+          <div class="rn reveal" style="--i:3" data-rn>
+            <div class="rn-head">
+              <p class="eyebrow">Narrated risk, pre-underwritten submissions</p>
+              <h3>Read the risk from the record, not the headline.</h3>
+              <p class="rn-lede">Two reads from the federal record, one per slide: what the file actually says once you put the sources side by side.</p>
+            </div>
+
+            <div class="rn-show" data-rn-show role="region" aria-roledescription="carousel" aria-label="Casualty and property" tabindex="0">
+              <div class="rn-slides">
+                <div class="rn-slide is-on" role="group" aria-roledescription="slide" aria-label="1 of 2, Casualty and energy">
+                  <div class="rn-say">
+                    <span class="rn-kicker">01 &middot; Casualty &middot; Energy</span>
+                    <p class="rn-title">Pipelines take the blame for wildfires. Put the federal records side by side:</p>
+                    <ul class="lines-points">
+                      <li>Since 2010, 1,349 pipeline incidents have involved an ignition.</li>
+                      <li>3,324 wildfires were recorded within 10 miles of those incidents.</li>
+                      <li><b>Only one</b> of those wildfires, the Pollard Creek Gas Fire in Fritch, Texas, in 2023, ties directly to a pipeline ignition. It was held to 0.65 acres.</li>
+                    </ul>
+                  </div>
+                  <div class="rn-vis rn-vis--figure">
+                    <figure class="dots-chart">
+                      <figcaption class="dots-head">
+                        <span class="dots-title">Pipeline ignitions vs. wildfire activity</span>
+                        <span class="dots-sub">Incidents, 2010 to present &middot; one dot, one incident</span>
+                      </figcaption>
+                      <div class="dots-cols">
+                        <div class="dots-col">
+                          <div class="dots-stack" data-count="1349"><span class="dots-n">1,349</span></div>
+                          <span class="dots-label">Pipeline ignition incidents</span>
+                        </div>
+                        <div class="dots-col">
+                          <div class="dots-stack" data-count="3324"><span class="dots-n">3,324</span></div>
+                          <span class="dots-label">Wildfires within 10 miles</span>
+                        </div>
+                        <div class="dots-col">
+                          <div class="dots-stack" data-count="1" data-punchline><span class="dots-n">1</span></div>
+                          <span class="dots-label">Wildfires directly caused</span>
+                        </div>
+                      </div>
+                      <div class="fig-source">Sources: Pipeline and Hazardous Materials Safety Administration (PHMSA) incident data; National Interagency Fire Center</div>
+                    </figure>
+                  </div>
+                </div>
+
+                <div class="rn-slide" role="group" aria-roledescription="slide" aria-label="2 of 2, Property and hail">
+                  <div class="rn-say">
+                    <span class="rn-kicker">02 &middot; Property &middot; Hail</span>
+                    <p class="rn-title">Hail severity, mapped from NOAA records.</p>
+                    <ul class="lines-points">
+                      <li>11,026 grid cells carry a severity rating. 9,648 of them rate Very Low.</li>
+                      <li>1,168 rate Low and 169 Moderate, almost all of them along the Front Range and out onto the eastern plains.</li>
+                      <li><b>Forty cells rate High, and one rates Very High</b> &mdash; near Colorado Springs. Severity is not spread across the state; it sits in a corridor.</li>
+                    </ul>
+                  </div>
+                  <div class="rn-vis rn-vis--figure">
+                    <figure class="hail-frame">
+                      <figcaption class="dots-head">
+                        <span class="dots-title">Hail severity, Colorado</span>
+                        <span class="dots-sub">NOAA storm records &middot; one cell, one grid square</span>
+                      </figcaption>
+                      <div class="hail-map" data-hail-map data-owns-pointer tabindex="0" role="group"
+                           aria-label="Hail severity map of Colorado. Arrow keys read out a cell, plus and minus zoom, zero reframes the state.">
+                        <div class="hail-pan" data-hail-pan>
+                          <img src="hail-severity.svg" width="1000" height="735" loading="lazy" decoding="async"
+                               alt="Hail severity across Colorado from NOAA storm records. Nearly all of the 11,026 grid cells rate Very Low; the Low, Moderate and High cells crowd the Front Range and the eastern plains, and a single Very High cell sits near Colorado Springs.">
+                        </div>
+                        <span class="hail-dot" data-hail-dot hidden></span>
+                        <div class="hail-tip" data-hail-tip hidden><b data-hail-label></b><span data-hail-place></span></div>
+                        <span class="hail-read" data-hail-read aria-live="polite"></span>
+                      </div>
+                      <ul class="hail-key">
+                        <li><i style="background:#e9e4dc"></i>Very low</li>
+                        <li><i style="background:#b9b1f5"></i>Low</li>
+                        <li><i style="background:#8c82fa"></i>Moderate</li>
+                        <li><i style="background:#5e54c8"></i>High</li>
+                        <li><i style="background:#221f20"></i>Very high</li>
+                      </ul>
+                      <div class="fig-source">Sources: NOAA Storm Events Database; NOAA Severe Weather Data Inventory</div>
+                    </figure>
+                  </div>
+                </div>
+              </div>
+
+              <div class="rn-nav">
+                <button class="rn-arrow" type="button" data-rn-prev aria-label="Previous slide">&larr;</button>
+                <div class="rn-pips" role="tablist" aria-label="Slides">
+                  <button class="rn-pip" type="button" role="tab" aria-selected="true" aria-label="Casualty and energy"></button>
+                  <button class="rn-pip" type="button" role="tab" aria-selected="false" aria-label="Property and hail"></button>
+                </div>
+                <button class="rn-arrow" type="button" data-rn-next aria-label="Next slide">&rarr;</button>
+                <span class="rn-count" data-rn-count aria-live="polite">01 / 02 &middot; Casualty &middot; Energy</span>
+              </div>
+            </div>
+            <p class="rn-foot">Both reads are drawn from the federal record, not from any one account.</p>
+          </div>
+
+          <div class="how reveal" style="--i:4">
+            <div class="how-head"><h3>How it works</h3><span class="eyebrow">For retailers</span></div>
+            <ol class="steps">
+              <li><b>01</b><strong>Send us the submission</strong><span>SOVs, loss runs, and schedules, in whatever shape they arrive. Our brokers each spent 15+ years in retail, so we know what you need back.</span></li>
+              <li><b>02</b><strong>We pre-underwrite it</strong><span>We add the depth underwriters look for: a risk narrative, pricing guidance, loss history, mitigating factors. That depth turns a no into a maybe, and a maybe into a yes.</span></li>
+              <li><b>03</b><strong>We engage the right markets</strong><span>We track appetite from real outcomes to find the best possible placement for each risk. You get full transparency into each step of our marketing process.</span></li>
+            </ol>
+            <a class="go" href="#contact">Start an open market submission &rarr;</a>
+          </div>
+
+          <div class="how reveal" style="--i:5">
+            <div class="how-head"><h3>What underwriters get</h3><span class="eyebrow">For carriers</span></div>
+            <ol class="steps">
+              <li><b>01</b><strong>Only what you want to see</strong><span>We track your appetite and send what matches it. Nothing blasted, nothing you have already seen.</span></li>
+              <li><b>02</b><strong>Enriched, packaged submissions</strong><span>Every submission carries our custom data visualizations and well-packaged loss information, so the right facts reach you early.</span></li>
+              <li><b>03</b><strong>Risks you are not seeing</strong><span>Small and mid-market risks that the big wholesalers do not prioritize, packaged to a high standard, across a wide geographic spread. We find flow to match your appetite, not the other way around.</span></li>
+            </ol>
+            <a class="go" href="#contact">Tell us your appetite &rarr;</a>
+          </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="band" data-wash aria-labelledby="close-title">
+    <div class="wrap close">
+      <div>
+        <span class="run" aria-hidden="true"></span>
+        <p class="eyebrow">Get in touch</p>
+        <h2 id="close-title">Tell us about the risk.</h2>
+        <p>A broker, not a form, gets back to you.</p>
+      </div>
+      <a class="btn btn-primary" href="mailto:hello@arqu.com">Get in touch</a>
+    </div>
+  </section>
+
+</main>
+
+<footer id="careers">
+  <div class="wrap">
+    <div>
+      <a class="mark" href="home.html">arqu</a>
+      <small>Innovate beyond the ask.</small>
+    </div>
+    <nav class="f-links" aria-label="Footer">
+      <a href="open-market.html">Open market</a>
+      <a href="programs.html">Programs</a>
+      <a href="#careers">Careers</a>
+      <a href="#contact">Contact us</a>
+      <a href="#top">Privacy policy</a>
+      <a href="#top">Terms of service</a>
+    </nav>
+    <p class="f-note">This page loads type from Google Fonts (fonts.googleapis.com, fonts.gstatic.com) and one drawing library from jsDelivr (cdn.jsdelivr.net), so opening it shows your address to those three. The hail map is drawn from this site and reaches nobody.</p>
+  </div>
+</footer>
+
+<script src="home-interaction.js"></script>
+<script src="home-risk-narrative.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js" integrity="sha384-1NLkwxMO2sOqcq7rQkFBhIAUJtbt8ziLxhVKVgKfFGMEU8pF+GEq5LVogviveup6" crossorigin="anonymous"></script>
+<script src="home-hand.js"></script>
+<script src="home-hand-marks.js"></script>
+<script src="home-sector-icons.js"></script>
+<script src="home-ambient.js"></script>
+<script src="home-lines.js"></script>
+<script src="hail-grid.js"></script>
+<script src="home-hail-map.js"></script>
+<script src="home-hail-map-ui.js"></script>
+<script id="arqu-edit-layer" src="arqu-edit-layer.js"
+        data-selector="h1, h2, .lead, .eyebrow, .way-kicker, .way-title, .way-desc, .node h3, .node p, .wins b, .wins span, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
+        data-key="arqu-copy-home-v3"
+        data-migrate-nodes="61"
+        data-what="the arqu open market page mockup"></script>
+</body>
+</html>

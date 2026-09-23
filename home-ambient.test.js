@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, settle } = require('./test/page-harness');
+const { openPage, settle } = require('./test/page-harness');
 
 // strongest purple the field has painted inside a square around (x, y), in CSS pixels
 function purpleNear(page, x, y, r) {
@@ -20,7 +20,7 @@ function purpleNear(page, x, y, r) {
 }
 
 test('the field covers the viewport', async (t) => {
-  const { page, errors } = await openHome(t);
+  const { page, errors } = await openPage(t);
   const fit = await page.evaluate(() => {
     const cv = document.querySelector('canvas.ambient');
     return cv.width === Math.floor(window.innerWidth * Math.min(2, window.devicePixelRatio || 1));
@@ -30,7 +30,7 @@ test('the field covers the viewport', async (t) => {
 });
 
 test('dots near the pointer lift into purple, dots far away stay ink', async (t) => {
-  const { page } = await openHome(t);
+  const { page } = await openPage(t);
   await page.mouse.move(700, 500);
   await page.mouse.move(720, 520, { steps: 5 });
   assert.ok(
@@ -43,7 +43,7 @@ test('dots near the pointer lift into purple, dots far away stay ink', async (t)
 });
 
 test('a click sends a ring out through the field', async (t) => {
-  const { page } = await openHome(t);
+  const { page } = await openPage(t);
   await page.mouse.click(300, 700);
   await page.mouse.move(5, 5);
   // about 0.42px per ms, so the ring passes 210px out after roughly half a second

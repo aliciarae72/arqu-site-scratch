@@ -21,9 +21,9 @@
  * The one-time index -> key mapping is only correct if the page still has the
  * same nodes in the same order it had when those edits were typed. Set
  * data-migrate-nodes to the node count at that time and the migration refuses
- * to run if the page has drifted, falling back to the old index behaviour and
- * saying so. Refusing is right: a mis-mapped migration silently rewrites copy
- * onto the wrong elements, and nothing else holds a copy of it.
+ * to run if the page has drifted. A refused page applies no saved copy from the
+ * old store and says so: its indexes point at nodes this page does not have in
+ * that order, so applying them rewrites copy onto the wrong elements.
  */
 (function(){
   var st = document.createElement('style');
@@ -38,12 +38,9 @@
   var KEY2 = KEY + ':bykey';
   var WHAT = (ME && ME.getAttribute('data-what')) || 'this page';
   var nodes = [], orig = [], keys = [], saved = {}, editing = false;
-  // false only if the migration refused; then we read and write the old index
-  // store exactly as before, so a drifted page loses nothing.
-  var byKey = true;
 
   function readStore(k){
-    try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch(e){ return null; }
+    try { return JSON.parse(localStorage.getItem(k) || 'null'); } catch { return null; }
   }
 
   // Key off the element's ORIGINAL words, not its position. Same text in two
@@ -59,6 +56,14 @@
     return el.tagName.toLowerCase() + '-' + h.toString(36) + '-' + txt.length;
   }
 
+  // True when every old index points at a node this page has in the order it was typed on.
+  function indexesMap(idx){
+    if (!idx.length) return true;
+    var expect = ME && ME.getAttribute('data-migrate-nodes');
+    if (expect && +expect !== nodes.length) return false;
+    return idx.every(function(i){ return /^[0-9]+$/.test(i) && +i < nodes.length; });
+  }
+
   // Runs once per browser. Returns false if it cannot prove the mapping.
   function migrate(){
     var v2 = readStore(KEY2);
@@ -66,16 +71,10 @@
 
     var v1 = readStore(KEY) || {};
     var idx = Object.keys(v1);
-    if (idx.length){
-      var expect = ME && ME.getAttribute('data-migrate-nodes');
-      if (expect && +expect !== nodes.length) return false;
-      for (var j=0;j<idx.length;j++){
-        if (!/^[0-9]+$/.test(idx[j]) || +idx[j] >= nodes.length) return false;
-      }
-    }
+    if (!indexesMap(idx)) return false;
     var out = {};
     for (var k=0;k<idx.length;k++) out[keys[+idx[k]]] = v1[idx[k]];
-    try { localStorage.setItem(KEY2, JSON.stringify(out)); } catch(e){ return false; }
+    try { localStorage.setItem(KEY2, JSON.stringify(out)); } catch { return false; }
     saved = out;
     return true;
   }
@@ -90,8 +89,8 @@
     return 'page header';
   }
   function persist(){
-    try { localStorage.setItem(byKey ? KEY2 : KEY, JSON.stringify(saved)); }
-    catch(e){ toast("Couldn't save that edit — the browser is out of room for this page."); }
+    try { localStorage.setItem(KEY2, JSON.stringify(saved)); }
+    catch { toast("Couldn't save that edit — the browser is out of room for this page."); }
   }
   function changedList(){
     var out = [];
@@ -133,12 +132,9 @@
     return L.join('\n');
   }
 
-  function build(){
-    nodes = Array.prototype.slice.call(document.querySelectorAll(SEL));
-
-    // Pass one captures the original wording and the key it implies. It has to
-    // finish before anything is applied, because the migration maps old indexes
-    // onto this whole key list.
+  // The original wording and the key it implies. It has to finish before anything is
+  // applied, because the migration maps old indexes onto this whole key list.
+  function captureKeys(){
     var seen = {};
     nodes.forEach(function(el, i){
       orig[i] = el.innerHTML;
@@ -146,32 +142,34 @@
       var n = seen[base] = (seen[base] == null ? 0 : seen[base] + 1);
       keys[i] = n ? base + '~' + n : base;
     });
+  }
 
-    byKey = migrate();
-    if (!byKey){
-      saved = readStore(KEY) || {};
-      setTimeout(function(){
-        toast('This page has changed since these edits were saved, so they are still tied to their old positions. Tell Alicia before editing.');
-      }, 700);
-    }
+  function loadSaved(){
+    if (migrate()) return;
+    saved = {};
+    setTimeout(function(){
+      toast('Edits saved on the old one-page homepage cannot be placed on this page, so none are shown. They are kept as they were. Tell Alicia before editing.');
+    }, 700);
+  }
 
-    nodes.forEach(function(el, i){
-      var slot = byKey ? keys[i] : i;
-      el.setAttribute('data-ed', i);
-      el.setAttribute('data-edit-slot', slot);
-      if (saved[slot] != null) el.innerHTML = saved[slot];
-      el.addEventListener('input', function(){
-        if (el.innerHTML.trim() === orig[i].trim()) delete saved[slot];
-        else saved[slot] = el.innerHTML;
-        persist(); paint();
-      });
-      el.addEventListener('paste', function(ev){
-        ev.preventDefault();
-        var txt = (ev.clipboardData || window.clipboardData).getData('text');
-        document.execCommand('insertText', false, txt);
-      });
+  function wireNode(el, i){
+    var slot = keys[i];
+    el.setAttribute('data-ed', i);
+    el.setAttribute('data-edit-slot', slot);
+    if (saved[slot] != null) el.innerHTML = saved[slot];
+    el.addEventListener('input', function(){
+      if (el.innerHTML.trim() === orig[i].trim()) delete saved[slot];
+      else saved[slot] = el.innerHTML;
+      persist(); paint();
     });
+    el.addEventListener('paste', function(ev){
+      ev.preventDefault();
+      var txt = (ev.clipboardData || window.clipboardData).getData('text');
+      document.execCommand('insertText', false, txt);
+    });
+  }
 
+  function addBar(){
     var bar = document.createElement('div');
     bar.id = 'edbar';
     bar.innerHTML =
@@ -180,56 +178,66 @@
       '<button id="edcopy">Copy changes</button>' +
       '<button id="edreset">Reset</button>';
     document.body.appendChild(bar);
-
     var t = document.createElement('div'); t.id = 'edtoast'; document.body.appendChild(t);
+  }
 
-    document.getElementById('edtoggle').addEventListener('click', function(){
-      editing = !editing;
-      document.body.classList.toggle('editing', editing);
-      nodes.forEach(function(el){ el.contentEditable = editing ? 'true' : 'false'; });
-      this.classList.toggle('on', editing);
-      this.textContent = editing ? 'Editing — click to stop' : 'Edit copy';
-      if (editing) toast('Click any headline or paragraph and type. Your edits stay here after you refresh.');
-    });
+  function toggleEditing(){
+    editing = !editing;
+    document.body.classList.toggle('editing', editing);
+    nodes.forEach(function(el){ el.contentEditable = editing ? 'true' : 'false'; });
+    this.classList.toggle('on', editing);
+    this.textContent = editing ? 'Editing — click to stop' : 'Edit copy';
+    if (editing) toast('Click any headline or paragraph and type. Your edits stay here after you refresh.');
+  }
 
-    // While editing, a click inside an editable region must not fire the button
-    // or link that region sits in — otherwise you cannot place a cursor in the
-    // copy on any page whose headlines double as controls. Capture phase, so it
-    // runs before the host page's own handler.
-    document.addEventListener('click', function(ev){
-      if (!editing) return;
-      var t = ev.target;
-      var ed = t && t.closest ? t.closest('[data-ed]') : null;
-      if (!ed) return;
-      if (ed.closest('button, a')){ ev.preventDefault(); ev.stopPropagation(); }
-    }, true);
+  // While editing, a click inside an editable region must not fire the button
+  // or link that region sits in — otherwise you cannot place a cursor in the
+  // copy on any page whose headlines double as controls. Registered in the
+  // capture phase, so it runs before the host page's own handler.
+  function holdClicksWhileEditing(ev){
+    if (!editing) return;
+    var t = ev.target;
+    var ed = t && t.closest ? t.closest('[data-ed]') : null;
+    if (!ed) return;
+    if (ed.closest('button, a')){ ev.preventDefault(); ev.stopPropagation(); }
+  }
 
-    document.getElementById('edcopy').addEventListener('click', function(){
-      var r = report();
-      if (!r){ toast('Nothing changed yet — turn on Edit copy and change some words first.'); return; }
-      function ok(){ toast('Copied. Paste it to a Claude and it can make the same changes for real.'); }
-      if (navigator.clipboard && navigator.clipboard.writeText){
-        navigator.clipboard.writeText(r).then(ok, function(){ fallback(r, ok); });
-      } else fallback(r, ok);
-    });
+  function copyFallback(text, ok){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); ok(); }
+    catch { toast("Couldn't reach the clipboard — select the text in the box and copy it by hand."); ta.style.opacity='1'; ta.style.inset='20% 10%'; ta.style.width='80%'; ta.style.height='50%'; return; }
+    document.body.removeChild(ta);
+  }
 
-    function fallback(text, ok){
-      var ta = document.createElement('textarea');
-      ta.value = text; ta.style.position='fixed'; ta.style.opacity='0';
-      document.body.appendChild(ta); ta.select();
-      try { document.execCommand('copy'); ok(); }
-      catch(e){ toast("Couldn't reach the clipboard — select the text in the box and copy it by hand."); ta.style.opacity='1'; ta.style.inset='20% 10%'; ta.style.width='80%'; ta.style.height='50%'; return; }
-      document.body.removeChild(ta);
-    }
+  function copyChanges(){
+    var r = report();
+    if (!r){ toast('Nothing changed yet — turn on Edit copy and change some words first.'); return; }
+    function ok(){ toast('Copied. Paste it to a Claude and it can make the same changes for real.'); }
+    if (navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(r).then(ok, function(){ copyFallback(r, ok); });
+    } else copyFallback(r, ok);
+  }
 
-    document.getElementById('edreset').addEventListener('click', function(){
-      if (!changedList().length){ toast('Already back to the original wording.'); return; }
-      if (!confirm('Put every headline and paragraph back to the original wording? Your edits are lost.')) return;
-      nodes.forEach(function(el, i){ el.innerHTML = orig[i]; });
-      saved = {}; persist(); paint();
-      toast('Back to the original wording.');
-    });
+  function resetAll(){
+    if (!changedList().length){ toast('Already back to the original wording.'); return; }
+    if (!confirm('Put every headline and paragraph back to the original wording? Your edits are lost.')) return;
+    nodes.forEach(function(el, i){ el.innerHTML = orig[i]; });
+    saved = {}; persist(); paint();
+    toast('Back to the original wording.');
+  }
 
+  function build(){
+    nodes = Array.prototype.slice.call(document.querySelectorAll(SEL));
+    captureKeys();
+    loadSaved();
+    nodes.forEach(wireNode);
+    addBar();
+    document.getElementById('edtoggle').addEventListener('click', toggleEditing);
+    document.addEventListener('click', holdClicksWhileEditing, true);
+    document.getElementById('edcopy').addEventListener('click', copyChanges);
+    document.getElementById('edreset').addEventListener('click', resetAll);
     paint();
   }
 

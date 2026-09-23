@@ -10,7 +10,6 @@
   if (!H) return;
   var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var MARKS = [
-    { sel: '.val:nth-child(2) h3', text: 'Human touch', kind: 'underline', seed: 27, wait: 800 },
     { sel: '.way-grid .or', text: 'or', kind: 'circle', seed: 5, wait: 700, ink: true },
     { sel: '#close-title + p', text: 'A broker', kind: 'underline', seed: 31, wait: 700 },
   ];

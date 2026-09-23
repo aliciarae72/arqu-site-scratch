@@ -1,38 +1,9 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector, settle } = require('./test/page-harness');
+const { openPage, scrollToSelector, settle } = require('./test/page-harness');
 
-test('the hero draws the ask and the arrow back to it, and marks no word in the title', async (t) => {
-  const { page, errors } = await openHome(t);
-  const read = () =>
-    page.evaluate(() => {
-      const strokes = [...document.querySelectorAll('.hand-motif path')].filter(
-        (p) => p.getAttribute('stroke') !== 'none',
-      );
-      return {
-        titleMarks: document.querySelectorAll('#hero-title .hand-mark').length,
-        motifStrokes: strokes.length,
-        inked: strokes.every((p) => p.style.strokeDashoffset === '0'),
-      };
-    });
-  const hero = await settle(read, (h) => h.inked && h.motifStrokes === 3);
-  assert.deepEqual(hero, { titleMarks: 0, motifStrokes: 3, inked: true });
-  assert.deepEqual(errors, []);
-});
-
-test('the hero, the cards, the closing band and the handshake stage follow the pointer', async (t) => {
-  const { page } = await openHome(t);
-  // the listener attaches once rough.js has loaded, so keep moving until the hero answers
-  let nudge = 0;
-  const px = await settle(
-    async () => {
-      nudge = 1 - nudge;
-      await page.mouse.move(1300 + nudge, 300);
-      return page.evaluate(() => document.querySelector('.motif').style.getPropertyValue('--px'));
-    },
-    (v) => +v > 0,
-  );
-  assert.ok(+px > 0, `--px is ${px}`);
+test('the cards, the closing band and the handshake stage follow the pointer', async (t) => {
+  const { page } = await openPage(t);
   // x = 240 keeps the pointer clear of the fixed spine rail on the left edge, whose dots take the hover
   // The element may still be revealing or scrolling into place, so re-aim the pointer at it on every read.
   const washAt = async (selector, pseudo, expected) => {

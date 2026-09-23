@@ -148,10 +148,4 @@
   icons.forEach(function (svg) {
     io.observe(svg);
   });
-  /* the flow closed: ink these again the next time they come into view */
-  window.addEventListener('arqu:layout', function () {
-    icons.forEach(function (svg) {
-      if (!svg.getClientRects().length) svg.__inked = false;
-    });
-  });
 })();

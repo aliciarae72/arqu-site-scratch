@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector, settle } = require('./test/page-harness');
+const { openPage, scrollToSelector, settle } = require('./test/page-harness');
 
 // width of the inked region on a card canvas, as a share of the canvas width
 function inkSpread(page, art) {
@@ -26,8 +26,19 @@ async function hover(page, selector) {
   await page.mouse.move(box.x + box.width / 2, box.y + box.height * 0.3);
 }
 
+test('each landing card link carries its own art canvas', async (t) => {
+  const { page } = await openPage(t);
+  const arts = await page.evaluate(() =>
+    [...document.querySelectorAll('a.way canvas[data-art]')].map((cv) => [cv.closest('a').id, cv.dataset.art]),
+  );
+  assert.deepEqual(arts, [
+    ['way-market', 'market'],
+    ['way-programs', 'programs'],
+  ]);
+});
+
 test('hovering Open market opens its one dot out across the card', async (t) => {
-  const { page, errors } = await openHome(t);
+  const { page, errors } = await openPage(t);
   await scrollToSelector(page, '.way-grid', 160);
   await hover(page, '#way-market');
   assert.ok(
@@ -40,7 +51,7 @@ test('hovering Open market opens its one dot out across the card', async (t) => 
 });
 
 test('hovering Programs closes its dots into one', async (t) => {
-  const { page } = await openHome(t);
+  const { page } = await openPage(t);
   await scrollToSelector(page, '.way-grid', 160);
   await hover(page, '#way-programs');
   const spread = await settle(
@@ -51,7 +62,7 @@ test('hovering Programs closes its dots into one', async (t) => {
 });
 
 test('left alone, the art keeps moving', async (t) => {
-  const { page } = await openHome(t);
+  const { page } = await openPage(t);
   await scrollToSelector(page, '.way-grid', 160);
   await page.mouse.move(5, 5);
   const frame = () => page.evaluate(() => document.querySelector('canvas[data-art="market"]').toDataURL());
@@ -68,7 +79,7 @@ test('left alone, the art keeps moving', async (t) => {
 });
 
 test('under reduced motion, a resize re-settles the art to fit the new card', async (t) => {
-  const { page } = await openHome(t, { width: 390 });
+  const { page } = await openPage(t, { width: 390 });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload();
   await scrollToSelector(page, '.way-grid', 160);

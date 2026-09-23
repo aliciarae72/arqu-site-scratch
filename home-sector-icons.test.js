@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector, settle } = require('./test/page-harness');
+const { openPage, scrollToSelector, settle } = require('./test/page-harness');
 
 // every icon's strokes, whether they have finished inking on, and where the icon sits against its heading
 function columns(page) {
@@ -20,9 +20,8 @@ function columns(page) {
   );
 }
 
-test('opening Open market heads each column with a hand-drawn icon instead of the purple dots', async (t) => {
-  const { page, errors } = await openHome(t);
-  await page.click('#way-market');
+test('the Open market page heads each column with a hand-drawn icon instead of the purple dots', async (t) => {
+  const { page, errors } = await openPage(t, { url: 'open-market.html' });
   await scrollToSelector(page, '#flow-market .branches', 140);
   const icon = { purple: 1, inked: true, aboveHeading: true, dotAndRule: false };
   const allInked = (cols) => cols.every((c) => c.inked);
@@ -32,33 +31,4 @@ test('opening Open market heads each column with a hand-drawn icon instead of th
     { ...icon, icon: 'energy', strokes: 11 },
   ]);
   assert.deepEqual(errors, []);
-});
-
-test('closing and reopening the flow inks the icons on again', async (t) => {
-  const { page } = await openHome(t, { query: '?open=market' });
-  await scrollToSelector(page, '.way-grid', 120);
-  assert.ok(
-    (
-      await settle(
-        () => columns(page),
-        (cols) => cols.every((c) => c.inked),
-      )
-    ).every((c) => c.inked),
-  );
-  await page.click('#way-market');
-  await page.click('#way-market');
-  await page.waitForFunction(
-    () =>
-      [...document.querySelectorAll('.sector-icon path')].some((p) => getComputedStyle(p).strokeDashoffset !== '0px'),
-    null,
-    { timeout: 3000 },
-  );
-  assert.ok(
-    (
-      await settle(
-        () => columns(page),
-        (cols) => cols.every((c) => c.inked),
-      )
-    ).every((c) => c.inked),
-  );
 });
