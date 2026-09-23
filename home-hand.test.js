@@ -6,15 +6,15 @@ test('the hero draws the ask and the arrow back to it, and marks no word in the 
   const { page, errors } = await openHome(t);
   const read = () =>
     page.evaluate(() => {
-    const strokes = [...document.querySelectorAll('.hand-motif path')].filter(
-      (p) => p.getAttribute('stroke') !== 'none',
-    );
-    return {
-      titleMarks: document.querySelectorAll('#hero-title .hand-mark').length,
-      motifStrokes: strokes.length,
-      inked: strokes.every((p) => p.style.strokeDashoffset === '0'),
-    };
-  });
+      const strokes = [...document.querySelectorAll('.hand-motif path')].filter(
+        (p) => p.getAttribute('stroke') !== 'none',
+      );
+      return {
+        titleMarks: document.querySelectorAll('#hero-title .hand-mark').length,
+        motifStrokes: strokes.length,
+        inked: strokes.every((p) => p.style.strokeDashoffset === '0'),
+      };
+    });
   const hero = await settle(read, (h) => h.inked && h.motifStrokes === 3);
   assert.deepEqual(hero, { titleMarks: 0, motifStrokes: 3, inked: true });
   assert.deepEqual(errors, []);

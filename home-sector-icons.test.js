@@ -37,7 +37,14 @@ test('opening Open market heads each column with a hand-drawn icon instead of th
 test('closing and reopening the flow inks the icons on again', async (t) => {
   const { page } = await openHome(t, { query: '?open=market' });
   await scrollToSelector(page, '.way-grid', 120);
-  assert.ok((await settle(() => columns(page), (cols) => cols.every((c) => c.inked))).every((c) => c.inked));
+  assert.ok(
+    (
+      await settle(
+        () => columns(page),
+        (cols) => cols.every((c) => c.inked),
+      )
+    ).every((c) => c.inked),
+  );
   await page.click('#way-market');
   await page.click('#way-market');
   await page.waitForFunction(
@@ -46,5 +53,12 @@ test('closing and reopening the flow inks the icons on again', async (t) => {
     null,
     { timeout: 3000 },
   );
-  assert.ok((await settle(() => columns(page), (cols) => cols.every((c) => c.inked))).every((c) => c.inked));
+  assert.ok(
+    (
+      await settle(
+        () => columns(page),
+        (cols) => cols.every((c) => c.inked),
+      )
+    ).every((c) => c.inked),
+  );
 });

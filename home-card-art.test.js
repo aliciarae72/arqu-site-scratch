@@ -30,7 +30,12 @@ test('hovering Open market opens its one dot out across the card', async (t) => 
   const { page, errors } = await openHome(t);
   await scrollToSelector(page, '.way-grid', 160);
   await hover(page, '#way-market');
-  assert.ok((await settle(() => inkSpread(page, 'market'), (x) => x > 0.5)) > 0.5);
+  assert.ok(
+    (await settle(
+      () => inkSpread(page, 'market'),
+      (x) => x > 0.5,
+    )) > 0.5,
+  );
   assert.deepEqual(errors, []);
 });
 
@@ -38,7 +43,10 @@ test('hovering Programs closes its dots into one', async (t) => {
   const { page } = await openHome(t);
   await scrollToSelector(page, '.way-grid', 160);
   await hover(page, '#way-programs');
-  const spread = await settle(() => inkSpread(page, 'programs'), (x) => x > 0.01 && x < 0.15);
+  const spread = await settle(
+    () => inkSpread(page, 'programs'),
+    (x) => x > 0.01 && x < 0.15,
+  );
   assert.ok(spread > 0.01 && spread < 0.15, `programs ink spans ${spread} of the card`);
 });
 

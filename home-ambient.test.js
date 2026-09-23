@@ -33,7 +33,12 @@ test('dots near the pointer lift into purple, dots far away stay ink', async (t)
   const { page } = await openHome(t);
   await page.mouse.move(700, 500);
   await page.mouse.move(720, 520, { steps: 5 });
-  assert.ok((await settle(() => purpleNear(page, 720, 520, 60), (v) => v > 0)) > 0);
+  assert.ok(
+    (await settle(
+      () => purpleNear(page, 720, 520, 60),
+      (v) => v > 0,
+    )) > 0,
+  );
   assert.equal(await purpleNear(page, 150, 150, 60), 0);
 });
 
@@ -42,5 +47,11 @@ test('a click sends a ring out through the field', async (t) => {
   await page.mouse.click(300, 700);
   await page.mouse.move(5, 5);
   // about 0.42px per ms, so the ring passes 210px out after roughly half a second
-  assert.ok((await settle(() => purpleNear(page, 510, 700, 40), (v) => v > 0, 3000)) > 0);
+  assert.ok(
+    (await settle(
+      () => purpleNear(page, 510, 700, 40),
+      (v) => v > 0,
+      3000,
+    )) > 0,
+  );
 });
