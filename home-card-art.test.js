@@ -26,6 +26,17 @@ async function hover(page, selector) {
   await page.mouse.move(box.x + box.width / 2, box.y + box.height * 0.3);
 }
 
+test('each landing card link carries its own art canvas', async (t) => {
+  const { page } = await openPage(t);
+  const arts = await page.evaluate(() =>
+    [...document.querySelectorAll('a.way canvas[data-art]')].map((cv) => [cv.closest('a').id, cv.dataset.art]),
+  );
+  assert.deepEqual(arts, [
+    ['way-market', 'market'],
+    ['way-programs', 'programs'],
+  ]);
+});
+
 test('hovering Open market opens its one dot out across the card', async (t) => {
   const { page, errors } = await openPage(t);
   await scrollToSelector(page, '.way-grid', 160);
