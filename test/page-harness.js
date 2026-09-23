@@ -32,14 +32,16 @@ function serve() {
 
 async function openHome(t, { width = 1440, height = 900, query = '' } = {}) {
   const server = await serve();
-  const browser = await chromium.launch({ channel: 'chrome', headless: false });
+  let browser = null;
+  // registered before the launch, so a Chrome that fails to start still releases the port
+  t.after(async () => {
+    if (browser) await browser.close();
+    server.close();
+  });
+  browser = await chromium.launch({ channel: 'chrome', headless: false });
   const page = await browser.newPage({ viewport: { width, height } });
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
-  t.after(async () => {
-    await browser.close();
-    server.close();
-  });
   const { port } = server.address();
   await page.goto(`http://127.0.0.1:${port}/home.html${query}`);
   return { page, errors };
