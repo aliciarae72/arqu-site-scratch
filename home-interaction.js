@@ -91,9 +91,7 @@
   }
 
   /* ── 3. reveals. JS applies the attribute, so with JS off nothing is hidden. ── */
-  var RISE =
-    '.way-grid, .node, .steps li, .wins, .close > div, ' +
-    '.g-head, .globe-stage, .g-say, .g-note, .dots-chart';
+  var RISE = '.way-grid, .node, .steps li, .wins, .close > div, .g-head, .globe-stage, .g-say, .g-note, .dots-chart';
   function reveals() {
     var els = Array.prototype.slice.call(document.querySelectorAll(RISE));
     if (!els.length) return;
