@@ -6,4 +6,4 @@ cd "$(dirname "$0")/.."
 # generated from. --check writes nothing and fails when it has drifted.
 node scripts/build-hail-map.mjs --check
 
-exec node --test "test/*.test.mjs" "test/*.test.js"
+exec node --test "test/*.test.mjs" "test/*.test.js" "*.test.js"
