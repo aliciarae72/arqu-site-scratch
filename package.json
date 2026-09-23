@@ -1,0 +1,11 @@
+{
+  "name": "arqu-site-scratch",
+  "private": true,
+  "description": "arqu website mockups served by GitHub Pages",
+  "scripts": {
+    "test": "bin/test"
+  },
+  "devDependencies": {
+    "playwright-core": "1.63.0"
+  }
+}

@@ -41,13 +41,31 @@ test('serves at least the home page', () => {
 test('home.html links its split stylesheets and scripts, in load order', () => {
   const html = readFileSync(join(ROOT, 'home.html'), 'utf8');
   assert.deepEqual(stylesheetHrefs(html).filter((h) => h.startsWith('home')), [
-    'home.css', 'home-layers.css', 'home-spine.css', 'home-hand.css', 'home-risk-narrative.css', 'home-lines.css'
+    'home.css',
+    'home-layers.css',
+    'home-spine.css',
+    'home-hand.css',
+    'home-risk-narrative.css',
+    'home-lines.css',
   ]);
-  assert.deepEqual(scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')), [
-    'home-flows.js', 'home-interaction.js', 'home-risk-narrative.js', 'home-card-art.js',
-    'roughjs', 'home-hand.js', 'home-handshake.js', 'home-ambient.js',
-    'home-lines.js', 'hail-grid.js', 'home-hail-map.js', 'home-hail-map-ui.js', 'arqu-edit-layer.js'
-  ]);
+  assert.deepEqual(
+    scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')),
+    [
+      'home-flows.js',
+      'home-interaction.js',
+      'home-risk-narrative.js',
+      'home-card-art.js',
+      'roughjs',
+      'home-hand.js',
+      'home-handshake.js',
+      'home-ambient.js',
+      'home-lines.js',
+      'hail-grid.js',
+      'home-hail-map.js',
+      'home-hail-map-ui.js',
+      'arqu-edit-layer.js',
+    ],
+  );
 });
 
 for (const page of PAGES) {
@@ -91,7 +109,7 @@ test('home.html: the casualty material rides the open-market carousel, and the p
   assert.equal((LINES.match(/class="rn-slide[ "]/g) || []).length, 2);
   assert.equal((LINES.match(/class="rn-pip"/g) || []).length, 2);
   // the chart fills on .seen, which the page's own reveal pass adds
-  assert.match(interaction, /var RISE = [^;]*\.dots-chart/s);
+  assert.match(interaction, /var RISE =[^;]*\.dots-chart/s);
 });
 
 // Under the edit layer's DOM-index fallback (when its one-time migration refuses), one
