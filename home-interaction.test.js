@@ -4,13 +4,17 @@ const { openHome, scrollToSelector, settle } = require('./test/page-harness');
 
 test('the rail has one dot per section, placed top to bottom, under the header', async (t) => {
   const { page, errors } = await openHome(t);
-  await page.waitForTimeout(400);
-  const rail = await page.evaluate(() => ({
-    labels: [...document.querySelectorAll('.sdot')].map((d) => d.getAttribute('aria-label')),
-    ys: [...document.querySelectorAll('.sdot')].map((d) => parseFloat(d.style.getPropertyValue('--y'))),
-    spineTop: document.getElementById('spine').getBoundingClientRect().top,
-    headerBottom: document.querySelector('.top').getBoundingClientRect().bottom,
-  }));
+  const placed = (r) => r.ys.length > 1 && r.ys.every(Number.isFinite) && r.spineTop > r.headerBottom;
+  const rail = await settle(
+    () =>
+      page.evaluate(() => ({
+        labels: [...document.querySelectorAll('.sdot')].map((d) => d.getAttribute('aria-label')),
+        ys: [...document.querySelectorAll('.sdot')].map((d) => parseFloat(d.style.getPropertyValue('--y'))),
+        spineTop: document.getElementById('spine').getBoundingClientRect().top,
+        headerBottom: document.querySelector('.top').getBoundingClientRect().bottom,
+      })),
+    placed,
+  );
   assert.deepEqual(rail.labels, ['Start', 'Values', 'Ways to work', 'Human-centered', 'Get in touch', 'Careers']);
   rail.ys
     .slice(1)
@@ -36,7 +40,7 @@ test('scrolling marks the section in view as current and reveals its content', a
 
 test('clicking a rail dot scrolls to its section', async (t) => {
   const { page } = await openHome(t);
-  await page.waitForTimeout(400);
+  await page.waitForSelector('.sdot[aria-label="Human-centered"]');
   await page.click('.sdot[aria-label="Human-centered"]');
   const top = await settle(
     () => page.evaluate(() => document.getElementById('human').getBoundingClientRect().top),
