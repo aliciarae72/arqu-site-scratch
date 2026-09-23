@@ -67,7 +67,14 @@ const LOAD_ORDER = {
   },
   'programs.html': {
     css: CORE_CSS,
-    js: ['home-interaction.js', 'roughjs', 'home-hand.js', 'home-hand-marks.js', 'home-ambient.js', 'arqu-edit-layer.js'],
+    js: [
+      'home-interaction.js',
+      'roughjs',
+      'home-hand.js',
+      'home-hand-marks.js',
+      'home-ambient.js',
+      'arqu-edit-layer.js',
+    ],
   },
 };
 const read = (page) => readFileSync(join(ROOT, page), 'utf8');
@@ -113,6 +120,16 @@ test('home.html is the handshake section, then exactly two card links', () => {
   );
 });
 
+// The three pages share one edit-layer store, so saved copy follows its words to whichever page holds them.
+test('every page configures the edit layer the same way', () => {
+  const config = (page) =>
+    read(page)
+      .match(/<script id="arqu-edit-layer"[^>]*>/)[0]
+      .replace(/ data-what="[^"]*"/, '');
+  assert.equal(config('open-market.html'), config('home.html'));
+  assert.equal(config('programs.html'), config('home.html'));
+});
+
 for (const [page, flow] of [
   ['open-market.html', 'flow-market'],
   ['programs.html', 'flow-programs'],
@@ -126,7 +143,7 @@ for (const [page, flow] of [
 }
 
 for (const page of PAGES) {
-  const html = readFileSync(join(ROOT, page), 'utf8');
+  const html = read(page);
 
   test(`${page}: every inline script parses`, () => {
     inlineScripts(html).forEach((code, i) => {

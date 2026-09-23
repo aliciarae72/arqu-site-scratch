@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector, settle } = require('./test/page-harness');
+const { openPage, scrollToSelector, settle } = require('./test/page-harness');
 
 // every icon's strokes, whether they have finished inking on, and where the icon sits against its heading
 function columns(page) {
@@ -21,7 +21,7 @@ function columns(page) {
 }
 
 test('the Open market page heads each column with a hand-drawn icon instead of the purple dots', async (t) => {
-  const { page, errors } = await openHome(t, { path: 'open-market.html' });
+  const { page, errors } = await openPage(t, { url: 'open-market.html' });
   await scrollToSelector(page, '#flow-market .branches', 140);
   const icon = { purple: 1, inked: true, aboveHeading: true, dotAndRule: false };
   const allInked = (cols) => cols.every((c) => c.inked);

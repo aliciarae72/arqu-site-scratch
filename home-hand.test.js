@@ -1,9 +1,9 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector, settle } = require('./test/page-harness');
+const { openPage, scrollToSelector, settle } = require('./test/page-harness');
 
 test('the cards, the closing band and the handshake stage follow the pointer', async (t) => {
-  const { page } = await openHome(t);
+  const { page } = await openPage(t);
   // x = 240 keeps the pointer clear of the fixed spine rail on the left edge, whose dots take the hover
   // The element may still be revealing or scrolling into place, so re-aim the pointer at it on every read.
   const washAt = async (selector, pseudo, expected) => {

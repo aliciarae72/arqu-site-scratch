@@ -101,8 +101,7 @@ main{overflow-x:clip}
 
 /* a way's own page: back link, title, then its flow */
 .ways.page{padding-top:clamp(40px,6vw,72px)}
-.back{display:inline-block;margin-bottom:28px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);text-decoration:none}
-.back:hover{color:var(--purple-deep)}
+.back{display:inline-block;margin-bottom:28px}
 .page .sec-head{margin-bottom:0}
 .page .lead{color:var(--ink-2);max-width:48ch;margin-top:18px}
 .page .chain{margin-top:clamp(40px,5vw,64px)}
@@ -155,8 +154,8 @@ footer .wrap{display:flex;justify-content:space-between;align-items:start;flex-w
 footer .mark{font-size:28px}
 footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.06em;color:var(--ink-3);margin-top:12px}
 .f-links{display:flex;flex-wrap:wrap;gap:10px 28px}
-.f-links a{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);text-decoration:none}
-.f-links a:hover{color:var(--purple-deep)}
+.f-links a,.back{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);text-decoration:none}
+.f-links a:hover,.back:hover{color:var(--purple-deep)}
 .f-note{flex-basis:100%;margin:18px 0 0;max-width:86ch;color:var(--ink-3);font-size:13px;line-height:1.5}
 
 @media (max-width:860px){
@@ -174,12 +173,10 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 }
 
 /* ── THE MARK, one version everywhere: dots, a gap, then the rule ────────────
-   Rev 2026-09-16 from Alicia's stickies. It was a heavy full-width divider over
-   every section head, a dots-only stub on the market columns and mirrored on the
-   closing band. Now it is one quiet mark: small dots in purple, a hairline in the
-   paper's own line colour, always in that order. It sits on the rules that mean
-   something (values, program rows, the 1-2-3 steps) and bookends
-   the page once at the hero and once at the close. No section head carries one.
+   One quiet mark: small dots in purple, a hairline in the paper's own line
+   colour, always in that order. It sits on the rules that mean something
+   (program rows, the 1-2-3 steps) and once on the closing band. No section
+   head carries one.
    --mk-n = how many dots. The rule is painted after the dots, not under them, so
    nothing has to cut a hole in the paper and the ambient field shows through. */
 .node,.steps li,.wins{--mk-n:3;position:relative}
@@ -195,12 +192,11 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 .steps li:nth-child(2){--mk-n:2}
 .steps li:nth-child(3){--mk-n:3}
 
-/* the two bookend marks (hero, closing band) — same geometry as above */
+/* the closing band's mark — same geometry as above */
 .run{display:block;box-sizing:border-box;width:100%;height:5px;margin:0 0 26px;overflow:hidden;
   background:
     radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 0 0/10px 100% no-repeat,
     radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 10px 0/10px 100% no-repeat,
     radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 20px 0/10px 100% no-repeat,
     linear-gradient(var(--line-2),var(--line-2)) 36px 50%/100% 1px no-repeat}
-.run>*{display:none}
 

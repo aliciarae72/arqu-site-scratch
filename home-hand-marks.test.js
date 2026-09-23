@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector, settle } = require('./test/page-harness');
+const { openPage, scrollToSelector, settle } = require('./test/page-harness');
 
 const MARKS = [
   { sel: '.way-grid .or', text: 'or', kind: 'circle' },
@@ -48,7 +48,7 @@ async function afterReflow(page) {
 }
 
 test('marks further down only draw once scrolled into view', async (t) => {
-  const { page, errors } = await openHome(t);
+  const { page, errors } = await openPage(t);
   await page.waitForTimeout(2000);
   const count = () => page.evaluate(() => document.querySelectorAll('.hand-mark > g').length);
   const before = await count();
@@ -58,7 +58,7 @@ test('marks further down only draw once scrolled into view', async (t) => {
 });
 
 test('an underline is one fluid stroke: a single path, drawn in a single pass', async (t) => {
-  const { page } = await openHome(t);
+  const { page } = await openPage(t);
   await scrollToSelector(page, '#contact', 0);
   await page.waitForFunction(() => document.querySelector('.close > div > .hand-mark > g'), null, {
     timeout: 6000,
@@ -71,7 +71,7 @@ test('an underline is one fluid stroke: a single path, drawn in a single pass', 
 });
 
 test('every mark lands on its words at 1440, 1024 and 390, and stays there as the page reflows', async (t) => {
-  const { page, errors } = await openHome(t);
+  const { page, errors } = await openPage(t);
   for (const m of MARKS) {
     await page.evaluate((sel) => document.querySelector(sel).scrollIntoView({ block: 'center' }), m.sel);
     await page.waitForFunction(

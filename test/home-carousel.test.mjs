@@ -73,7 +73,6 @@ test('open-market.html: the casualty chart names both sources, and the hail map 
   assert.match(source, /National Interagency Fire Center/);
   const src = LINES.match(/<img src="(hail-severity\.svg)"/)[1];
   assert.ok(existsSync(join(ROOT, src)), 'the map SVG ships with the site');
-  assert.ok(scriptTags(MARKET).some((tag) => tag.src === 'home-lines.js'));
 });
 
 // The map is markup, not an opaque embed, so its parts can be asserted the way the
@@ -135,15 +134,6 @@ test('open-market.html: the map takes a pointer and a keyboard, and ships the gr
   // The carousel skips a touch that starts on a control with gestures of its own. Without
   // this attribute a drag across the map pages the slide instead of panning.
   assert.match(map, /\bdata-owns-pointer\b/, 'the map does not claim its own gestures');
-  ['hail-grid.js', 'home-hail-map.js', 'home-hail-map-ui.js'].forEach((src) => {
-    assert.ok(
-      scriptTags(MARKET).some((tag) => tag.src === src),
-      `open-market.html does not load ${src}`,
-    );
-  });
-  // The wiring reads the grid and the arithmetic off globals, so both load ahead of it.
-  assert.ok(MARKET.indexOf('hail-grid.js') < MARKET.indexOf('home-hail-map-ui.js'));
-  assert.ok(MARKET.indexOf('home-hail-map.js') < MARKET.indexOf('home-hail-map-ui.js'));
   // Shipped as a script, not fetched: a fetch is blocked on file:// and the readout dies.
   assert.doesNotMatch(readFileSync(join(ROOT, 'home-hail-map-ui.js'), 'utf8'), /\bfetch\s*\(/);
 });

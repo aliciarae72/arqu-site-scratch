@@ -55,7 +55,7 @@
   /* 0 = gathered into one, 1 = spread across the market */
   function spreadAt(art, now, lag) {
     var market = art.kind === 'market';
-    if (art.st.hover || art.card.classList.contains('on')) return market ? 1 : 0;
+    if (art.st.hover) return market ? 1 : 0;
     var u = ((now - art.st.t0) / PERIOD + lag) % 1;
     var open = u > 0.12 && u < 0.62;
     return open === market ? 1 : 0;

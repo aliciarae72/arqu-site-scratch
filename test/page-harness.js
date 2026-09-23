@@ -30,7 +30,7 @@ function serve() {
   return new Promise((resolve) => server.listen(0, '127.0.0.1', () => resolve(server)));
 }
 
-async function openHome(t, { path = 'home.html', width = 1440, height = 900, query = '' } = {}) {
+async function openPage(t, { url = 'home.html', width = 1440, height = 900 } = {}) {
   const server = await serve();
   let browser = null;
   // registered before the launch, so a Chrome that fails to start still releases the port
@@ -43,7 +43,7 @@ async function openHome(t, { path = 'home.html', width = 1440, height = 900, que
   const errors = [];
   page.on('pageerror', (e) => errors.push(String(e)));
   const { port } = server.address();
-  await page.goto(`http://127.0.0.1:${port}/${path}${query}`);
+  await page.goto(`http://127.0.0.1:${port}/${url}`);
   return { page, errors };
 }
 
@@ -66,4 +66,4 @@ async function settle(read, done, ms = 12000) {
   return value;
 }
 
-module.exports = { openHome, scrollToSelector, serve, settle };
+module.exports = { openPage, scrollToSelector, serve, settle };
