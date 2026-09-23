@@ -216,6 +216,7 @@
       });
       decorate(0);
       running = false;
+      svg.classList.add('orbiting');
       orbit(performance.now());
       return;
     }

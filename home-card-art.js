@@ -46,7 +46,10 @@
         d.y = st.h / 2;
       }
     });
-    if (RM) paint(art);
+    if (RM) {
+      for (var k = 0; k < 240; k++) step(art, 0);
+      paint(art);
+    }
   }
 
   /* 0 = gathered into one, 1 = spread across the market */
@@ -168,11 +171,7 @@
     };
     listen(art);
     size(art);
-    if (RM) {
-      for (var k = 0; k < 240; k++) step(art, 0);
-      paint(art);
-      return;
-    }
+    if (RM) return;
     function frame(now) {
       art.st.raf = 0;
       step(art, now);

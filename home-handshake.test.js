@@ -46,12 +46,25 @@ test('the dots keep circling while the section is in view', async (t) => {
   const { page } = await drawn(t);
   const where = () => page.evaluate(() => [...document.querySelectorAll('#hs .odot')].map((d) => d.getAttribute('cx')));
   const first = await where();
-  await page.waitForTimeout(600);
+  await page.waitForFunction(
+    (prev) => [...document.querySelectorAll('#hs .odot')].some((d, i) => d.getAttribute('cx') !== prev[i]),
+    first,
+    { timeout: 5000 },
+  );
   assert.notDeepEqual(await where(), first);
 });
 
 test('hovering makes the two forearms shake together about their shoulders', async (t) => {
   const { page } = await drawn(t);
+  // the automatic post-draw shake must finish first, so the sampled shear comes from the hover
+  await page.waitForFunction(
+    () =>
+      [5, 11].every((i) =>
+        /^matrix\(1 0 0 1 0 0\)$/.test(document.getElementById('hs-p' + i).getAttribute('transform') || ''),
+      ),
+    null,
+    { timeout: 6000 },
+  );
   const box = await (await page.$('#hs')).boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
   // The shake is a sine, so a single sample can land on a zero crossing or before the
@@ -73,4 +86,22 @@ test('hovering makes the two forearms shake together about their shoulders', asy
     .then((h) => h.jsonValue());
   // matrix(1 k 0 1 0 f): a shear k with the shoulder held fixed; opposite signs keep the hands joined
   assert.ok(arms[0][1] !== 0 && Math.sign(arms[0][1]) === -Math.sign(arms[1][1]), `shears ${arms[0][1]} ${arms[1][1]}`);
+});
+
+test('under reduced motion the orbit dots are visible, not stuck at opacity 0', async (t) => {
+  const { page } = await openHome(t);
+  await page.emulateMedia({ reducedMotion: 'reduce' });
+  await page.reload();
+  await scrollToSelector(page, '#human', 60);
+  const opacities = await page
+    .waitForFunction(
+      () => {
+        const dots = [...document.querySelectorAll('#hs .odot')];
+        return dots.length && dots.every((d) => Number(d.style.opacity) > 0) ? dots.map((d) => d.style.opacity) : null;
+      },
+      null,
+      { timeout: 6000 },
+    )
+    .then((h) => h.jsonValue());
+  assert.ok(opacities.length > 0);
 });

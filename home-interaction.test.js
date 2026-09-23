@@ -44,3 +44,17 @@ test('clicking a rail dot scrolls to its section', async (t) => {
   );
   assert.ok(Math.abs(top) < 120, `human section top is ${top}px from the viewport top`);
 });
+
+test('content below the fold stays unrevealed until it is scrolled to', async (t) => {
+  const { page } = await openHome(t);
+  await page.waitForTimeout(3000);
+  assert.equal(await page.evaluate(() => document.querySelector('.g-note').classList.contains('seen')), false);
+  await scrollToSelector(page, '.g-note', 300);
+  assert.equal(
+    await settle(
+      () => page.evaluate(() => document.querySelector('.g-note').classList.contains('seen')),
+      (seen) => seen,
+    ),
+    true,
+  );
+});

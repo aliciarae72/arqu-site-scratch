@@ -63,17 +63,20 @@
       e.preventDefault();
     }
   });
-  var sx = null;
+  var sx = null,
+    pid = null;
   show.addEventListener(
     'pointerdown',
     function (e) {
       // Any new touch invalidates the last one, including a gesture this handler declines and
-      // one the browser cancelled: a start position left behind gets spent by the next
-      // pointerup, which is not the gesture that set it.
+      // one the browser cancelled. A second finger landing mid-swipe makes it a multi-touch
+      // gesture, not a swipe, so neither finger may finish it.
+      var pending = sx !== null;
       sx = null;
-      if (e.pointerType !== 'touch') return;
+      if (e.pointerType !== 'touch' || pending) return;
       if (e.target.closest && e.target.closest('[data-owns-pointer]')) return;
       sx = e.clientX;
+      pid = e.pointerId;
     },
     { passive: true },
   );
@@ -87,7 +90,7 @@
   show.addEventListener(
     'pointerup',
     function (e) {
-      if (sx === null) return;
+      if (sx === null || e.pointerId !== pid) return;
       var dx = e.clientX - sx;
       sx = null;
       if (Math.abs(dx) > 50) go(cur + (dx < 0 ? 1 : -1));

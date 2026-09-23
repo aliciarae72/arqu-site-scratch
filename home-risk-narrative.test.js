@@ -55,3 +55,37 @@ test('the first slide animates in once the slideshow is on screen', async (t) =>
   );
   assert.equal(entered, true);
 });
+
+// Touch contacts dispatched on the slideshow's own text, away from the map that owns its gestures.
+function touches(page, contacts) {
+  return page.evaluate((list) => {
+    const target = document.querySelector('.rn-slide.is-on .rn-title');
+    list.forEach(([type, pointerId, clientX]) =>
+      target.dispatchEvent(
+        new PointerEvent(type, { bubbles: true, pointerType: 'touch', pointerId, clientX, clientY: 300 }),
+      ),
+    );
+  }, contacts);
+}
+
+test('a one-finger swipe moves to the next slide', async (t) => {
+  const { page } = await openHome(t, { query: '?open=market' });
+  await scrollToSelector(page, '[data-rn]');
+  await touches(page, [
+    ['pointerdown', 7, 300],
+    ['pointerup', 7, 150],
+  ]);
+  assert.equal((await slideState(page)).on, 1);
+});
+
+test('a second finger landing mid-swipe cancels the swipe', async (t) => {
+  const { page } = await openHome(t, { query: '?open=market' });
+  await scrollToSelector(page, '[data-rn]');
+  await touches(page, [
+    ['pointerdown', 7, 300],
+    ['pointerdown', 8, 400],
+    ['pointerup', 7, 320],
+    ['pointerup', 8, 250],
+  ]);
+  assert.equal((await slideState(page)).on, 0);
+});

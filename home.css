@@ -7,9 +7,9 @@
    The vellum route's own colors are deliberately NOT used.
    ============================================================ */
 :root{
-  /* Chi's palette, unchanged — the vellum route supplies type, rule and space, not color */
+  /* Chi's palette; ink-3 is darkened to reach 4.5:1 on the band. The vellum route supplies type, rule and space, not color */
   --bg:#fbfaf7; --band:#f2efe9; --surface:#ffffff;
-  --ink:#221f20; --ink-2:#56514f; --ink-3:#8d8785;
+  --ink:#221f20; --ink-2:#56514f; --ink-3:#6e6866;
   --line:#e7e2db; --line-2:#d5cec5;
   --purple:#8c82fa; --purple-deep:#5e54c8; --tint:#f3f1ff; --tint-2:#e6e2ff;
   --font-display:"Hoefler Text","Didot","Bodoni 72","Playfair Display","Palatino Linotype",Palatino,Georgia,serif;
@@ -213,7 +213,8 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 }
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
-  .motif .beyond,.reveal{animation:none}
+  .motif .beyond-in,.motif .ask,.reveal{animation:none}
+  .motif .beyond,.motif .ask{transition:none}
   .wire{animation:none}
 }
 

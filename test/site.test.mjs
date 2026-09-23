@@ -35,14 +35,10 @@ test('serves at least the home page', () => {
 
 test('home.html links its split stylesheets and scripts, in load order', () => {
   const html = readFileSync(join(ROOT, 'home.html'), 'utf8');
-  assert.deepEqual(stylesheetHrefs(html).filter((h) => h.startsWith('home')), [
-    'home.css',
-    'home-layers.css',
-    'home-spine.css',
-    'home-hand.css',
-    'home-risk-narrative.css',
-    'home-lines.css',
-  ]);
+  assert.deepEqual(
+    stylesheetHrefs(html).filter((h) => h.startsWith('home')),
+    ['home.css', 'home-layers.css', 'home-spine.css', 'home-hand.css', 'home-risk-narrative.css', 'home-lines.css'],
+  );
   assert.deepEqual(
     scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')),
     [
@@ -75,7 +71,9 @@ for (const page of PAGES) {
   });
 
   test(`${page}: every local script file exists and parses`, () => {
-    const local = scriptTags(html).map((s) => s.src).filter((src) => !/^https?:/.test(src));
+    const local = scriptTags(html)
+      .map((s) => s.src)
+      .filter((src) => !/^https?:/.test(src));
     assertLocalFilesExist(page, local);
     local.forEach((src) => {
       assert.doesNotThrow(() => new vm.Script(readFileSync(join(ROOT, src), 'utf8'), { filename: src }));

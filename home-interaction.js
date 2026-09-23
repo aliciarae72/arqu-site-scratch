@@ -108,8 +108,10 @@
       el.setAttribute('data-rise', '');
       el.style.transitionDelay = (i % 5) * 70 + 'ms';
     });
+    var fired = false;
     var io = new IntersectionObserver(
       function (entries) {
+        fired = true;
         entries.forEach(function (en) {
           if (en.isIntersecting) {
             en.target.classList.add('seen');
@@ -122,9 +124,10 @@
     els.forEach(function (el) {
       io.observe(el);
     });
-    /* Failsafe: if the observer never fires (headless, odd viewport, a
-       browser that lies about intersection) the page must not stay blank. */
+    /* Failsafe: if the observer never reports at all, the page must not stay blank.
+       A working observer reports every target once right after observe(). */
     setTimeout(function () {
+      if (fired) return;
       els.forEach(function (el) {
         el.classList.add('seen');
       });
