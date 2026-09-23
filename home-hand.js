@@ -39,37 +39,37 @@
   window.arquHand = { ink: ink, opts: opts, INK: INK, PURPLE: PURPLE };
 
   /* ── the hero: a person holding up their ask, in front of what we bring ── */
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+
+  /* the small arrow from the ask back toward the person */
+  function arrow(rc) {
+    var g = document.createElementNS(SVG_NS, 'g'),
+      pen = { stroke: INK, strokeWidth: 1.3, roughness: 1, bowing: 1 };
+    var shaft = [
+        [182, 350],
+        [174, 337],
+        [158, 330],
+      ],
+      head = [
+        [166, 324],
+        [157, 330],
+        [167, 336],
+      ];
+    g.appendChild(rc.curve(shaft, opts(40, pen)));
+    g.appendChild(rc.linearPath(head, opts(41, pen)));
+    return g;
+  }
+
   function heroMotif() {
     var svg = document.querySelector('.hand-motif');
     if (!svg) return;
     var rc = rough.svg(svg);
-    var ask = rc.ellipse(136, 251, 156, 150, opts(3, { stroke: INK, strokeWidth: 1.5, roughness: 1.5 }));
-    var arrow = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-    var a = { stroke: INK, strokeWidth: 1.3, roughness: 1, bowing: 1 };
-    arrow.appendChild(
-      rc.curve(
-        [
-          [182, 350],
-          [174, 337],
-          [158, 330],
-        ],
-        opts(40, a),
-      ),
+    var ask = svg.appendChild(
+      rc.ellipse(136, 251, 156, 150, opts(3, { stroke: INK, strokeWidth: 1.5, roughness: 1.5 })),
     );
-    arrow.appendChild(
-      rc.linearPath(
-        [
-          [166, 324],
-          [157, 330],
-          [167, 336],
-        ],
-        opts(41, a),
-      ),
-    );
-    svg.appendChild(ask);
-    svg.appendChild(arrow);
+    var back = svg.appendChild(arrow(rc));
     ink(ask, 750, 0.6);
-    ink(arrow, 2050, 0.4);
+    ink(back, 2050, 0.4);
   }
   heroMotif();
 
