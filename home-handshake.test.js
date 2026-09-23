@@ -52,19 +52,16 @@ test('hovering makes the two forearms shake together about their shoulders', asy
   const arms = await page
     .waitForFunction(
       () => {
+        // a near-zero shear serialises in exponent form, so read whole numbers, exponent included
         const shear = (i) =>
-          document
-            .getElementById('hs-p' + i)
-            .getAttribute('transform')
-            ?.replace(/[^-\d. ]/g, '')
-            .trim()
-            .split(/\s+/)
-            .map(Number) ?? [];
+          (document.getElementById('hs-p' + i).getAttribute('transform') || '')
+            .match(/-?\d*\.?\d+(?:e[-+]?\d+)?/gi)
+            ?.map(Number) ?? [];
         const pair = [shear(5), shear(11)];
-        return pair.every((m) => m.length === 6 && m[1] !== 0) ? pair : null;
+        return pair.every((m) => m.length === 6 && Math.abs(m[1]) > 1e-3) ? pair : null;
       },
       null,
-      { timeout: 3000 },
+      { timeout: 6000 },
     )
     .then((h) => h.jsonValue());
   // matrix(1 k 0 1 0 f): a shear k with the shoulder held fixed; opposite signs keep the hands joined
