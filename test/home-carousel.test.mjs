@@ -10,18 +10,18 @@ import cells from './../scripts/hail-cells.js';
 import { scriptTags } from './script-tags.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
-const HOME = readFileSync(join(ROOT, 'home.html'), 'utf8');
+const MARKET = readFileSync(join(ROOT, 'open-market.html'), 'utf8');
 
 // The casualty/property material rides the open-market carousel, so these assertions
 // read the carousel block.
 const HAIL = JSON.parse(readFileSync(join(ROOT, 'data/hail-severity.json'), 'utf8'));
-const LINES = HOME.slice(HOME.indexOf('<div class="rn reveal"'), HOME.indexOf('<div class="how reveal"'));
+const LINES = MARKET.slice(MARKET.indexOf('<div class="rn reveal"'), MARKET.indexOf('<div class="how reveal"'));
 
-test('home.html: the casualty material rides the open-market carousel, and the page wires it up', () => {
-  // It sits inside #ways, above "How it works" and below the three verticals.
-  assert.ok(HOME.indexOf('<div class="branches">') < HOME.indexOf('<div class="rn reveal"'));
-  assert.ok(HOME.indexOf('<div class="rn reveal"') < HOME.indexOf('<div class="how reveal"'));
-  assert.ok(!HOME.includes('<section id="lines"'), 'there is no standalone #lines section');
+test('open-market.html: the casualty material rides the open-market carousel, and the page wires it up', () => {
+  // It sits in the Open market flow, above "How it works" and below the three verticals.
+  assert.ok(MARKET.indexOf('<div class="branches">') < MARKET.indexOf('<div class="rn reveal"'));
+  assert.ok(MARKET.indexOf('<div class="rn reveal"') < MARKET.indexOf('<div class="how reveal"'));
+  assert.ok(!MARKET.includes('<section id="lines"'), 'there is no standalone #lines section');
   const interaction = readFileSync(join(ROOT, 'home-interaction.js'), 'utf8');
   assert.match(interaction, /\['ways',/, 'the spine list is read from the file that holds it');
   assert.ok(!/\['lines',/.test(interaction), 'the spine points only at sections that exist');
@@ -40,8 +40,8 @@ test('home.html: the casualty material rides the open-market carousel, and the p
 // move ADDS, not about re-litigating the block it landed in.
 const MOVED = [...LINES.matchAll(/<div class="rn-vis[^"]*">[\s\S]*?<\/figure>/g)].map((m) => m[0]).join('\n');
 
-test('home.html: the moved casualty material adds nothing the edit layer selects', () => {
-  const selector = HOME.match(/id="arqu-edit-layer"[^>]*data-selector="([^"]+)"/)[1];
+test('open-market.html: the moved casualty material adds nothing the edit layer selects', () => {
+  const selector = MARKET.match(/id="arqu-edit-layer"[^>]*data-selector="([^"]+)"/)[1];
   const classes = new Set([...MOVED.matchAll(/class="([^"]+)"/g)].flatMap((m) => m[1].split(/\s+/)));
   assert.ok(MOVED.includes('dots-chart') && MOVED.includes('hail-frame'), 'both figures are in scope');
   selector
@@ -53,7 +53,7 @@ test('home.html: the moved casualty material adds nothing the edit layer selects
     });
 });
 
-test('home.html: each printed count in the dot matrix equals its data-count', () => {
+test('open-market.html: each printed count in the dot matrix equals its data-count', () => {
   const stacks = [...LINES.matchAll(/<div class="dots-stack"[^>]*>[\s\S]*?<\/span>/g)].map((m) => ({
     count: m[0].match(/data-count="(\d+)"/)[1],
     printed: m[0].match(/class="dots-n">([\d,]+)</)[1],
@@ -67,13 +67,13 @@ test('home.html: each printed count in the dot matrix equals its data-count', ()
   });
 });
 
-test('home.html: the casualty chart names both sources, and the hail map is drawn from this repo', () => {
+test('open-market.html: the casualty chart names both sources, and the hail map is drawn from this repo', () => {
   const source = LINES.match(/class="fig-source">([^<]+)</)[1];
   assert.match(source, /Pipeline and Hazardous Materials Safety Administration/);
   assert.match(source, /National Interagency Fire Center/);
   const src = LINES.match(/<img src="(hail-severity\.svg)"/)[1];
   assert.ok(existsSync(join(ROOT, src)), 'the map SVG ships with the site');
-  assert.ok(scriptTags(HOME).some((tag) => tag.src === 'home-lines.js'));
+  assert.ok(scriptTags(MARKET).some((tag) => tag.src === 'home-lines.js'));
 });
 
 // The map is markup, not an opaque embed, so its parts can be asserted the way the
@@ -86,7 +86,7 @@ test('home.html: the casualty chart names both sources, and the hail map is draw
 const GRID = hailGrid;
 const DRAWN = cells.drawnCells(GRID.frame, HAIL.cells);
 
-test("home.html: the hail slide's counts match the data it ships", () => {
+test("open-market.html: the hail slide's counts match the data it ships", () => {
   const fig = LINES.slice(LINES.indexOf('02 &middot; Property'));
   const tally = {};
   DRAWN.forEach(([c]) => {
@@ -104,7 +104,7 @@ test("home.html: the hail slide's counts match the data it ships", () => {
   assert.equal(tally['Very High'], 1);
 });
 
-test('home.html: the hail figure carries a caption, a legend and its sources', () => {
+test('open-market.html: the hail figure carries a caption, a legend and its sources', () => {
   const fig = LINES.slice(LINES.indexOf('<figure class="hail-frame">'));
   assert.match(fig, /class="dots-title">Hail severity, Colorado</);
   assert.match(fig, /class="dots-sub">NOAA storm records/);
@@ -124,7 +124,7 @@ test('home.html: the hail figure carries a caption, a legend and its sources', (
   assert.match(alt, /Very High/i);
 });
 
-test('home.html: the map takes a pointer and a keyboard, and ships the grid it answers from', () => {
+test('open-market.html: the map takes a pointer and a keyboard, and ships the grid it answers from', () => {
   const map = LINES.match(/<div class="hail-map"[\s\S]*?<\/div>\s*<\/div>/)[0];
   assert.match(map, /\btabindex="0"/, 'the map cannot be reached from the keyboard');
   assert.match(map, /\baria-label="[^"]*[Aa]rrow keys[^"]*"/, 'the label does not say what the keys do');
@@ -137,20 +137,20 @@ test('home.html: the map takes a pointer and a keyboard, and ships the grid it a
   assert.match(map, /\bdata-owns-pointer\b/, 'the map does not claim its own gestures');
   ['hail-grid.js', 'home-hail-map.js', 'home-hail-map-ui.js'].forEach((src) => {
     assert.ok(
-      scriptTags(HOME).some((tag) => tag.src === src),
-      `home.html does not load ${src}`,
+      scriptTags(MARKET).some((tag) => tag.src === src),
+      `open-market.html does not load ${src}`,
     );
   });
   // The wiring reads the grid and the arithmetic off globals, so both load ahead of it.
-  assert.ok(HOME.indexOf('hail-grid.js') < HOME.indexOf('home-hail-map-ui.js'));
-  assert.ok(HOME.indexOf('home-hail-map.js') < HOME.indexOf('home-hail-map-ui.js'));
+  assert.ok(MARKET.indexOf('hail-grid.js') < MARKET.indexOf('home-hail-map-ui.js'));
+  assert.ok(MARKET.indexOf('home-hail-map.js') < MARKET.indexOf('home-hail-map-ui.js'));
   // Shipped as a script, not fetched: a fetch is blocked on file:// and the readout dies.
   assert.doesNotMatch(readFileSync(join(ROOT, 'home-hail-map-ui.js'), 'utf8'), /\bfetch\s*\(/);
 });
 
 // The carousel must not claim input a slide's own control has taken: arrows that something
 // inside already answered, and touches that start on a control which owns its gestures.
-test('home.html: the carousel yields the keys and touches its slides have claimed', () => {
+test('open-market.html: the carousel yields the keys and touches its slides have claimed', () => {
   const script = readFileSync(join(ROOT, 'home-risk-narrative.js'), 'utf8');
   const carousel = script.slice(script.indexOf("show.addEventListener('keydown'"), script.indexOf('go(0);'));
   assert.match(carousel, /if \(e\.defaultPrevented\) return;/, 'the carousel pages on a handled key');
@@ -165,7 +165,7 @@ test('home.html: the carousel yields the keys and touches its slides have claime
 
 // The image tag has to declare the size the generator drew, or the figure reflows once
 // the SVG arrives and the pointer lands on the wrong cell until it settles.
-test('home.html: the map image declares the size the SVG was drawn at', () => {
+test('open-market.html: the map image declares the size the SVG was drawn at', () => {
   const svg = readFileSync(join(ROOT, 'hail-severity.svg'), 'utf8');
   const [, width, height] = svg.match(/viewBox="0 0 (\d+) (\d+)"/);
   const img = LINES.match(/<img src="hail-severity\.svg"[^>]*>/)[0];
@@ -187,26 +187,29 @@ function disclosedHosts(html) {
 
 // The map is drawn from this repo, so none of these hosts may appear, and the footer
 // must tell a visitor that the map reaches nobody.
-test('home.html: the hail map reaches none of the embed hosts', () => {
+test('open-market.html: the hail map reaches none of the embed hosts', () => {
   const svg = readFileSync(join(ROOT, 'hail-severity.svg'), 'utf8');
   MAP_HOSTS.forEach((host) => {
-    assert.ok(!HOME.includes(host), `home.html still reaches ${host}`);
+    assert.ok(!MARKET.includes(host), `open-market.html still reaches ${host}`);
     assert.ok(!svg.includes(host), `the map SVG still reaches ${host}`);
   });
   assert.doesNotMatch(svg, /<(script|image|use\s+[^>]*href="http)/, 'the map SVG pulls something in');
-  const note = HOME.match(/class="f-note">([^<]+)</)[1];
+  const note = MARKET.match(/class="f-note">([^<]+)</)[1];
   assert.match(note, /hail map is drawn from this site and reaches nobody/);
 });
 
 // The map's hosts live inside the vendored export, so they are listed above. These are the
-// ones home.html asks for itself, and a new one has to arrive with a word to the visitor.
-test('home.html: every off-origin host in its own markup is named in a note', () => {
-  const hosts = new Set([...HOME.matchAll(/(?:src|href)="(https?:\/\/[^"]+)"/g)].map((m) => new URL(m[1]).host));
-  const notes = disclosedHosts(HOME);
-  hosts.forEach((host) => {
-    assert.ok(notes.includes(host), `home.html loads ${host}, and no note names it`);
+// ones each page asks for itself, and a new one has to arrive with a word to the visitor.
+for (const page of ['home.html', 'open-market.html', 'programs.html']) {
+  test(`${page}: every off-origin host in its own markup is named in a note`, () => {
+    const html = readFileSync(join(ROOT, page), 'utf8');
+    const hosts = new Set([...html.matchAll(/(?:src|href)="(https?:\/\/[^"]+)"/g)].map((m) => new URL(m[1]).host));
+    const notes = disclosedHosts(html);
+    hosts.forEach((host) => {
+      assert.ok(notes.includes(host), `${page} loads ${host}, and no note names it`);
+    });
   });
-});
+}
 
 const INSURED_COLUMNS = new Set(['name', 'address', 'city', 'zip', 'tiv', 'latitude', 'longitude']);
 

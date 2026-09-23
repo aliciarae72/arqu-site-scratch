@@ -3,15 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>arqu home</title>
-<meta name="description" content="arqu home page mockup: the handshake, then two ways to work with us.">
-<script>
-(function () {
-  var key = new URLSearchParams(location.search).get('open') || location.hash.replace(/^#(?:flow|way)-/, '');
-  if (key === 'market') location.replace('open-market.html');
-  else if (key === 'programs') location.replace('programs.html');
-})();
-</script>
+<title>arqu — Programs</title>
+<meta name="description" content="arqu programs mockup: a whole book at once.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600&display=swap">
@@ -43,50 +36,45 @@
 </header>
 
 <main id="top">
-  <section id="human" class="globe-sec" aria-labelledby="globe-title">
+  <section id="page" class="ways page" aria-labelledby="page-title">
     <div class="wrap">
-      <div class="g-head">
-        <div class="g-kicker">Human-centered</div>
-        <div class="g-title" id="globe-title" role="heading" aria-level="1">Insurance still runs on a handshake.</div>
-      </div>
-      <div class="globe-row">
-        <div class="globe-stage" data-wash><svg class="hs" id="hs" viewBox="0 0 640 600" role="img" aria-label="Two stick figures shake hands while a few dots circle around them"></svg></div>
+      <a class="back" href="home.html">&larr; Two ways in</a>
+      <div class="sec-head">
         <div>
-          <div class="g-say">Behind every submission is a retailer who knows the account and a broker who knows the market. We were retailers first, so that conversation is the part we protect.</div>
-          <div class="g-say">Data, models and nearly 100 capacity partners move around that relationship. AI clears the desk so it gets more of our time, not less.</div>
-          <div class="g-note">The tools turn. The handshake holds.</div>
+          <p class="eyebrow">A whole book at once</p>
+          <h1 id="page-title">Programs</h1>
+          <p class="lead">See how we build custom capacity for your book and find the economies of scale inside it.</p>
         </div>
       </div>
-    </div>
-
-  <section id="ways" class="ways" aria-label="Ways to work with us">
-    <div class="wrap">
-      <div class="way-grid">
-        <a class="way" id="way-market" href="open-market.html">
-          <span class="way-top">
-            <span class="way-kicker">One risk at a time</span>
-          </span>
-          <span class="art" aria-hidden="true"><canvas data-art="market"></canvas></span>
-          <span>
-            <span class="way-title">Open market</span>
-            <span class="way-desc">See how AI and data unlock better solutions with our nearly 100 capacity partners.</span>
-            <span class="way-cta"><span class="arrow" aria-hidden="true">&rarr;</span>Explore</span>
-          </span>
-        </a>
-
-        <span class="or" aria-hidden="true">or</span>
-
-        <a class="way" id="way-programs" href="programs.html">
-          <span class="way-top">
-            <span class="way-kicker">A whole book at once</span>
-          </span>
-          <span class="art" aria-hidden="true"><canvas data-art="programs"></canvas></span>
-          <span>
-            <span class="way-title">Programs</span>
-            <span class="way-desc">See how we build custom capacity for your book and find the economies of scale inside it.</span>
-            <span class="way-cta"><span class="arrow" aria-hidden="true">&rarr;</span>Explore</span>
-          </span>
-        </a>
+      <div class="flow" id="flow-programs">
+          <div class="chain">
+            <div class="node reveal" style="--i:0">
+              <span class="step-no">01</span>
+              <span class="dot"></span>
+              <h3>Book roll</h3>
+              <p>We are your program builder and administrator, not your wholesaler. We start from your book and fit capacity to it, not the other way around. Priced as one book, the spread of risk works in everyone's favor.</p>
+              <ul class="wins">
+                <li><b>Insureds</b><span>Lower, more competitive price than the open market gives one risk at a time.</span></li>
+                <li><b>Retailers</b><span>Scale your book without scaling your payroll. We have consolidated nearly 100 markets into one.</span></li>
+                <li><b>Capacity providers</b><span>A ready-to-roll book, pre-underwritten and delivered in bulk. Not a business plan.</span></li>
+              </ul>
+            </div>
+            <div class="link reveal" style="--i:1" aria-hidden="true"></div>
+            <div class="node reveal" style="--i:2">
+              <span class="step-no">02</span>
+              <span class="dot"></span>
+              <h3>Custom capacity and administration</h3>
+              <p>We source capacity for the program, including fronted solutions, and we administer it. Importantly, we let capacity providers do what they do best — underwrite — and we do what we do best — distribute.</p>
+              <ul class="wins">
+                <li><b>Insureds</b><span>Not your traditional layered and shared program. Each insured gets their own policy and their own limit.</span></li>
+                <li><b>Retailers</b><span>New carriers you have not used, and new underwriting units inside the ones you know. Quotes come straight from the agreed rates, so binding takes minutes, not weeks.</span></li>
+                <li><b>Capacity providers</b><span>Hand us any part of the process, or all of it. Quoting, binding, policy issuance, invoicing: we built the tools that lift the admin load.</span></li>
+              </ul>
+            </div>
+            <p class="result reveal" style="--i:3"><strong>The result:</strong> a program you can market as your own, like having your own MGA.</p>
+            <div class="center reveal" style="--i:3"><a class="go" href="#contact">Talk to us about a program &rarr;</a></div>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -127,16 +115,14 @@
 </footer>
 
 <script src="home-interaction.js"></script>
-<script src="home-card-art.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js" integrity="sha384-1NLkwxMO2sOqcq7rQkFBhIAUJtbt8ziLxhVKVgKfFGMEU8pF+GEq5LVogviveup6" crossorigin="anonymous"></script>
 <script src="home-hand.js"></script>
 <script src="home-hand-marks.js"></script>
-<script src="home-handshake.js"></script>
 <script src="home-ambient.js"></script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
         data-selector="h1, h2, .lead, .eyebrow, .way-kicker, .way-title, .way-desc, .node h3, .node p, .wins b, .wins span, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
         data-key="arqu-copy-home-v3"
         data-migrate-nodes="61"
-        data-what="the arqu homepage mockup"></script>
+        data-what="the arqu programs page mockup"></script>
 </body>
 </html>

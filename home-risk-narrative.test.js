@@ -12,7 +12,7 @@ async function slideState(page) {
 }
 
 test('arrows move one slide at a time and wrap around', async (t) => {
-  const { page, errors } = await openHome(t, { query: '?open=market' });
+  const { page, errors } = await openHome(t, { path: 'open-market.html' });
   await scrollToSelector(page, '[data-rn]');
   await page.click('[data-rn-next]');
   assert.deepEqual(await slideState(page), {
@@ -34,7 +34,7 @@ test('arrows move one slide at a time and wrap around', async (t) => {
 });
 
 test('pips jump straight to a slide and arrow keys move it', async (t) => {
-  const { page } = await openHome(t, { query: '?open=market' });
+  const { page } = await openHome(t, { path: 'open-market.html' });
   await scrollToSelector(page, '[data-rn]');
   await page.click('.rn-pip[aria-label="Property and hail"]');
   assert.equal((await slideState(page)).on, 1);
@@ -46,7 +46,7 @@ test('pips jump straight to a slide and arrow keys move it', async (t) => {
 });
 
 test('the first slide animates in once the slideshow is on screen', async (t) => {
-  const { page } = await openHome(t, { query: '?open=market' });
+  const { page } = await openHome(t, { path: 'open-market.html' });
   assert.equal(await page.evaluate(() => document.querySelectorAll('.rn-vis.in').length), 0);
   await scrollToSelector(page, '[data-rn-show]');
   const entered = await settle(
@@ -69,7 +69,7 @@ function touches(page, contacts) {
 }
 
 test('a one-finger swipe moves to the next slide', async (t) => {
-  const { page } = await openHome(t, { query: '?open=market' });
+  const { page } = await openHome(t, { path: 'open-market.html' });
   await scrollToSelector(page, '[data-rn]');
   await touches(page, [
     ['pointerdown', 7, 300],
@@ -79,7 +79,7 @@ test('a one-finger swipe moves to the next slide', async (t) => {
 });
 
 test('a second finger landing mid-swipe cancels the swipe', async (t) => {
-  const { page } = await openHome(t, { query: '?open=market' });
+  const { page } = await openHome(t, { path: 'open-market.html' });
   await scrollToSelector(page, '[data-rn]');
   await touches(page, [
     ['pointerdown', 7, 300],

@@ -3,7 +3,6 @@ const assert = require('node:assert/strict');
 const { openHome, scrollToSelector, settle } = require('./test/page-harness');
 
 const MARKS = [
-  { sel: '.val:nth-child(2) h3', text: 'Human touch', kind: 'underline' },
   { sel: '.way-grid .or', text: 'or', kind: 'circle' },
   { sel: '#close-title + p', text: 'A broker', kind: 'underline' },
 ];
@@ -53,26 +52,26 @@ test('marks further down only draw once scrolled into view', async (t) => {
   await page.waitForTimeout(2000);
   const count = () => page.evaluate(() => document.querySelectorAll('.hand-mark > g').length);
   const before = await count();
-  await scrollToSelector(page, '#values', 0);
+  await scrollToSelector(page, '#contact', 0);
   assert.equal(await settle(count, (n) => n === before + 1), before + 1);
   assert.deepEqual(errors, []);
 });
 
 test('an underline is one fluid stroke: a single path, drawn in a single pass', async (t) => {
   const { page } = await openHome(t);
-  await scrollToSelector(page, '#values', 0);
-  await page.waitForFunction(() => document.querySelector('.val:nth-child(2) > .hand-mark > g'), null, {
+  await scrollToSelector(page, '#contact', 0);
+  await page.waitForFunction(() => document.querySelector('.close > div > .hand-mark > g'), null, {
     timeout: 6000,
   });
   const paths = await page.evaluate(() =>
-    [...document.querySelectorAll('.val:nth-child(2) > .hand-mark path')].map((p) => p.getAttribute('d')),
+    [...document.querySelectorAll('.close > div > .hand-mark path')].map((p) => p.getAttribute('d')),
   );
   assert.equal(paths.length, 1);
   assert.equal(paths[0].match(/M/g).length, 1, paths[0]);
 });
 
 test('every mark lands on its words at 1440, 1024 and 390, and stays there as the page reflows', async (t) => {
-  const { page, errors } = await openHome(t, { query: '?open=market' });
+  const { page, errors } = await openHome(t);
   for (const m of MARKS) {
     await page.evaluate((sel) => document.querySelector(sel).scrollIntoView({ block: 'center' }), m.sel);
     await page.waitForFunction(
@@ -90,9 +89,5 @@ test('every mark lands on its words at 1440, 1024 and 390, and stays there as th
   await page.setViewportSize({ width: 390, height: 844 });
   await afterReflow(page);
   assert.deepEqual(await misplaced(page, '390'), []);
-  // at 390 the open flow sits between the card and the "or"; closing it pulls the "or" up the page
-  await page.click('#way-market');
-  await afterReflow(page);
-  assert.deepEqual(await misplaced(page, '390, flow closed'), []);
   assert.deepEqual(errors, []);
 });

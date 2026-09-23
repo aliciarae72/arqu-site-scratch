@@ -29,28 +29,34 @@ function assertLocalFilesExist(page, refs) {
     });
 }
 
-test('serves at least the home page', () => {
-  assert.ok(PAGES.includes('home.html'));
+test('serves the landing page and both ways in', () => {
+  ['home.html', 'open-market.html', 'programs.html'].forEach((page) => assert.ok(PAGES.includes(page), page));
 });
 
-test('home.html links its split stylesheets and scripts, in load order', () => {
-  const html = readFileSync(join(ROOT, 'home.html'), 'utf8');
-  assert.deepEqual(
-    stylesheetHrefs(html).filter((h) => h.startsWith('home')),
-    ['home.css', 'home-layers.css', 'home-spine.css', 'home-hand.css', 'home-risk-narrative.css', 'home-lines.css'],
-  );
-  assert.deepEqual(
-    scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')),
-    [
-      'home-flows.js',
+const CORE_CSS = ['home.css', 'home-layers.css', 'home-spine.css', 'home-hand.css'];
+const LOAD_ORDER = {
+  'home.html': {
+    css: CORE_CSS,
+    js: [
       'home-interaction.js',
-      'home-risk-narrative.js',
       'home-card-art.js',
       'roughjs',
       'home-hand.js',
       'home-hand-marks.js',
-      'home-sector-icons.js',
       'home-handshake.js',
+      'home-ambient.js',
+      'arqu-edit-layer.js',
+    ],
+  },
+  'open-market.html': {
+    css: [...CORE_CSS, 'home-risk-narrative.css', 'home-lines.css'],
+    js: [
+      'home-interaction.js',
+      'home-risk-narrative.js',
+      'roughjs',
+      'home-hand.js',
+      'home-hand-marks.js',
+      'home-sector-icons.js',
       'home-ambient.js',
       'home-lines.js',
       'hail-grid.js',
@@ -58,8 +64,66 @@ test('home.html links its split stylesheets and scripts, in load order', () => {
       'home-hail-map-ui.js',
       'arqu-edit-layer.js',
     ],
+  },
+  'programs.html': {
+    css: CORE_CSS,
+    js: ['home-interaction.js', 'roughjs', 'home-hand.js', 'home-hand-marks.js', 'home-ambient.js', 'arqu-edit-layer.js'],
+  },
+};
+const read = (page) => readFileSync(join(ROOT, page), 'utf8');
+
+for (const [page, want] of Object.entries(LOAD_ORDER)) {
+  test(`${page} links its split stylesheets and scripts, in load order`, () => {
+    const html = read(page);
+    assert.deepEqual(
+      stylesheetHrefs(html).filter((h) => h.startsWith('home')),
+      want.css,
+    );
+    assert.deepEqual(
+      scriptTags(html).map((s) => s.src.replace(/^https:\/\/cdn\.jsdelivr\.net\/npm\/(roughjs)@.*$/, '$1')),
+      want.js,
+    );
+  });
+
+  test(`${page} pins its remote scripts with an integrity hash`, () => {
+    const remote = scriptTags(read(page)).filter((s) => /^https?:/.test(s.src));
+    assert.ok(remote.length > 0);
+    remote.forEach((s) => {
+      assert.match(s.tag, /\bintegrity="sha(256|384|512)-/, `${page} loads ${s.src} unpinned`);
+    });
+  });
+}
+
+test('home.html is the handshake section, then exactly two card links', () => {
+  const html = read('home.html');
+  const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
+  assert.deepEqual(
+    [...main.matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]),
+    ['human', 'ways', 'contact'],
+  );
+  ['Insurance still runs on a handshake.', 'id="hs"', 'The tools turn. The handshake holds.'].forEach((part) => {
+    assert.ok(main.includes(part), `the handshake section is missing ${part}`);
+  });
+  assert.deepEqual(
+    [...main.matchAll(/<a class="way" id="([^"]+)" href="([^"]+)">/g)].map((m) => [m[1], m[2]]),
+    [
+      ['way-market', 'open-market.html'],
+      ['way-programs', 'programs.html'],
+    ],
   );
 });
+
+for (const [page, flow] of [
+  ['open-market.html', 'flow-market'],
+  ['programs.html', 'flow-programs'],
+]) {
+  test(`${page} carries its flow open, with a way back to the landing page`, () => {
+    const html = read(page);
+    // the exact tag, so a flow left `hidden` with no toggle to show it fails here
+    assert.ok(html.includes(`<div class="flow" id="${flow}">`), `${page} has no open #${flow}`);
+    assert.ok(html.includes('<a class="back" href="home.html">'), `${page} has no link back`);
+  });
+}
 
 for (const page of PAGES) {
   const html = readFileSync(join(ROOT, page), 'utf8');
@@ -84,13 +148,3 @@ for (const page of PAGES) {
     assertLocalFilesExist(page, stylesheetHrefs(html));
   });
 }
-
-const HOME = readFileSync(join(ROOT, 'home.html'), 'utf8');
-
-test('home.html pins its remote scripts with an integrity hash', () => {
-  const remote = scriptTags(HOME).filter((s) => /^https?:/.test(s.src));
-  assert.ok(remote.length > 0);
-  remote.forEach((s) => {
-    assert.match(s.tag, /\bintegrity="sha(256|384|512)-/, `home.html loads ${s.src} unpinned`);
-  });
-});
