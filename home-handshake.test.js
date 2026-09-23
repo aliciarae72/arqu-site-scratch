@@ -5,7 +5,14 @@ const { openHome, scrollToSelector } = require('./test/page-harness');
 async function drawn(t) {
   const opened = await openHome(t);
   await scrollToSelector(opened.page, '#human', 60);
-  await opened.page.waitForTimeout(5500);
+  await opened.page.waitForFunction(
+    () => {
+      const svg = document.getElementById('hs');
+      return svg.classList.contains('drawn') && svg.classList.contains('orbiting');
+    },
+    null,
+    { timeout: 15000 },
+  );
   return opened;
 }
 

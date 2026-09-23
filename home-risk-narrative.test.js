@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector } = require('./test/page-harness');
+const { openHome, scrollToSelector, settle } = require('./test/page-harness');
 
 async function slideState(page) {
   return page.evaluate(() => ({
@@ -49,9 +49,9 @@ test('the first slide animates in once the slideshow is on screen', async (t) =>
   const { page } = await openHome(t, { query: '?open=market' });
   assert.equal(await page.evaluate(() => document.querySelectorAll('.rn-vis.in').length), 0);
   await scrollToSelector(page, '[data-rn-show]');
-  await page.waitForTimeout(900);
-  assert.equal(
-    await page.evaluate(() => document.querySelector('.rn-slide.is-on .rn-vis').classList.contains('in')),
-    true,
+  const entered = await settle(
+    () => page.evaluate(() => document.querySelector('.rn-slide.is-on .rn-vis').classList.contains('in')),
+    (v) => v,
   );
+  assert.equal(entered, true);
 });

@@ -46,4 +46,16 @@ async function scrollToSelector(page, selector, offset = 80) {
   );
 }
 
-module.exports = { openHome, scrollToSelector };
+// Page state that arrives on animation frames and timers lands later on a loaded runner.
+// Re-read it until `done` accepts it or `ms` runs out, and return the last read for the assertion.
+async function settle(read, done, ms = 12000) {
+  const end = Date.now() + ms;
+  let value = await read();
+  while (!done(value) && Date.now() < end) {
+    await new Promise((resolve) => setTimeout(resolve, 100));
+    value = await read();
+  }
+  return value;
+}
+
+module.exports = { openHome, scrollToSelector, settle };

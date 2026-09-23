@@ -1,11 +1,11 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector } = require('./test/page-harness');
+const { openHome, scrollToSelector, settle } = require('./test/page-harness');
 
 test('the hero draws the ask and the arrow back to it, and marks no word in the title', async (t) => {
   const { page, errors } = await openHome(t);
-  await page.waitForTimeout(3500);
-  const hero = await page.evaluate(() => {
+  const read = () =>
+    page.evaluate(() => {
     const strokes = [...document.querySelectorAll('.hand-motif path')].filter(
       (p) => p.getAttribute('stroke') !== 'none',
     );
@@ -15,6 +15,7 @@ test('the hero draws the ask and the arrow back to it, and marks no word in the 
       inked: strokes.every((p) => p.style.strokeDashoffset === '0'),
     };
   });
+  const hero = await settle(read, (h) => h.inked && h.motifStrokes === 3);
   assert.deepEqual(hero, { titleMarks: 0, motifStrokes: 3, inked: true });
   assert.deepEqual(errors, []);
 });

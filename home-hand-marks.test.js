@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openHome, scrollToSelector } = require('./test/page-harness');
+const { openHome, scrollToSelector, settle } = require('./test/page-harness');
 
 const MARKS = [
   { sel: '.val:nth-child(2) h3', text: 'Human touch', kind: 'underline' },
@@ -43,7 +43,7 @@ function misplaced(page, label) {
   );
 }
 
-async function settle(page) {
+async function afterReflow(page) {
   await page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r))));
   await page.waitForTimeout(150);
 }
@@ -54,8 +54,7 @@ test('marks further down only draw once scrolled into view', async (t) => {
   const count = () => page.evaluate(() => document.querySelectorAll('.hand-mark > g').length);
   const before = await count();
   await scrollToSelector(page, '#values', 0);
-  await page.waitForTimeout(2000);
-  assert.equal(await count(), before + 1);
+  assert.equal(await settle(count, (n) => n === before + 1), before + 1);
   assert.deepEqual(errors, []);
 });
 
@@ -86,14 +85,14 @@ test('every mark lands on its words at 1440, 1024 and 390, and stays there as th
   }
   assert.deepEqual(await misplaced(page, '1440'), []);
   await page.setViewportSize({ width: 1024, height: 900 });
-  await settle(page);
+  await afterReflow(page);
   assert.deepEqual(await misplaced(page, '1024'), []);
   await page.setViewportSize({ width: 390, height: 844 });
-  await settle(page);
+  await afterReflow(page);
   assert.deepEqual(await misplaced(page, '390'), []);
   // at 390 the open flow sits between the card and the "or"; closing it pulls the "or" up the page
   await page.click('#way-market');
-  await settle(page);
+  await afterReflow(page);
   assert.deepEqual(await misplaced(page, '390, flow closed'), []);
   assert.deepEqual(errors, []);
 });
