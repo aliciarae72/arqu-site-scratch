@@ -18,7 +18,6 @@ const HAIL = JSON.parse(readFileSync(join(ROOT, 'data/hail-severity.json'), 'utf
 const LINES = MARKET.slice(MARKET.indexOf('<div class="rn reveal"'), MARKET.indexOf('<div class="how reveal"'));
 
 test('open-market.html: the casualty material rides the open-market carousel, and the page wires it up', () => {
-  // It sits in the Open market flow, above "How it works" and below the three verticals.
   assert.ok(MARKET.indexOf('<div class="branches">') < MARKET.indexOf('<div class="rn reveal"'));
   assert.ok(MARKET.indexOf('<div class="rn reveal"') < MARKET.indexOf('<div class="how reveal"'));
   assert.ok(!MARKET.includes('<section id="lines"'), 'there is no standalone #lines section');
