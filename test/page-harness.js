@@ -3,7 +3,7 @@
 // every animation this page runs would sit frozen at frame zero.
 const http = require('node:http');
 const { readFile } = require('node:fs/promises');
-const { join, extname, normalize } = require('node:path');
+const { join, extname, resolve, sep } = require('node:path');
 const { chromium } = require('playwright-core');
 
 const ROOT = join(__dirname, '..');
@@ -11,10 +11,16 @@ const TYPES = { '.html': 'text/html', '.css': 'text/css', '.js': 'text/javascrip
 
 function serve() {
   const server = http.createServer(async (req, res) => {
-    const path = normalize(decodeURIComponent(req.url.split('?')[0])).replace(/^(\.\.[/\\])+/, '');
+    // resolve against the repo root and refuse anything that lands outside it
+    const file = resolve(ROOT, `.${decodeURIComponent(req.url.split('?')[0])}`);
+    if (!file.startsWith(ROOT + sep)) {
+      res.writeHead(403);
+      res.end();
+      return;
+    }
     try {
-      const body = await readFile(join(ROOT, path));
-      res.writeHead(200, { 'content-type': TYPES[extname(path)] || 'application/octet-stream' });
+      const body = await readFile(file);
+      res.writeHead(200, { 'content-type': TYPES[extname(file)] || 'application/octet-stream' });
       res.end(body);
     } catch {
       res.writeHead(404);
@@ -58,4 +64,4 @@ async function settle(read, done, ms = 12000) {
   return value;
 }
 
-module.exports = { openHome, scrollToSelector, settle };
+module.exports = { openHome, scrollToSelector, serve, settle };
