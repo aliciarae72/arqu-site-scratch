@@ -75,6 +75,42 @@ const LOAD_ORDER = {
       'arqu-edit-layer.js',
     ],
   },
+  'about.html': {
+    css: [...CORE_CSS, 'home-pages.css'],
+    js: [
+      'home-interaction.js',
+      'roughjs',
+      'home-hand.js',
+      'home-hand-marks.js',
+      'home-handshake.js',
+      'home-ambient.js',
+      'arqu-edit-layer.js',
+    ],
+  },
+  'construction.html': {
+    css: [...CORE_CSS, 'home-pages.css'],
+    js: [
+      'home-interaction.js',
+      'roughjs',
+      'home-hand.js',
+      'home-hand-marks.js',
+      'home-sector-icons.js',
+      'home-ambient.js',
+      'arqu-edit-layer.js',
+    ],
+  },
+  'energy.html': {
+    css: [...CORE_CSS, 'home-pages.css'],
+    js: [
+      'home-interaction.js',
+      'roughjs',
+      'home-hand.js',
+      'home-hand-marks.js',
+      'home-sector-icons.js',
+      'home-ambient.js',
+      'arqu-edit-layer.js',
+    ],
+  },
 };
 const read = (page) => readFileSync(join(ROOT, page), 'utf8');
 
@@ -127,7 +163,9 @@ test('every page configures the edit layer the same way', () => {
       .match(/<script id="arqu-edit-layer"[^>]*>/)[0]
       .replace(/ data-what="[^"]*"/, '');
   assert.equal(config('open-market.html'), config('home.html'));
-  assert.equal(config('programs.html'), config('home.html'));
+  ['programs.html', 'about.html', 'construction.html', 'energy.html'].forEach((page) => {
+    assert.equal(config(page), config('home.html'), page);
+  });
 });
 
 for (const [page, flow] of [
