@@ -138,12 +138,12 @@ for (const [page, want] of Object.entries(LOAD_ORDER)) {
   });
 }
 
-test('home.html is the headline hero, then exactly two card links', () => {
+test('home.html is the headline hero, the values, then exactly two card links', () => {
   const html = read('home.html');
   const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
   assert.deepEqual(
     [...main.matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]),
-    ['intro', 'ways', 'contact'],
+    ['intro', 'values', 'ways', 'contact'],
   );
   ['Innovate beyond <em>the ask.</em>', 'We are wholesale brokers and technologists.'].forEach((part) => {
     assert.ok(main.includes(part), `the landing hero is missing ${part}`);

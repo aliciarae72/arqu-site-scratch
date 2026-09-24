@@ -164,6 +164,21 @@ test('programs.html reads a sample book four ways, labelled as illustrative, eac
   });
 });
 
+test('home, open market and programs each carry the values section, word for word', () => {
+  [read('home.html'), MARKET, PROGRAMS].forEach((page) => {
+    const start = page.indexOf('<section id="values"');
+    const values = page.slice(start, page.indexOf('</section>', start));
+    assert.deepEqual(texts(values, /<p class="eyebrow">([^<]+)<\/p>/g), ['Our values']);
+    assert.deepEqual(texts(values, /<h2 id="values-title">([^<]+)<\/h2>/g), ['Service is our product']);
+    assert.deepEqual(texts(values, /<h3>([^<]+)<\/h3>/g), ['Expertise', 'Execution', 'Innovation']);
+    assert.deepEqual(texts(values, /<\/h3>\s*<p>([^<]+)<\/p>/g), [
+      'Everything we build exists to help you grow your business. Our brokers leverage their expertise to consult with you for better solutions.',
+      'Our technology automates the paperwork and prioritizes the relationship, so our brokers spend more time with you.',
+      'We work with the latest technology to get deeper insights into risk',
+    ]);
+  });
+});
+
 test('no page carries the footer blurb', () => {
   ['home.html', 'open-market.html', 'programs.html'].forEach((page) => {
     assert.ok(!read(page).includes('f-note'), `${page} still has the footer blurb`);

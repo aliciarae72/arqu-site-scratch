@@ -10,6 +10,7 @@
   var SECTIONS = [
     ['page', 'Start'],
     ['intro', 'Welcome'],
+    ['values', 'Values'],
     ['ways', 'Ways to work'],
     ['contact', 'Get in touch'],
     ['careers', 'Careers'],
