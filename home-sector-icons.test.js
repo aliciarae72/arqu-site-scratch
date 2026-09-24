@@ -29,6 +29,7 @@ test('the Open market page heads each column with a hand-drawn icon instead of t
     { ...icon, icon: 'construction', strokes: 9 },
     { ...icon, icon: 'realEstate', strokes: 12 },
     { ...icon, icon: 'energy', strokes: 11 },
+    { ...icon, icon: 'more', strokes: 6 },
   ]);
   assert.deepEqual(errors, []);
 });

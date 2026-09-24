@@ -1,4 +1,4 @@
-/* ══ HAND MARKS — circles and underlines on words in the copy ═════════════════
+/* ══ HAND MARKS — underlines on words in the copy ═════════════════════════════
    Each mark is its own small svg inside the element that holds its words, and is
    positioned against that element. A reveal transform, a flow opening above it
    or a column reflowing then carries the mark along with the words, where a
@@ -9,10 +9,7 @@
   var H = window.arquHand;
   if (!H) return;
   var RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var MARKS = [
-    { sel: '.way-grid .or', text: 'or', kind: 'circle', seed: 5, wait: 700, ink: true },
-    { sel: '#close-title + p', text: 'A broker', kind: 'underline', seed: 31, wait: 700 },
-  ];
+  var MARKS = [{ sel: '#close-title + p', text: 'A broker', seed: 31, wait: 700 }];
 
   /* one rect per line the phrase sits on */
   function phraseRects(el, text) {
@@ -27,21 +24,6 @@
     return Array.prototype.filter.call(range.getClientRects(), function (r) {
       return r.width > 1;
     });
-  }
-
-  function circle(rc, b, m) {
-    var big = b.h > 46;
-    var o = H.opts(m.seed, m.ink ? { stroke: H.INK, strokeWidth: 1.3 } : {});
-    o.roughness = 1.9;
-    o.bowing = 2.1;
-    o.strokeWidth = big ? 2 : o.strokeWidth;
-    return rc.ellipse(
-      b.x + b.w / 2,
-      b.y + b.h / 2,
-      b.w * (big ? 1.08 : 1.3) + (big ? 18 : 22),
-      b.h * (big ? 1.0 : 1.35) + 8,
-      o,
-    );
   }
 
   /* one pen stroke, not a sketch: a single pass that dips and lifts off at the end */
@@ -74,7 +56,7 @@
     if (!rects.length) return null;
     var host = el.parentElement,
       box = host.getBoundingClientRect();
-    var boxes = rects.slice(0, m.kind === 'circle' ? 1 : rects.length).map(function (r) {
+    var boxes = rects.map(function (r) {
       return { x: r.left - box.left - host.clientLeft, y: r.top - box.top - host.clientTop, w: r.width, h: r.height };
     });
     var key = boxes
@@ -98,7 +80,7 @@
     m.key = at.key;
     svg.textContent = '';
     at.boxes.forEach(function (b) {
-      var g = (m.kind === 'circle' ? circle : underline)(rc, b, m);
+      var g = underline(rc, b, m);
       svg.appendChild(g);
       if (delay >= 0) H.ink(g, delay, 0.55);
     });

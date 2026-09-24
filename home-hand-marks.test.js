@@ -2,16 +2,13 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { openPage, scrollToSelector, settle } = require('./test/page-harness');
 
-const MARKS = [
-  { sel: '.way-grid .or', text: 'or', kind: 'circle' },
-  { sel: '#close-title + p', text: 'A broker', kind: 'underline' },
-];
+const MARKS = [{ sel: '#close-title + p', text: 'A broker' }];
 
 // Every mark checked against where its words are right now. Returns one line per mark that is off.
 function misplaced(page, label) {
   return page.evaluate(
     ([marks, where]) =>
-      marks.flatMap(({ sel, text, kind }) => {
+      marks.flatMap(({ sel, text }) => {
         const el = document.querySelector(sel);
         const walk = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
         let n = walk.nextNode();
@@ -23,18 +20,16 @@ function misplaced(page, label) {
         const strokes = [...el.parentElement.querySelectorAll(':scope > .hand-mark > g')].map((g) =>
           g.getBoundingClientRect(),
         );
-        const expected = kind === 'circle' ? Math.min(1, words.length) : words.length;
+        const expected = words.length;
         if (strokes.length !== expected)
           return [`${where} ${text}: ${strokes.length} strokes for ${words.length} lines`];
         return strokes.flatMap((s, i) => {
           const w = words[i];
           const on =
-            kind === 'circle'
-              ? s.left < w.left && s.right > w.right && s.top < w.top && s.bottom > w.bottom
-              : Math.abs(s.left - w.left) < 12 &&
-                Math.abs(s.right - w.right) < 14 &&
-                s.top > w.bottom - 3 &&
-                s.bottom < w.bottom + 10;
+            Math.abs(s.left - w.left) < 12 &&
+            Math.abs(s.right - w.right) < 14 &&
+            s.top > w.bottom - 3 &&
+            s.bottom < w.bottom + 10;
           return on ? [] : [`${where} ${text}: stroke ${JSON.stringify(s)} vs words ${JSON.stringify(w)}`];
         });
       }),

@@ -39,7 +39,6 @@ const LOAD_ORDER = {
     css: CORE_CSS,
     js: [
       'home-interaction.js',
-      'home-card-art.js',
       'roughjs',
       'home-hand.js',
       'home-hand-marks.js',
@@ -49,7 +48,7 @@ const LOAD_ORDER = {
     ],
   },
   'open-market.html': {
-    css: [...CORE_CSS, 'home-risk-narrative.css', 'home-lines.css'],
+    css: [...CORE_CSS, 'home-pages.css', 'home-risk-narrative.css', 'home-lines.css'],
     js: [
       'home-interaction.js',
       'home-risk-narrative.js',
@@ -66,7 +65,7 @@ const LOAD_ORDER = {
     ],
   },
   'programs.html': {
-    css: CORE_CSS,
+    css: [...CORE_CSS, 'home-pages.css'],
     js: [
       'home-interaction.js',
       'roughjs',
@@ -108,9 +107,10 @@ test('home.html is the handshake section, then exactly two card links', () => {
     [...main.matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]),
     ['human', 'ways', 'contact'],
   );
-  ['Insurance still runs on a handshake.', 'id="hs"', 'The tools turn. The handshake holds.'].forEach((part) => {
+  ['Insurance still runs on a handshake.', 'id="hs"'].forEach((part) => {
     assert.ok(main.includes(part), `the handshake section is missing ${part}`);
   });
+  assert.ok(!main.includes('The tools turn.'), 'the handshake section still carries the line Alicia cut');
   assert.deepEqual(
     [...main.matchAll(/<a class="way" id="([^"]+)" href="([^"]+)">/g)].map((m) => [m[1], m[2]]),
     [

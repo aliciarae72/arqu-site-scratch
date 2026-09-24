@@ -3,7 +3,7 @@
    stroke by stroke, then shaking hands. Each filled path is revealed through a
    mask whose stroke traces that limb, so the real artwork appears as if drawn.
    Six dots circle the pair on a hand-drawn ground ring: the tools move, the
-   people stay put. Hover or tap and they shake again. */
+   people stay put. Hover or tap and they high-five. */
 (function () {
   var svg = document.getElementById('hs');
   if (!svg || !window.rough) return;
@@ -188,6 +188,34 @@
     })(t0);
   }
 
+  /* high-five: swing each whole arm up about its own shoulder until the hands
+     meet between the heads, slap, hold, and come back down */
+  var HIGH = 80,
+    fiving = 0;
+  function easeOut(x) {
+    return 1 - (1 - x) * (1 - x);
+  }
+  function liftAt(k) {
+    if (k < 0.25) return easeOut(k / 0.25);
+    if (k < 0.7) return 1;
+    return 1 - easeOut((k - 0.7) / 0.3);
+  }
+  function highFive() {
+    if (RM || fiving || shaking) return;
+    var t0 = performance.now(),
+      DUR = 1400;
+    fiving = 1;
+    (function tick(now) {
+      var k = Math.min(1, (now - t0) / DUR),
+        slap = k > 0.22 && k < 0.4 ? 5 * Math.sin(((k - 0.22) / 0.18) * Math.PI) : 0,
+        a = liftAt(k) * HIGH - slap;
+      paths[5].setAttribute('transform', 'rotate(' + -a + ' 90 242)');
+      paths[11].setAttribute('transform', 'rotate(' + a + ' 344 242)');
+      if (k < 1) requestAnimationFrame(tick);
+      else fiving = 0;
+    })(t0);
+  }
+
   var phase = 0,
     pointer = 0,
     running = false,
@@ -232,12 +260,12 @@
 
   svg.addEventListener('pointerenter', function () {
     pointer = 1;
-    shake();
+    highFive();
   });
   svg.addEventListener('pointerleave', function () {
     pointer = 0;
   });
-  svg.addEventListener('click', shake);
+  svg.addEventListener('click', highFive);
 
   var begun = false;
   new IntersectionObserver(

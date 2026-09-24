@@ -8,14 +8,18 @@
    Linked after home.css on purpose — source order decides ties. */
 
 /* ── the human-centered section: the handshake ─────────────────────────────── */
-.globe-sec{border-top:1px solid var(--line);padding:clamp(54px,8vw,104px) 0}
-.globe-sec .g-head{margin-bottom:clamp(26px,4vw,46px)}
+.globe-sec{padding:clamp(40px,6vw,80px) 0}
 .g-kicker{margin-bottom:14px}
 .g-title{font-family:var(--font-display);font-weight:400;font-size:clamp(28px,4.4vw,46px);
   line-height:1.06;letter-spacing:-.02em;color:var(--ink);max-width:18ch}
-.globe-row{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);
-  gap:clamp(24px,5vw,64px);align-items:center}
-@media (max-width:860px){.globe-row{grid-template-columns:1fr}}
+/* the landing hero fills the first screen: the words on the left, the handshake beside them */
+.splash{min-height:calc(100svh - 112px);display:grid;align-items:center}
+.splash-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(24px,5vw,72px);align-items:center;width:100%}
+.splash .g-title{font-size:clamp(40px,6vw,78px);line-height:1;letter-spacing:-.03em;max-width:12ch;margin-bottom:clamp(20px,3vw,32px)}
+.splash-next{display:inline-flex;gap:8px;margin-top:clamp(24px,3vw,36px);font:10.5px/1 var(--font-mono);letter-spacing:.14em;
+  text-transform:uppercase;color:var(--purple-deep);text-decoration:none;border-bottom:1px solid var(--purple-deep);padding-bottom:4px}
+.splash-next:hover{opacity:.7}
+@media (max-width:860px){.splash{min-height:0}.splash-grid{grid-template-columns:1fr}}
 .globe-stage{position:relative;aspect-ratio:16/15;max-height:min(64vh,560px);margin-inline:auto;width:100%}
 .hs{display:block;width:100%;height:100%;overflow:visible;cursor:grab}
 .hs .fig{fill:var(--ink)}
@@ -24,10 +28,8 @@
 .hs.drawn .lbl{opacity:1}
 .hs .odot{opacity:0;transition:opacity .8s var(--ease)}
 .hs.orbiting .odot{opacity:1}
-.g-say{color:var(--ink-2);font-size:clamp(15px,1.5vw,17px);line-height:1.62;max-width:46ch}
+.g-say{color:var(--ink-2);font-size:clamp(16px,1.5vw,18px);line-height:1.62;max-width:46ch}
 .g-say + .g-say{margin-top:15px}
-.g-note{margin-top:20px;font:600 10px/1.5 var(--font-mono);letter-spacing:.13em;
-  text-transform:uppercase;color:var(--ink-3)}
 
 /* ── scroll-linked reveals. Applied by JS, so a no-JS page stays fully visible ── */
 [data-rise]{opacity:0;transform:translateY(16px);
