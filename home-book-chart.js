@@ -1,10 +1,12 @@
 /* The Programs chart: a sample book as a scatter, premium across and loss ratio up,
    each dot's area drawn to its incurred loss. The worst account is labelled, and a
-   dashed line marks the loss ratio of the whole book. */
+   dashed line marks the loss ratio of the whole book. It opens close on the worst
+   account and pulls back to the whole chart. */
 (() => {
   const node = typeof module === 'object' && module.exports;
   const data = node ? require('./home-book-data.js') : window.arquBookData;
   const axes = node ? require('./home-book-axes.js') : window.arquBookAxes;
+  const camera = node ? require('./home-book-camera.js') : window.arquBookCamera;
   const { lossRatio, percent } = data;
   /* radius in plot units per root dollar of loss, so area tracks dollars */
   const RADIUS_PER_ROOT_DOLLAR = 0.042;
@@ -14,6 +16,10 @@
   const FALLBACK_SIZE = { width: 500, height: 400 };
   /* room around the plot for the tick labels and axis titles, in screen pixels */
   const MARGIN = { left: 50, right: 14, top: 28, bottom: 44 };
+  /* how much room the close-up leaves around the worst account's dot */
+  const CLOSE_UP_MARGIN = 1.5;
+  /* a mono label's width per character at the chart's 10px size, to know if it fits */
+  const LABEL_CHAR_PX = 6.4;
 
   /* Loss-free accounts all sit at 0%, so they spread over a thin seeded band around it
      instead of stacking into one line. The key says the band is jittered. */
@@ -82,11 +88,13 @@
     }
   }
 
-  /* the worst account's label, set to the left of its dot with a short leader */
+  /* The worst account's label, set to the left of its dot with a short leader. Close in,
+     the dot fills the plot and leaves no room, so the label waits until it fits. */
   function focusLabel(doc, frame, rect, focus) {
     const { sx, sy } = axes.toScreen(frame, rect, focus.x, focus.y);
     const edge = sx - (focus.r / frame.width) * rect.w;
     const text = `One account · ${percent(lossRatio([focus.account]))}`;
+    if (edge - 22 - text.length * LABEL_CHAR_PX < rect.x) return [];
     return [
       axes.svgElement(doc, 'line', { class: 'bz-leader', x1: edge - 4, x2: edge - 18, y1: sy, y2: sy }),
       axes.svgElement(doc, 'text', { class: 'bz-focus-label', x: edge - 22, y: sy + 3, 'text-anchor': 'end' }, text),
@@ -98,16 +106,22 @@
     return box.width && box.height ? { width: box.width, height: box.height } : FALLBACK_SIZE;
   }
 
-  /* Builds the chart inside the figure's svg; returns a painter that fits it to the svg's size. */
+  /* the camera at `progress` of the pull-back, from the close-up to the whole chart */
+  function frameFor(sc, aspect, progress) {
+    const start = camera.frameAround([sc.focus], CLOSE_UP_MARGIN, aspect);
+    return camera.frameAt(progress, start, chartFrame(aspect), sc.focus);
+  }
+
+  /* Builds the chart inside the figure's svg; returns a painter for any moment of the pull-back. */
   function chart(doc, fig, sc) {
     const svg = fig.querySelector('[data-bz-svg]');
     const layer = svg.appendChild(axes.svgElement(doc, 'g', { class: 'bz-axes' }));
     const plot = svg.appendChild(axes.svgElement(doc, 'svg', { class: 'bz-plot', preserveAspectRatio: 'none' }));
     drawDots(doc, plot, sc.dots);
-    return () => {
+    return (progress) => {
       const size = sizeOf(svg);
       const rect = plotRect(size);
-      const frame = chartFrame(rect.w / rect.h);
+      const frame = frameFor(sc, rect.w / rect.h, progress);
       svg.setAttribute('viewBox', `0 0 ${size.width} ${size.height}`);
       for (const [k, v] of Object.entries({ x: rect.x, y: rect.y, width: rect.w, height: rect.h }))
         plot.setAttribute(k, v);
@@ -124,12 +138,22 @@
     fig.querySelector('[data-bz-stage]').setAttribute('aria-label', describe(sc));
     fig.querySelector('[data-bz-ratio]').textContent = percent(sc.bookRatio);
     fig.querySelector('[data-bz-count]').textContent = `${sc.book.length} accounts`;
-    const paint = chart(doc, fig, sc);
-    paint();
-    win.addEventListener('resize', paint);
+    const show = chart(doc, fig, sc);
+    let shown = 0;
+    const paint = (progress) => {
+      shown = progress;
+      show(progress);
+    };
+    win.addEventListener('resize', () => show(shown));
+    if (win.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      paint(1);
+      return;
+    }
+    paint(0);
+    camera.onceHalfSeen(win, fig, () => camera.play(win, paint));
   }
 
-  const api = { placeDots, chartFrame, plotRect, viewBox, scene, describe, mount };
+  const api = { placeDots, chartFrame, frameFor, plotRect, viewBox, scene, describe, mount };
   if (node) module.exports = api;
   else api.mount(document, window);
 })();

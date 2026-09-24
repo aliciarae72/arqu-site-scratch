@@ -73,6 +73,7 @@ const LOAD_ORDER = {
       'home-ambient.js',
       'home-book-data.js',
       'home-book-axes.js',
+      'home-book-camera.js',
       'home-book-chart.js',
       'arqu-edit-layer.js',
     ],

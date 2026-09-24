@@ -29,7 +29,8 @@ class Element {
   }
 }
 
-function makePage() {
+// `reduced` stands in for prefers-reduced-motion; animation frames run only when the test paints them
+function makePage({ reduced = true } = {}) {
   const parts = {};
   for (const key of ['svg', 'stage', 'ratio', 'count']) parts[key] = new Element(key);
   const fig = new Element('figure');
@@ -39,8 +40,28 @@ function makePage() {
     createElementNS: (_ns, tag) => new Element(tag),
     querySelector: (selector) => (selector === '[data-book-chart]' ? fig : null),
   };
-  const win = { addEventListener: (type, fn) => (listeners[type] = fn) };
-  return { doc, win, parts, listeners };
+  const frames = [];
+  const observers = [];
+  let now = 0;
+  const win = {
+    addEventListener: (type, fn) => (listeners[type] = fn),
+    matchMedia: (query) => ({ matches: reduced && query === '(prefers-reduced-motion: reduce)' }),
+    performance: { now: () => now },
+    requestAnimationFrame: (fn) => frames.push(fn),
+    IntersectionObserver: class {
+      constructor(callback) {
+        this.callback = callback;
+        observers.push(this);
+      }
+      observe() {}
+      disconnect() {}
+    },
+  };
+  const paint = (at) => {
+    now = at;
+    for (const fn of frames.splice(0)) fn(at);
+  };
+  return { doc, win, parts, listeners, observers, frames, paint };
 }
 
 test('every account is one dot at its premium and loss ratio, the focus drawn last', () => {
@@ -105,7 +126,7 @@ test('describe names the chart, the worst loss and the whole-book ratio', () => 
   );
 });
 
-test('mount draws the dots, the axes, the focus label and the whole-book total', () => {
+test('with reduced motion, mount draws the whole chart at once: dots, axes, focus label, whole-book total', () => {
   const page = makePage();
   chart.mount(page.doc, page.win);
   const [layer, plot] = page.parts.svg.children;
@@ -136,6 +157,39 @@ test('the chart fits the svg it is drawn in, and falls back when the svg has no 
   unsized.parts.svg.getBoundingClientRect = () => ({ width: 0, height: 0 });
   chart.mount(unsized.doc, unsized.win);
   assert.equal(unsized.parts.svg.getAttribute('viewBox'), '0 0 500 400');
+});
+
+test('it opens close on the worst account, then pulls back to the whole chart once half of it is seen', () => {
+  const page = makePage({ reduced: false });
+  chart.mount(page.doc, page.win);
+  const [layer, plot] = page.parts.svg.children;
+  const texts = () => layer.children.filter((c) => c.tag === 'text').map((c) => c.textContent);
+  const rect = chart.plotRect({ width: 500, height: 400 });
+  const aspect = rect.w / rect.h;
+  assert.equal(plot.getAttribute('viewBox'), chart.viewBox(chart.frameFor(chart.scene(), aspect, 0)));
+  assert.ok(!texts().includes('One account · 87%'), 'the label is drawn over the close-up');
+  assert.ok(!texts().includes('Whole book 22%'), 'the whole-book line shows in the close-up');
+  assert.equal(page.frames.length, 0, 'it pulled back before it was seen');
+  page.observers[0].callback([{ isIntersecting: true }]);
+  page.paint(0);
+  page.paint(1400 + 3800);
+  assert.equal(plot.getAttribute('viewBox'), chart.viewBox(chart.chartFrame(aspect)));
+  assert.ok(texts().includes('One account · 87%') && texts().includes('Whole book 22%'));
+  assert.equal(page.frames.length, 0, 'it keeps asking for frames after the end');
+});
+
+test('frameFor opens on the worst account alone and ends on the whole chart', () => {
+  const sc = chart.scene();
+  const inside = (d, f) =>
+    Math.abs(d.x - f.cx) + d.r <= f.width / 2 + 1e-9 && Math.abs(d.y - f.cy) + d.r <= f.height / 2 + 1e-9;
+  const start = chart.frameFor(sc, 1.3, 0);
+  assert.deepEqual(
+    sc.dots.filter((d) => inside(d, start)).map((d) => d.account.focus),
+    [true],
+  );
+  assert.deepEqual(chart.frameFor(sc, 1.3, 1), chart.chartFrame(1.3));
+  for (let p = 0; p <= 1; p += 0.05)
+    assert.ok(inside(sc.focus, chart.frameFor(sc, 1.3, p)), `the focus leaves at ${p}`);
 });
 
 test('mount fails loudly when the figure is missing', () => {

@@ -35,7 +35,7 @@ test('programs.html opens on the loss scatter, labelled illustrative, with its k
   assert.ok(!PROGRAMS.includes('class="dash'), 'the old dashboard is still on the page');
   assert.ok(
     PROGRAMS.includes(
-      '<script src="home-book-data.js"></script>\n<script src="home-book-axes.js"></script>\n<script src="home-book-chart.js"></script>',
+      '<script src="home-book-data.js"></script>\n<script src="home-book-axes.js"></script>\n<script src="home-book-camera.js"></script>\n<script src="home-book-chart.js"></script>',
     ),
     'the chart scripts are missing or out of order',
   );
