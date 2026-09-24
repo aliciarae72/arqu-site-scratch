@@ -69,5 +69,3 @@
 @media (prefers-reduced-motion:reduce){
   .dots-stack svg,.dots-stack:not([data-punchline]) svg{transition:none}
 }
-/* stacked under its read, the chart would run as tall as the column is wide */
-.rn .dots-cols{max-width:460px;margin-inline:auto}

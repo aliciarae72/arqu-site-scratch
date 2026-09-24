@@ -1,11 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openPage, scrollToSelector, settle } = require('./page-harness');
-
-async function hover(page, selector) {
-  const box = await (await page.$(selector)).boundingBox();
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height * 0.3);
-}
+const { hoverOver, openPage, scrollToSelector, settle } = require('./page-harness');
 
 test('each landing card carries a drawing of what it offers: one risk to the market, a book into a program', async (t) => {
   const { page, errors } = await openPage(t);
@@ -31,7 +26,7 @@ test('hovering Open market lights the one market that fits the risk', async (t) 
   await scrollToSelector(page, '.way-grid', 160);
   const fill = () => page.evaluate(() => getComputedStyle(document.querySelector('rect.ca-hit')).fill);
   assert.notEqual(await fill(), 'rgb(94, 84, 200)');
-  await hover(page, '#way-market');
+  await hoverOver(page, '#way-market');
   assert.equal(await settle(fill, (f) => f === 'rgb(94, 84, 200)'), 'rgb(94, 84, 200)');
 });
 
@@ -41,14 +36,16 @@ test('hovering Programs moves the book toward the program', async (t) => {
   const shift = () =>
     page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.ca-book rect')).transform).e);
   assert.equal(await shift(), 0);
-  await hover(page, '#way-programs');
+  await hoverOver(page, '#way-programs');
   assert.ok((await settle(shift, (x) => x > 9)) > 9);
 });
 
 test('the "or" sits in a clean drawn circle, with no sketched mark over it', async (t) => {
   const { page } = await openPage(t);
   await scrollToSelector(page, '.way-grid', 160);
-  await page.waitForTimeout(1500);
+  // the page's one mark inks on first, so a mark over the "or" would have landed by now too
+  await scrollToSelector(page, '#contact', 0);
+  await page.waitForSelector('.close > div > .hand-mark > g');
   const or = await page.evaluate(() => {
     const el = document.querySelector('.way-grid .or');
     const cs = getComputedStyle(el);

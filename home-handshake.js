@@ -168,30 +168,35 @@
     }, delay + 600);
   }
 
+  /* the arm moves run one at a time; pose(k) writes both arm transforms for k from 0 to 1 */
+  var moving = 0;
+  function animateArms(DUR, pose) {
+    if (RM || moving) return;
+    var t0 = performance.now();
+    moving = 1;
+    (function tick(now) {
+      var k = Math.min(1, (now - t0) / DUR);
+      pose(k);
+      if (k < 1) requestAnimationFrame(tick);
+      else moving = 0;
+    })(t0);
+  }
+
   /* shake: shear each forearm about its own shoulder so the joined hands pump
      up and down together while the shoulders stay put */
-  var shaking = 0;
   function shake() {
-    if (RM || shaking) return;
-    var t0 = performance.now(),
-      DUR = 1150;
-    shaking = 1;
-    (function tick(now) {
-      var k = (now - t0) / DUR,
-        dy = k < 1 ? 11 * Math.sin(k * Math.PI * 6) * Math.sin(k * Math.PI) : 0;
+    animateArms(1150, function (k) {
+      var dy = k < 1 ? 11 * Math.sin(k * Math.PI * 6) * Math.sin(k * Math.PI) : 0;
       var kl = dy / 129,
         kr = dy / (215 - 344);
       paths[5].setAttribute('transform', 'matrix(1 ' + kl + ' 0 1 0 ' + -kl * 90 + ')');
       paths[11].setAttribute('transform', 'matrix(1 ' + kr + ' 0 1 0 ' + -kr * 344 + ')');
-      if (k < 1) requestAnimationFrame(tick);
-      else shaking = 0;
-    })(t0);
+    });
   }
 
   /* high-five: swing each whole arm up about its own shoulder until the hands
      meet between the heads, slap, hold, and come back down */
-  var HIGH = 80,
-    fiving = 0;
+  var HIGH = 80;
   function easeOut(x) {
     return 1 - (1 - x) * (1 - x);
   }
@@ -201,19 +206,12 @@
     return 1 - easeOut((k - 0.7) / 0.3);
   }
   function highFive() {
-    if (RM || fiving || shaking) return;
-    var t0 = performance.now(),
-      DUR = 1400;
-    fiving = 1;
-    (function tick(now) {
-      var k = Math.min(1, (now - t0) / DUR),
-        slap = k > 0.22 && k < 0.4 ? 5 * Math.sin(((k - 0.22) / 0.18) * Math.PI) : 0,
+    animateArms(1400, function (k) {
+      var slap = k > 0.22 && k < 0.4 ? 5 * Math.sin(((k - 0.22) / 0.18) * Math.PI) : 0,
         a = liftAt(k) * HIGH - slap;
       paths[5].setAttribute('transform', 'rotate(' + -a + ' 90 242)');
       paths[11].setAttribute('transform', 'rotate(' + a + ' 344 242)');
-      if (k < 1) requestAnimationFrame(tick);
-      else fiving = 0;
-    })(t0);
+    });
   }
 
   var phase = 0,

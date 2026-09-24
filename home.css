@@ -58,9 +58,8 @@ main{overflow-x:clip}
 
 /* ways to work with us */
 .ways{padding-block:clamp(80px,11vw,140px)}
-.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px 40px;flex-wrap:wrap;margin-bottom:44px}
-.sec-head h1,.sec-head h2{font-size:clamp(34px,5vw,60px);line-height:1.02;margin-top:14px;max-width:20ch}
-.sec-head h2 em{font-style:italic;color:var(--purple-deep)}
+/* every page opens on a split hero: the words, then a visual beside them */
+.hero-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(28px,5vw,72px);align-items:center;width:100%}
 
 
 
@@ -116,46 +115,32 @@ main{overflow-x:clip}
 /* a way's own page */
 .ways.page{padding-top:clamp(40px,6vw,72px)}
 .back{display:inline-block;margin-bottom:28px}
-.page .sec-head{margin-bottom:0}
 .page .lead{color:var(--ink-2);max-width:48ch;margin-top:18px}
-.page .chain{margin-top:clamp(40px,5vw,64px)}
 .reveal{animation:rise .55s var(--ease) both;animation-delay:calc(var(--i,0) * 110ms + 250ms)}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 .node{background:transparent;border:0;border-radius:0;padding:26px 0 26px;position:relative}
-.node .dot{display:none}
 .node h3{font-size:clamp(23px,2.4vw,29px);line-height:1.1;font-weight:400;font-style:italic;letter-spacing:-.02em;margin-bottom:10px}
 .node p{color:var(--ink-2);font-size:16px}
 .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
-.wins{list-style:none;margin:18px 0 0;padding:18px 0 0;display:grid;gap:12px}
-.wins li{display:grid;grid-template-columns:150px 1fr;gap:12px;font-size:16px;color:var(--ink-2)}
-.wins b{font-family:var(--font-mono);font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep);font-weight:400;padding-top:5px}
-@media (max-width:600px){.wins li{grid-template-columns:1fr;gap:2px}}
 .chip{font-family:var(--font-mono);font-size:12px;line-height:1.3;letter-spacing:.01em;color:var(--ink-2);background:transparent;border:1px solid var(--line-2);border-radius:999px;padding:3px 11px 4px}
 
 .branches{display:grid;grid-template-columns:repeat(4,1fr);gap:0 clamp(28px,3vw,48px);margin-top:clamp(28px,4vw,48px)}
 /* each market column is headed by a hand-drawn icon (home-sector-icons.js), not the dot-and-rule mark */
 .branches .node::before,.branches .node::after{content:none}
 .sector-icon{display:block;width:72px;height:60px;overflow:visible;margin:0 0 14px -3px}
-
-.chain{max-width:620px;margin-inline:auto;display:grid}
-.link{width:1px;height:40px;background:var(--purple-deep);margin-inline:auto;position:relative}
-.link::after{content:"";position:absolute;left:50%;bottom:-1px;width:6px;height:6px;border-right:1px solid var(--purple-deep);border-bottom:1px solid var(--purple-deep);transform:translateX(-50%) rotate(45deg)}
-.step-no{position:absolute;top:24px;right:0;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;color:var(--ink-3);font-variant-numeric:tabular-nums}
+@media (max-width:1100px) and (min-width:861px){.branches{grid-template-columns:repeat(2,1fr)}}
 
 .how{margin-top:clamp(40px,5vw,56px);padding-top:8px}
 .how-head{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:12px;margin-bottom:24px}
 .how-head h3{font-size:24px;font-weight:400;font-style:italic}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(20px,3vw,44px);list-style:none;margin:0;padding:0}
+.steps{display:grid;grid-template-columns:repeat(var(--steps-cols,3),1fr);gap:clamp(20px,3vw,44px);list-style:none;margin:0;padding:0}
 .steps li{padding-top:18px}
 .steps li b{display:block;font-family:var(--font-display);font-weight:400;font-size:38px;line-height:1;color:var(--line-2);margin-bottom:10px;font-variant-numeric:tabular-nums}
 .steps li strong{display:block;font-family:var(--font-display);font-weight:400;font-style:italic;font-size:20px;margin-bottom:4px}
 .steps li span{color:var(--ink-2);font-size:16px}
-.result{margin-top:28px;text-align:center;color:var(--ink-2)}
-.result strong{color:var(--ink);font-weight:400;font-style:italic}
 .go{display:inline-flex;align-items:center;gap:8px;margin-top:28px;font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep);text-decoration:none;border-bottom:1px solid var(--purple-deep);padding-bottom:3px}
 .go:hover{opacity:.7}
-.center{text-align:center}
 
 /* closing + footer */
 .band{background:var(--band);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
@@ -170,14 +155,15 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
 .f-links{display:flex;flex-wrap:wrap;gap:10px 28px}
 .f-links a,.back{font-family:var(--font-mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-2);text-decoration:none}
 .f-links a:hover,.back:hover{color:var(--purple-deep)}
-.f-note{flex-basis:100%;margin:18px 0 0;max-width:86ch;color:var(--ink-3);font-size:13px;line-height:1.5}
 
 @media (max-width:860px){
   .nav a:not(.btn){display:none}
   .way-grid{grid-template-columns:1fr}
   .or{text-align:center}
   .way{min-height:0}
-  .branches,.steps{grid-template-columns:1fr}
+  .branches{grid-template-columns:1fr}
+  .steps{--steps-cols:1}
+  .hero-split{grid-template-columns:1fr}
   .branches .node + .node{margin-top:0}
   .close{grid-template-columns:1fr}
 }
@@ -194,18 +180,20 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
    head carries one.
    --mk-n = how many dots. The rule is painted after the dots, not under them, so
    nothing has to cut a hole in the paper and the ambient field shows through. */
-.node,.steps li,.wins{--mk-n:3;position:relative}
-.node::before,.steps li::before,.wins::before,
-.node::after,.steps li::after,.wins::after{content:"";position:absolute;pointer-events:none;left:0}
-.node::before,.steps li::before,.wins::before{
+.node,.steps li{--mk-n:3;position:relative}
+.node::before,.steps li::before,
+.node::after,.steps li::after{content:"";position:absolute;pointer-events:none;left:0}
+.node::before,.steps li::before{
   top:-2.5px;height:5px;width:calc(var(--mk-n) * 10px);
   background:radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 0 0/10px 100% repeat-x}
-.node::after,.steps li::after,.wins::after{
+.node::after,.steps li::after{
   top:0;height:1px;right:0;left:calc(var(--mk-n) * 10px + 6px);background:var(--line-2)}
-/* the steps COUNT: one dot, two, three */
+/* the steps COUNT: one dot, two, three, and on */
 .steps li:nth-child(1){--mk-n:1}
 .steps li:nth-child(2){--mk-n:2}
 .steps li:nth-child(3){--mk-n:3}
+.steps li:nth-child(4){--mk-n:4}
+.steps li:nth-child(5){--mk-n:5}
 
 /* the closing band's mark — same geometry as above */
 .run{display:block;box-sizing:border-box;width:100%;height:5px;margin:0 0 26px;overflow:hidden;

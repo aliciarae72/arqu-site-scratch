@@ -2,8 +2,7 @@
    the Programs sections drawn from the retailer one-pager, and the Open market
    audience rows. Linked after home.css, so source order decides ties. */
 
-.hero-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(28px,5vw,72px);align-items:center;
-  min-height:min(62vh,560px)}
+.hero-split{min-height:min(62vh,560px)}
 .hero-split h1{font-size:clamp(46px,6vw,80px);line-height:.98;letter-spacing:-.03em;margin-top:14px}
 .hero-split .lead{color:var(--ink-2);max-width:40ch;margin-top:22px;font-size:clamp(17px,1.6vw,20px)}
 
@@ -48,11 +47,9 @@
 
 .pg-caps{margin-top:clamp(48px,6vw,76px);background:var(--band);border:1px solid var(--line);border-radius:18px;padding:clamp(22px,3vw,40px)}
 .pg-caps-head{font:10px/1.5 var(--font-mono);letter-spacing:.16em;text-transform:uppercase;color:var(--purple-deep);margin-bottom:26px}
-.steps-5{grid-template-columns:repeat(5,1fr);gap:clamp(16px,2vw,28px)}
+.steps-5{--steps-cols:5;gap:clamp(16px,2vw,28px)}
 .steps-5 li strong{font-size:19px}
 .steps-5 li span{font-size:15px}
-.steps li:nth-child(4){--mk-n:4}
-.steps li:nth-child(5){--mk-n:5}
 
 .pg-ask{margin-top:clamp(48px,6vw,76px);padding-left:22px;border-left:3px solid var(--purple)}
 .pg-ask p:first-child{font-family:var(--font-display);font-size:clamp(22px,2.6vw,32px);line-height:1.2;letter-spacing:-.01em;max-width:32ch}
@@ -60,26 +57,24 @@
 .pg-sign{margin-top:16px;color:var(--ink-2)}
 .pg-sign b{font-weight:400;color:var(--purple-deep)}
 
-@media (max-width:1000px){.steps-5{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:1000px) and (min-width:861px){.steps-5{--steps-cols:2}}
 @media (max-width:860px){
-  .hero-split{grid-template-columns:1fr;min-height:0}
+  .hero-split{min-height:0}
   .pg-stats{grid-template-columns:1fr}
-  .pg-stat,.pg-stat:first-child{padding-left:0}
+  .pg-stat{padding-left:0}
   .pg-stat + .pg-stat{border-left:0;border-top:1px solid var(--line-2)}
   .pg-compare-head{display:none}
   .pg-compare li{grid-template-columns:1fr;gap:6px}
   .pg-compare li::after{content:none}
   .pg-compare li strong{grid-column:1}
-  .steps-5{grid-template-columns:1fr}
 }
 
 /* Open market: four sectors, and the two audiences side by side, each a stacked run of steps */
-@media (max-width:1100px) and (min-width:861px){.branches{grid-template-columns:repeat(2,1fr)}}
 .audiences{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,3vw,40px);margin-top:clamp(56px,7vw,96px);align-items:start}
 .audiences .how{margin-top:0;padding:clamp(22px,3vw,36px);background:var(--surface);border:1px solid var(--line-2);border-radius:18px;
   box-shadow:0 1px 2px rgba(34,31,32,.05),0 22px 44px -32px rgba(34,31,32,.3)}
 .audiences .how-head h3{font-size:clamp(26px,2.8vw,34px);font-style:normal}
-.steps-stack{grid-template-columns:1fr;gap:0}
+.steps-stack{--steps-cols:1;gap:0}
 .steps-stack li{display:grid;grid-template-columns:52px minmax(0,1fr);column-gap:14px;padding:22px 0 20px}
 .steps-stack li b{grid-row:1 / span 2;font-size:32px;margin:0;color:var(--purple)}
 .steps-stack li strong,.steps-stack li span{grid-column:2}

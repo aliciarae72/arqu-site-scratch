@@ -54,6 +54,12 @@ async function scrollToSelector(page, selector, offset = 80) {
   );
 }
 
+// Rests the pointer inside an element, a little above its middle.
+async function hoverOver(page, selector) {
+  const box = await (await page.$(selector)).boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height * 0.3);
+}
+
 // Page state that arrives on animation frames and timers lands later on a loaded runner.
 // Re-read it until `done` accepts it or `ms` runs out, and return the last read for the assertion.
 async function settle(read, done, ms = 12000) {
@@ -66,4 +72,4 @@ async function settle(read, done, ms = 12000) {
   return value;
 }
 
-module.exports = { openPage, scrollToSelector, serve, settle };
+module.exports = { hoverOver, openPage, scrollToSelector, serve, settle };
