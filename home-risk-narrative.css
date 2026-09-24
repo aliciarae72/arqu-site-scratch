@@ -9,7 +9,7 @@
 .rn-show{position:relative;outline:none;touch-action:pan-y}
 .rn-show:focus-visible{outline:1px solid var(--purple-deep);outline-offset:10px;border-radius:22px}
 .rn-slides{display:grid}
-.rn-slide{grid-area:1/1;display:grid;grid-template-columns:minmax(0,1fr);gap:22px;align-items:start;
+.rn-slide{grid-area:1/1;display:grid;grid-template-columns:minmax(0,1fr);gap:22px;align-items:start;align-content:start;
   opacity:0;visibility:hidden;transition:opacity .4s var(--ease),visibility 0s .4s}
 .rn-slide.is-on{opacity:1;visibility:visible;transition:opacity .55s var(--ease) .06s,visibility 0s}
 .rn-vis{position:relative;aspect-ratio:4/3;background:var(--surface);border:1px solid var(--line-2);border-radius:18px;overflow:hidden;

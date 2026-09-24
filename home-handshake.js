@@ -184,6 +184,10 @@
 
   /* shake: shear each forearm about its own shoulder so the joined hands pump
      up and down together while the shoulders stay put */
+  function shakeWhenFree() {
+    if (moving) setTimeout(shakeWhenFree, 150);
+    else shake();
+  }
   function shake() {
     animateArms(1150, function (k) {
       var dy = k < 1 ? 11 * Math.sin(k * Math.PI * 6) * Math.sin(k * Math.PI) : 0;
@@ -251,7 +255,7 @@
       paths.forEach(function (p) {
         p.removeAttribute('mask');
       });
-      shake();
+      shakeWhenFree();
     }, end + 100);
     decorate(end - 300);
   }

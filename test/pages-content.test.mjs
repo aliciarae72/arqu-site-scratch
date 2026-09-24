@@ -17,9 +17,8 @@ test('programs.html opens on a dashboard of what a book review imports', () => {
   assert.deepEqual(texts(dash, /<div class="dash-tile">([\s\S]*?)<\/div>/g), [
     '500SOVs imported',
     '729Loss runs imported',
-    '1,142Locations enriched',
-    '38Gaps flagged',
   ]);
+  assert.doesNotMatch(dash, /\d+%<\/em>/, 'a progress row states a percentage nobody supplied');
 });
 
 test('programs.html carries the retailer one-pager: headline, three figures, seven rows, five capabilities', () => {
