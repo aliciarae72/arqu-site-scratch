@@ -48,13 +48,17 @@ async function openPage(t, { url = 'home.html', width = 1440, height = 900 } = {
 }
 
 // The site scrolls smoothly, so a plain scrollTo returns mid-glide and keeps moving under
-// the next action. The jump is instant here, and the page has arrived when this returns.
+// the next action. The jump is instant here, and this returns a frame later, once the
+// page's scroll observers have seen where it landed.
 async function scrollToSelector(page, selector, offset = 80) {
   await page.evaluate(
     ([sel, off]) =>
-      window.scrollTo({
-        top: document.querySelector(sel).getBoundingClientRect().top + window.scrollY - off,
-        behavior: 'instant',
+      new Promise((landed) => {
+        window.scrollTo({
+          top: document.querySelector(sel).getBoundingClientRect().top + window.scrollY - off,
+          behavior: 'instant',
+        });
+        requestAnimationFrame(() => landed());
       }),
     [selector, offset],
   );
@@ -62,8 +66,9 @@ async function scrollToSelector(page, selector, offset = 80) {
 
 // Rests the pointer inside an element, a little above its middle.
 async function hoverOver(page, selector) {
-  const box = await (await page.$(selector)).boundingBox();
-  await page.hover(selector, { position: { x: box.width / 2, y: box.height * 0.3 } });
+  const target = page.locator(selector);
+  const box = await target.boundingBox();
+  await target.hover({ position: { x: box.width / 2, y: box.height * 0.3 } });
 }
 
 // Page state that arrives on animation frames and timers lands later on a loaded runner.

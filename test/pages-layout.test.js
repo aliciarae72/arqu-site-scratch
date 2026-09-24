@@ -34,9 +34,10 @@ for (const page of PAGES) {
         document.documentElement.clientWidth,
       ]);
       assert.equal(scroll, client, `${page} scrolls ${scroll - client}px sideways at ${width}`);
-      // main clips its overflow, so content cut off at the edge never shows up as scroll
+      // main clips its overflow, so the scroll check above only sees the header and footer.
+      // Every text block and figure on the page is measured against the viewport edge too.
       const offEdge = await tab.evaluate(() =>
-        [...document.querySelectorAll('main h1, main h2, main h3, main p, main li, main figure')]
+        [...document.querySelectorAll('h1, h2, h3, p, li, figure, a')]
           .filter((el) => el.getBoundingClientRect().width && el.getBoundingClientRect().right > innerWidth + 1)
           .map((el) => el.textContent.trim().slice(0, 40)),
       );
