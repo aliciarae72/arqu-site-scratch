@@ -72,7 +72,7 @@
 @media (max-width:980px){.rn{grid-template-columns:1fr}}
 /* every slide's figure is one fixed height, so paging never moves the arrows */
 .rn{--vis-h:600px}
-.rn-vis--figure > figure{height:var(--vis-h);display:flex;flex-direction:column;overflow:hidden}
+.rn-vis--figure > figure{height:auto;min-height:var(--vis-h);display:flex;flex-direction:column}
 .rn-vis--figure .fig-source{margin-top:auto;padding-top:16px}
 .rn .dots-cols{width:100%;max-width:400px;margin-inline:auto}
 .rn .hail-map{width:min(100%,480px);margin-inline:auto}

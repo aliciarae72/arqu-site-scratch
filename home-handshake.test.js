@@ -117,3 +117,27 @@ test('under reduced motion the orbit dots are visible, not stuck at opacity 0', 
     .then((h) => h.jsonValue());
   assert.ok(opacities.length > 0);
 });
+
+test('a hover that lands during the opening shake still gets its high-five once the shake ends', async (t) => {
+  const { page } = await openPage(t);
+  await scrollToSelector(page, '#human', 60);
+  // the opening shake shears the forearms; catch it mid-move
+  await page.waitForFunction(
+    () => /^matrix\(1 -?[\d.e-]*[1-9]/.test(document.getElementById('hs-p5').getAttribute('transform') || ''),
+    null,
+    { timeout: 15000, polling: 16 },
+  );
+  const box = await (await page.$('#hs')).boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  const raised = await page
+    .waitForFunction(
+      () => {
+        const m = (document.getElementById('hs-p5').getAttribute('transform') || '').match(/^rotate\((-?[\d.e+-]+) /);
+        return m && Number(m[1]) < -60 ? Number(m[1]) : null;
+      },
+      null,
+      { timeout: 6000 },
+    )
+    .then((h) => h.jsonValue());
+  assert.ok(raised < -60, `the left arm only reached ${raised}`);
+});

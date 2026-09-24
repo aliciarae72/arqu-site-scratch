@@ -168,8 +168,10 @@
     }, delay + 600);
   }
 
-  /* the arm moves run one at a time; pose(k) writes both arm transforms for k from 0 to 1 */
-  var moving = 0;
+  /* the arm moves run one at a time; pose(k) writes both arm transforms for k from 0 to 1.
+     A move asked for while another runs is held, and the latest one asked for plays next. */
+  var moving = 0,
+    queued = null;
   function animateArms(DUR, pose) {
     if (RM || moving) return;
     var t0 = performance.now();
@@ -177,17 +179,20 @@
     (function tick(now) {
       var k = Math.min(1, (now - t0) / DUR);
       pose(k);
-      if (k < 1) requestAnimationFrame(tick);
-      else moving = 0;
+      if (k < 1) return requestAnimationFrame(tick);
+      moving = 0;
+      var next = queued;
+      queued = null;
+      if (next) next();
     })(t0);
+  }
+  function whenFree(move) {
+    if (moving) queued = move;
+    else move();
   }
 
   /* shake: shear each forearm about its own shoulder so the joined hands pump
      up and down together while the shoulders stay put */
-  function shakeWhenFree() {
-    if (moving) setTimeout(shakeWhenFree, 150);
-    else shake();
-  }
   function shake() {
     animateArms(1150, function (k) {
       var dy = k < 1 ? 11 * Math.sin(k * Math.PI * 6) * Math.sin(k * Math.PI) : 0;
@@ -255,19 +260,21 @@
       paths.forEach(function (p) {
         p.removeAttribute('mask');
       });
-      shakeWhenFree();
+      whenFree(shake);
     }, end + 100);
     decorate(end - 300);
   }
 
   svg.addEventListener('pointerenter', function () {
     pointer = 1;
-    highFive();
+    whenFree(highFive);
   });
   svg.addEventListener('pointerleave', function () {
     pointer = 0;
   });
-  svg.addEventListener('click', highFive);
+  svg.addEventListener('click', function () {
+    whenFree(highFive);
+  });
 
   var begun = false;
   new IntersectionObserver(

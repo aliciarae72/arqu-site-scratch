@@ -24,7 +24,10 @@ for (const page of PAGES) {
       await tab.waitForSelector('#edbar');
       assert.deepEqual(await barCollisions(tab), []);
       // the sticky header rides along, so check it again part-way down the page
-      await tab.evaluate(() => window.scrollTo(0, 1200));
+      await tab.evaluate(() => {
+        document.documentElement.style.scrollBehavior = 'auto';
+        window.scrollTo(0, 1200);
+      });
       assert.deepEqual(await barCollisions(tab), []);
       const [scroll, client] = await tab.evaluate(() => [
         document.documentElement.scrollWidth,

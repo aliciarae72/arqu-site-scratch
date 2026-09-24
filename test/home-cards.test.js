@@ -78,3 +78,15 @@ test('the landing hero fills the first screen, the words beside the handshake', 
   });
   assert.deepEqual(hero, { beside: true, cardsBelowFold: true });
 });
+
+test('on a phone the "or" sits centred between the stacked cards', async (t) => {
+  const { page } = await openPage(t, { width: 390 });
+  const off = await page.evaluate(() => {
+    const centre = (el) => {
+      const r = el.getBoundingClientRect();
+      return r.left + r.width / 2;
+    };
+    return Math.abs(centre(document.querySelector('.way-grid .or')) - centre(document.querySelector('.way-grid')));
+  });
+  assert.ok(off < 1, `the "or" sits ${off}px off the middle`);
+});

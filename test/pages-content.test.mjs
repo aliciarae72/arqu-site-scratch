@@ -95,10 +95,9 @@ test("open-market.html's hero draws the Programs sample book: loss ratio by year
     years.map(([, , shown, year]) => [year, shown]),
     panelRows('Loss ratio by year'),
   );
-  const perils = [...MARKET.matchAll(/<li style="--k:\d"><i><\/i>([^<]+) <b>(\d+)%<\/b><\/li>/g)].map((m) => [
-    m[1],
-    m[2],
-  ]);
+  const perils = [
+    ...MARKET.matchAll(/<li style="--w:(?:\d+);--k:\d"><span>([^<]+)<\/span><i><\/i><b>(\d+)%<\/b><\/li>/g),
+  ].map((m) => [m[1], m[2]]);
   assert.deepEqual(perils, panelRows('CAT exposure'));
 });
 

@@ -57,7 +57,7 @@ async function scrollToSelector(page, selector, offset = 80) {
 // Rests the pointer inside an element, a little above its middle.
 async function hoverOver(page, selector) {
   const box = await (await page.$(selector)).boundingBox();
-  await page.mouse.move(box.x + box.width / 2, box.y + box.height * 0.3);
+  await page.hover(selector, { position: { x: box.width / 2, y: box.height * 0.3 } });
 }
 
 // Page state that arrives on animation frames and timers lands later on a loaded runner.
