@@ -58,7 +58,6 @@ main{overflow-x:clip}
 
 /* ways to work with us */
 .ways{padding-block:clamp(80px,11vw,140px)}
-/* every page opens on a split hero: the words, then a visual beside them */
 .hero-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);gap:clamp(28px,5vw,72px);align-items:center;width:100%}
 
 

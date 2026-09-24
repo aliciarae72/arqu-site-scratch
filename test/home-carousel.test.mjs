@@ -85,7 +85,7 @@ const GRID = hailGrid;
 const DRAWN = cells.drawnCells(GRID.frame, HAIL.cells);
 
 // No risk narrative carried hail copy, so the slide keeps its kicker and lets the map
-// speak; the map's alt text still states the drawn count (asserted below).
+// speak; the map's alt text still states the drawn count.
 test('open-market.html: the hail slide carries no read beyond its kicker', () => {
   const at = LINES.indexOf('02 &middot; Property');
   const say = LINES.slice(at, LINES.indexOf('<div class="rn-vis', at));

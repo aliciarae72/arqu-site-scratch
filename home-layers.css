@@ -12,7 +12,6 @@
 .g-kicker{margin-bottom:14px}
 .g-title{font-family:var(--font-display);font-weight:400;font-size:clamp(28px,4.4vw,46px);
   line-height:1.06;letter-spacing:-.02em;color:var(--ink);max-width:18ch}
-/* the landing hero fills the first screen: the words on the left, the handshake beside them */
 .splash{min-height:calc(100svh - 112px);display:grid;align-items:center}
 .splash .g-title{font-size:clamp(40px,6vw,78px);line-height:1;letter-spacing:-.03em;max-width:12ch;margin-bottom:clamp(20px,3vw,32px)}
 @media (max-width:860px){.splash{min-height:0}}
