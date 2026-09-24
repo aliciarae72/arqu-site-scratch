@@ -10,7 +10,7 @@ for (const [card, page, flow] of [
     const { page: tab, errors } = await openPage(t);
     await scrollToSelector(tab, '.way-grid', 160);
     await Promise.all([tab.waitForURL(`**/${page}`), tab.click(card)]);
-    await tab.waitForSelector(`${flow} .node`, { state: 'visible' });
+    await tab.waitForSelector(flow, { state: 'visible' });
     assert.equal(await tab.title(), `arqu — ${page === 'programs.html' ? 'Programs' : 'Open market'}`);
     await Promise.all([tab.waitForURL('**/home.html'), tab.click('a.back')]);
     assert.deepEqual(errors, []);

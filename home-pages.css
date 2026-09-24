@@ -1,0 +1,103 @@
+/* Linked after home.css: these page rules win its ties by source order. */
+
+.hero-split{min-height:min(62vh,560px)}
+.hero-split h1{font-size:clamp(46px,6vw,80px);line-height:.98;letter-spacing:-.03em;margin-top:14px}
+.hero-split .lead{color:var(--ink-2);max-width:40ch;margin-top:22px;font-size:clamp(17px,1.6vw,20px)}
+
+.dash{margin:0;background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:0 0 clamp(16px,2vw,22px);overflow:hidden;
+  box-shadow:0 1px 2px rgba(34,31,32,.05),0 30px 60px -36px rgba(94,84,200,.45)}
+.dash-bar{display:flex;align-items:center;gap:6px;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--bg)}
+.dash-bar i{width:8px;height:8px;border-radius:50%;background:var(--line-2)}
+.dash-bar span{margin-left:10px;font:9.5px/1 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.dash-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border-bottom:1px solid var(--line)}
+.dash-tile{background:var(--surface);padding:clamp(14px,1.8vw,20px) clamp(16px,2vw,22px);display:flex;flex-direction:column;gap:4px}
+.dash-tile b{font-family:var(--font-display);font-weight:400;font-size:clamp(30px,3.4vw,44px);line-height:1;letter-spacing:-.02em;
+  font-variant-numeric:lining-nums tabular-nums;color:var(--purple-deep)}
+.dash-tile span,.dash-row span,.dash-row em{font:9.5px/1.4 var(--font-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3);font-style:normal}
+.dash-row{display:grid;grid-template-columns:150px 1fr 44px;align-items:center;gap:12px;padding:12px clamp(16px,2vw,22px) 0}
+.dash-row i{height:6px;border-radius:3px;background:linear-gradient(var(--purple),var(--purple)) 0 0/var(--p) 100% no-repeat,var(--tint-2)}
+.dash-row em{text-align:right;color:var(--purple-deep)}
+
+.pg-intro{margin-top:clamp(64px,8vw,112px);max-width:760px}
+.pg-intro h2,.pg-close h2{font-size:clamp(32px,4.6vw,56px);line-height:1.04;margin-top:14px}
+.pg-intro h2 em,.pg-close h2 em{font-style:italic;color:var(--purple-deep)}
+.pg-intro .lead{color:var(--ink-2);margin-top:20px;max-width:58ch}
+
+/* the three figures count off like the steps: one dot, two, three */
+.figures{display:grid;grid-template-columns:repeat(3,1fr);gap:0 clamp(28px,3vw,48px);margin-top:clamp(36px,4vw,52px)}
+.figures .node:nth-child(1){--mk-n:1}
+.figures .node:nth-child(2){--mk-n:2}
+.figures .node:nth-child(3){--mk-n:3}
+.figures .node h3{font-size:clamp(34px,4vw,50px);font-style:normal;color:var(--purple-deep);font-variant-numeric:lining-nums}
+
+.pg-build{margin-top:clamp(64px,8vw,104px)}
+.steps-5{--steps-cols:5;gap:clamp(16px,2vw,28px)}
+.steps-5 li strong{font-size:19px}
+.steps-5 li span{font-size:15px}
+
+.pg-close{margin:clamp(72px,9vw,120px) auto 0;max-width:780px;text-align:center}
+.pg-close h2{font-size:clamp(28px,3.8vw,46px);line-height:1.1}
+
+/* the open market hero is the sample book in motion: loss ratios rise in, the average draws
+   across, each peril's bar fills in turn, then one year at a time takes the highlight */
+.risk-hero{margin:0;background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:clamp(20px,2.4vw,30px);
+  box-shadow:0 1px 2px rgba(34,31,32,.05),0 30px 60px -36px rgba(94,84,200,.45)}
+.rh-head{display:flex;justify-content:space-between;gap:12px;font:9.5px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rh-head em{font-style:normal;color:var(--purple-deep)}
+.rh-bars{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(10px,1.6vw,18px);height:190px;margin:18px 0 34px;border-bottom:1px solid var(--line-2)}
+.rh-col{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
+.rh-col i{display:block;width:100%;height:calc(var(--v) / 80 * 100%);max-height:calc(100% - 22px);border-radius:6px 6px 2px 2px;background:var(--line-2);
+  transform-origin:50% 100%;animation:rh-grow .9s var(--spring) both,rh-pick 8s linear infinite;
+  animation-delay:calc(var(--k) * 120ms + 300ms),calc(var(--k) * 1.6s + 1.8s)}
+.rh-col b{font:400 clamp(15px,1.5vw,19px)/1 var(--font-display);font-style:italic;font-variant-numeric:lining-nums;color:var(--ink-3);
+  animation:rh-fade .5s var(--ease) both,rh-pick-text 8s linear infinite;animation-delay:calc(var(--k) * 120ms + 900ms),calc(var(--k) * 1.6s + 1.8s)}
+.rh-col span{position:absolute;bottom:-24px;font:9.5px/1 var(--font-mono);letter-spacing:.12em;color:var(--ink-3)}
+.rh-avg{position:absolute;left:0;right:0;bottom:calc(var(--v) / 80 * 100%);border-top:1.5px dashed var(--purple);
+  transform-origin:0 50%;animation:rh-draw 1.2s var(--ease) 1.2s both}
+.rh-avg em{position:absolute;right:0;top:-18px;font:9.5px/1 var(--font-mono);font-style:normal;letter-spacing:.12em;color:var(--purple-deep);background:var(--surface);padding-left:6px}
+.rh-perils{list-style:none;margin:14px 0 0;padding:0;display:grid;gap:8px}
+.rh-perils li{display:grid;grid-template-columns:92px minmax(0,1fr) 40px;align-items:center;gap:10px;
+  font:9.5px/1.4 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.rh-perils i{position:relative;height:8px;border-radius:4px;background:var(--tint);overflow:hidden}
+.rh-perils i::after{content:"";position:absolute;inset:0 auto 0 0;width:calc(var(--w) * 1%);background:var(--purple-deep);
+  transform-origin:0 50%;animation:rh-draw .6s var(--ease) both;animation-delay:calc(var(--k) * 150ms + 1.4s)}
+.rh-perils b{font-weight:400;text-align:right;color:var(--ink)}
+@keyframes rh-grow{from{transform:scaleY(0)}}
+@keyframes rh-draw{from{transform:scaleX(0)}}
+@keyframes rh-fade{from{opacity:0}}
+@keyframes rh-pick{0%,17%{background:var(--purple-deep)}20%,100%{background:var(--line-2)}}
+@keyframes rh-pick-text{0%,17%{color:var(--purple-deep)}20%,100%{color:var(--ink-3)}}
+@media (prefers-reduced-motion:reduce){.risk-hero *,.risk-hero *::after{animation:none!important}}
+
+.book-data{margin-top:clamp(56px,7vw,88px)}
+.bd-note{font:9.5px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.bd-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px)}
+.bd-panel{margin:0;background:var(--surface);border:1px solid var(--line-2);border-radius:14px;padding:clamp(18px,2vw,24px)}
+.bd-panel figcaption{font:10px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep);margin-bottom:14px}
+.bd-panel ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.bd-panel li{display:grid;grid-template-columns:130px minmax(0,1fr) 52px;align-items:center;gap:10px;font-size:14px;color:var(--ink-2)}
+.bd-panel li i{height:8px;border-radius:4px;background:linear-gradient(var(--purple),var(--purple)) 0 0/var(--w) 100% no-repeat,var(--tint)}
+.bd-panel li b{font-weight:400;text-align:right;font-variant-numeric:lining-nums tabular-nums;color:var(--ink)}
+
+@media (max-width:1000px) and (min-width:861px){.steps-5{--steps-cols:2}}
+@media (max-width:860px){
+  .hero-split{min-height:0}
+  .figures{grid-template-columns:1fr}
+  .bd-grid{grid-template-columns:1fr}
+  .steps-5{--steps-cols:1}
+}
+
+.audiences{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(20px,3vw,40px);margin-top:clamp(56px,7vw,96px);align-items:start}
+.audiences .how{margin-top:0;padding:clamp(22px,3vw,36px);background:var(--surface);border:1px solid var(--line-2);border-radius:18px;
+  box-shadow:0 1px 2px rgba(34,31,32,.05),0 22px 44px -32px rgba(34,31,32,.3)}
+.audiences .how-head h3{font-size:clamp(26px,2.8vw,34px);font-style:normal}
+.steps-stack{--steps-cols:1;gap:0}
+.steps-stack li{display:grid;grid-template-columns:52px minmax(0,1fr);column-gap:14px;padding:22px 0 20px}
+.steps-stack li b{grid-row:1 / span 2;font-size:32px;margin:0;color:var(--purple)}
+.steps-stack li strong,.steps-stack li span{grid-column:2}
+@media (max-width:860px){.audiences{grid-template-columns:1fr}}
+
+/* today reads as the quieter of the two panels */
+.audiences .how--quiet{background:transparent;box-shadow:none;border-style:dashed}
+.how--quiet .steps-stack li b{color:var(--line-2)}
+.how--quiet .steps-stack li strong{color:var(--ink-2)}

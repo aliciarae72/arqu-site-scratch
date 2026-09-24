@@ -43,20 +43,16 @@
 </header>
 
 <main id="top">
-  <section id="human" class="globe-sec" aria-labelledby="globe-title">
-    <div class="wrap">
-      <div class="g-head">
+  <section id="human" class="globe-sec splash" aria-labelledby="globe-title">
+    <div class="wrap hero-split">
+      <div class="splash-copy">
         <div class="g-kicker">Human-centered</div>
         <div class="g-title" id="globe-title" role="heading" aria-level="1">Insurance still runs on a handshake.</div>
+        <div class="g-say">Behind every submission is a retailer who knows the account and a broker who knows the market. We were retailers first, so that conversation is the part we protect.</div>
+        <div class="g-say">Data, models and nearly 100 capacity partners move around that relationship. AI clears the desk so it gets more of our time, not less.</div>
+        <a class="go" href="#ways">Two ways in <span aria-hidden="true">&darr;</span></a>
       </div>
-      <div class="globe-row">
-        <div class="globe-stage" data-wash><svg class="hs" id="hs" viewBox="0 0 640 600" role="img" aria-label="Two stick figures shake hands while a few dots circle around them"></svg></div>
-        <div>
-          <div class="g-say">Behind every submission is a retailer who knows the account and a broker who knows the market. We were retailers first, so that conversation is the part we protect.</div>
-          <div class="g-say">Data, models and nearly 100 capacity partners move around that relationship. AI clears the desk so it gets more of our time, not less.</div>
-          <div class="g-note">The tools turn. The handshake holds.</div>
-        </div>
-      </div>
+      <div class="globe-stage" data-wash><svg class="hs" id="hs" viewBox="0 0 640 600" role="img" aria-label="Two stick figures shake hands while a few dots circle around them"></svg></div>
     </div>
   </section>
 
@@ -67,7 +63,15 @@
           <span class="way-top">
             <span class="way-kicker">One risk at a time</span>
           </span>
-          <span class="art" aria-hidden="true"><canvas data-art="market"></canvas></span>
+          <span class="art" aria-hidden="true">
+            <svg class="card-art" data-art="market" viewBox="0 0 400 150">
+              <g class="ca-doc"><path d="M52 30h44l14 14v66H52z"/><path class="ca-fold" d="M96 30v14h14"/><path class="ca-rule" d="M62 58h36M62 70h36M62 82h26"/></g>
+              <g class="ca-links"><path d="M110 70C190 70 190 30 268 30"/><path class="ca-hit" d="M110 70C190 70 190 62 268 62"/><path d="M110 70C190 70 190 94 268 94"/><path d="M110 70C190 70 190 126 268 126"/></g>
+              <g class="ca-markets"><rect x="268" y="20" width="84" height="20" rx="4"/><rect class="ca-hit" x="268" y="52" width="84" height="20" rx="4"/><rect x="268" y="84" width="84" height="20" rx="4"/><rect x="268" y="116" width="84" height="20" rx="4"/></g>
+              <path class="ca-check" d="M332 62l5 5 9-10"/>
+              <text x="81" y="134">One risk</text><text x="310" y="12">The right market</text>
+            </svg>
+          </span>
           <span>
             <span class="way-title">Open market</span>
             <span class="way-desc">See how AI and data unlock better solutions with our nearly 100 capacity partners.</span>
@@ -81,7 +85,14 @@
           <span class="way-top">
             <span class="way-kicker">A whole book at once</span>
           </span>
-          <span class="art" aria-hidden="true"><canvas data-art="programs"></canvas></span>
+          <span class="art" aria-hidden="true">
+            <svg class="card-art" data-art="programs" viewBox="0 0 400 150">
+              <g class="ca-book"><rect x="34" y="28" width="22" height="28" rx="2"/><rect x="62" y="28" width="22" height="28" rx="2"/><rect x="90" y="28" width="22" height="28" rx="2"/><rect x="118" y="28" width="22" height="28" rx="2"/><rect x="34" y="62" width="22" height="28" rx="2"/><rect x="62" y="62" width="22" height="28" rx="2"/><rect x="90" y="62" width="22" height="28" rx="2"/><rect x="118" y="62" width="22" height="28" rx="2"/><rect x="34" y="96" width="22" height="28" rx="2"/><rect x="62" y="96" width="22" height="28" rx="2"/><rect x="90" y="96" width="22" height="28" rx="2"/><rect x="118" y="96" width="22" height="28" rx="2"/></g>
+              <g class="ca-links"><path d="M150 42C210 42 210 76 262 76"/><path d="M150 76H262"/><path d="M150 110C210 110 210 76 262 76"/></g>
+              <g class="ca-program"><rect x="262" y="30" width="92" height="92" rx="6"/><path class="ca-spine" d="M276 30v92"/><path class="ca-rule" d="M290 58h48M290 70h48M290 82h32"/></g>
+              <text x="87" y="142">Your book</text><text x="308" y="142">One program</text>
+            </svg>
+          </span>
           <span>
             <span class="way-title">Programs</span>
             <span class="way-desc">See how we build custom capacity for your book and find the economies of scale inside it.</span>
@@ -120,19 +131,17 @@
       <a href="#top">Privacy policy</a>
       <a href="#top">Terms of service</a>
     </nav>
-    <p class="f-note">This page loads type from Google Fonts (fonts.googleapis.com, fonts.gstatic.com) and one drawing library from jsDelivr (cdn.jsdelivr.net), so opening it shows your address to those three.</p>
   </div>
 </footer>
 
 <script src="home-interaction.js"></script>
-<script src="home-card-art.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/roughjs@4.6.6/bundled/rough.js" integrity="sha384-1NLkwxMO2sOqcq7rQkFBhIAUJtbt8ziLxhVKVgKfFGMEU8pF+GEq5LVogviveup6" crossorigin="anonymous"></script>
 <script src="home-hand.js"></script>
 <script src="home-hand-marks.js"></script>
 <script src="home-handshake.js"></script>
 <script src="home-ambient.js"></script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
-        data-selector="h1, h2, .lead, .eyebrow, .way-kicker, .way-title, .way-desc, .node h3, .node p, .wins b, .wins span, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
+        data-selector="h1, h2, .lead, .eyebrow, .way-kicker, .way-title, .way-desc, .node h3, .node p, .chip, .steps li strong, .steps li span, .go, .close p, footer small, .ed"
         data-key="arqu-copy-home-v3"
         data-migrate-nodes="61"
         data-what="the arqu homepage mockup"></script>

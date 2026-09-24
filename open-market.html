@@ -12,6 +12,7 @@
 <link rel="stylesheet" href="home-layers.css">
 <link rel="stylesheet" href="home-spine.css">
 <link rel="stylesheet" href="home-hand.css">
+<link rel="stylesheet" href="home-pages.css">
 <link rel="stylesheet" href="home-risk-narrative.css">
 <link rel="stylesheet" href="home-lines.css">
 </head>
@@ -41,12 +42,31 @@
   <section id="page" class="ways page" aria-labelledby="page-title">
     <div class="wrap">
       <a class="back" href="home.html">&larr; Two ways in</a>
-      <div class="sec-head">
+      <div class="hero-split">
         <div>
           <p class="eyebrow">One risk at a time</p>
           <h1 id="page-title">Open market</h1>
           <p class="lead">See how AI and data unlock better solutions with our nearly 100 capacity partners.</p>
         </div>
+        <figure class="risk-hero reveal" style="--i:1" aria-label="Sample book. Loss ratio by year: 2021 58%, 2022 71%, 2023 49%, 2024 44%, 2025 38%. CAT exposure, share of TIV in each peril zone: hail 38%, wind 22%, wildfire 9%, flood 7%, earthquake 4%.">
+          <div class="rh-head"><span>Loss ratio by year</span><em>Sample book</em></div>
+          <div class="rh-bars" aria-hidden="true">
+              <div class="rh-col" style="--v:58;--k:0"><b>58%</b><i></i><span>2021</span></div>
+              <div class="rh-col" style="--v:71;--k:1"><b>71%</b><i></i><span>2022</span></div>
+              <div class="rh-col" style="--v:49;--k:2"><b>49%</b><i></i><span>2023</span></div>
+              <div class="rh-col" style="--v:44;--k:3"><b>44%</b><i></i><span>2024</span></div>
+              <div class="rh-col" style="--v:38;--k:4"><b>38%</b><i></i><span>2025</span></div>
+            <span class="rh-avg" style="--v:52"><em>5-yr 52%</em></span>
+          </div>
+          <div class="rh-head"><span>CAT exposure &middot; share of TIV in zone</span></div>
+          <ul class="rh-perils" aria-hidden="true">
+            <li style="--w:38;--k:0"><span>Hail</span><i></i><b>38%</b></li>
+            <li style="--w:22;--k:1"><span>Wind</span><i></i><b>22%</b></li>
+            <li style="--w:9;--k:2"><span>Wildfire</span><i></i><b>9%</b></li>
+            <li style="--w:7;--k:3"><span>Flood</span><i></i><b>7%</b></li>
+            <li style="--w:4;--k:4"><span>Earthquake</span><i></i><b>4%</b></li>
+          </ul>
+        </figure>
       </div>
       <div class="flow" id="flow-market">
           <div class="branches">
@@ -54,7 +74,7 @@
               <svg class="sector-icon" data-icon="construction" viewBox="0 0 72 60" aria-hidden="true"></svg>
               <h3>Construction</h3>
               <p>Builder's risk is where we started, not where we stop. We place the contractors' casualty too, on new builds, renovations and modular projects.</p>
-              <div class="chips"><span class="chip">Builder's risk</span><span class="chip">Casualty</span></div>
+              <div class="chips"><span class="chip">Builder's risk</span><span class="chip">Casualty</span><span class="chip">Environmental</span></div>
             </div>
             <div class="node reveal" style="--i:1">
               <svg class="sector-icon" data-icon="realEstate" viewBox="0 0 72 60" aria-hidden="true"></svg>
@@ -68,26 +88,23 @@
               <p>Energy projects, contractors, and operators in both conventional and renewables.</p>
               <div class="chips"><span class="chip">Property</span><span class="chip">Casualty</span><span class="chip">Environmental</span></div>
             </div>
+            <div class="node reveal" style="--i:3">
+              <svg class="sector-icon" data-icon="more" viewBox="0 0 72 60" aria-hidden="true"></svg>
+              <h3>And More</h3>
+              <p>Complex small- to middle-market risks that do not fit one box. The harder the account is to place, the more our pre-underwriting is worth.</p>
+              <div class="chips"><span class="chip">Small market</span><span class="chip">Middle market</span></div>
+            </div>
           </div>
           <div class="rn reveal" style="--i:3" data-rn>
             <div class="rn-head">
               <p class="eyebrow">Narrated risk, pre-underwritten submissions</p>
-              <h3>Read the risk from the record, not the headline.</h3>
-              <p class="rn-lede">Two reads from the federal record, one per slide: what the file actually says once you put the sources side by side.</p>
+              <h3 class="ed">Read the risk from the record, not the headline.</h3>
+              <p class="rn-lede ed">Two reads from the federal record, one per slide: what the file actually says once you put the sources side by side.</p>
             </div>
 
             <div class="rn-show" data-rn-show role="region" aria-roledescription="carousel" aria-label="Casualty and property" tabindex="0">
               <div class="rn-slides">
                 <div class="rn-slide is-on" role="group" aria-roledescription="slide" aria-label="1 of 2, Casualty and energy">
-                  <div class="rn-say">
-                    <span class="rn-kicker">01 &middot; Casualty &middot; Energy</span>
-                    <p class="rn-title">Pipelines take the blame for wildfires. Put the federal records side by side:</p>
-                    <ul class="lines-points">
-                      <li>Since 2010, 1,349 pipeline incidents have involved an ignition.</li>
-                      <li>3,324 wildfires were recorded within 10 miles of those incidents.</li>
-                      <li><b>Only one</b> of those wildfires, the Pollard Creek Gas Fire in Fritch, Texas, in 2023, ties directly to a pipeline ignition. It was held to 0.65 acres.</li>
-                    </ul>
-                  </div>
                   <div class="rn-vis rn-vis--figure">
                     <figure class="dots-chart">
                       <figcaption class="dots-head">
@@ -114,15 +131,6 @@
                 </div>
 
                 <div class="rn-slide" role="group" aria-roledescription="slide" aria-label="2 of 2, Property and hail">
-                  <div class="rn-say">
-                    <span class="rn-kicker">02 &middot; Property &middot; Hail</span>
-                    <p class="rn-title">Hail severity, mapped from NOAA records.</p>
-                    <ul class="lines-points">
-                      <li>11,026 grid cells carry a severity rating. 9,648 of them rate Very Low.</li>
-                      <li>1,168 rate Low and 169 Moderate, almost all of them along the Front Range and out onto the eastern plains.</li>
-                      <li><b>Forty cells rate High, and one rates Very High</b> &mdash; near Colorado Springs. Severity is not spread across the state; it sits in a corridor.</li>
-                    </ul>
-                  </div>
                   <div class="rn-vis rn-vis--figure">
                     <figure class="hail-frame">
                       <figcaption class="dots-head">
@@ -162,27 +170,28 @@
                 <span class="rn-count" data-rn-count aria-live="polite">01 / 02 &middot; Casualty &middot; Energy</span>
               </div>
             </div>
-            <p class="rn-foot">Both reads are drawn from the federal record, not from any one account.</p>
           </div>
 
-          <div class="how reveal" style="--i:4">
-            <div class="how-head"><h3>How it works</h3><span class="eyebrow">For retailers</span></div>
-            <ol class="steps">
-              <li><b>01</b><strong>Send us the submission</strong><span>SOVs, loss runs, and schedules, in whatever shape they arrive. Our brokers each spent 15+ years in retail, so we know what you need back.</span></li>
-              <li><b>02</b><strong>We pre-underwrite it</strong><span>We add the depth underwriters look for: a risk narrative, pricing guidance, loss history, mitigating factors. That depth turns a no into a maybe, and a maybe into a yes.</span></li>
-              <li><b>03</b><strong>We engage the right markets</strong><span>We track appetite from real outcomes to find the best possible placement for each risk. You get full transparency into each step of our marketing process.</span></li>
-            </ol>
-            <a class="go" href="#contact">Start an open market submission &rarr;</a>
-          </div>
+          <div class="audiences">
+            <div class="how reveal" style="--i:4">
+              <div class="how-head"><h3>For Retailers</h3></div>
+              <ol class="steps steps-stack">
+                <li><b>01</b><strong>Send us the submission</strong><span>SOVs, loss runs, and schedules, in whatever shape they arrive. Our brokers each spent 15+ years in retail, so we know what you need back.</span></li>
+                <li><b>02</b><strong>We pre-underwrite it</strong><span>We add the depth underwriters look for: a risk narrative, pricing guidance, loss history, mitigating factors. That depth turns a no into a maybe, and a maybe into a yes.</span></li>
+                <li><b>03</b><strong>We engage the right markets</strong><span>We track appetite from real outcomes to find the best possible placement for each risk. You get full transparency into each step of our marketing process.</span></li>
+              </ol>
+              <a class="go" href="#contact">Start an open market submission &rarr;</a>
+            </div>
 
-          <div class="how reveal" style="--i:5">
-            <div class="how-head"><h3>What underwriters get</h3><span class="eyebrow">For carriers</span></div>
-            <ol class="steps">
-              <li><b>01</b><strong>Only what you want to see</strong><span>We track your appetite and send what matches it. Nothing blasted, nothing you have already seen.</span></li>
-              <li><b>02</b><strong>Enriched, packaged submissions</strong><span>Every submission carries our custom data visualizations and well-packaged loss information, so the right facts reach you early.</span></li>
-              <li><b>03</b><strong>Risks you are not seeing</strong><span>Small and mid-market risks that the big wholesalers do not prioritize, packaged to a high standard, across a wide geographic spread. We find flow to match your appetite, not the other way around.</span></li>
-            </ol>
-            <a class="go" href="#contact">Tell us your appetite &rarr;</a>
+            <div class="how reveal" style="--i:5">
+              <div class="how-head"><h3>For Underwriters</h3></div>
+              <ol class="steps steps-stack">
+                <li><b>01</b><strong>Only what you want to see</strong><span>We track your appetite and send what matches it. Nothing blasted, nothing you have already seen.</span></li>
+                <li><b>02</b><strong>Enriched, packaged submissions</strong><span>Every submission carries our custom data visualizations and well-packaged loss information, so the right facts reach you early.</span></li>
+                <li><b>03</b><strong>Risks you are not seeing</strong><span>Small and mid-market risks that the big wholesalers do not prioritize, packaged to a high standard, across a wide geographic spread. We find flow to match your appetite, not the other way around.</span></li>
+              </ol>
+              <a class="go" href="#contact">Tell us your appetite &rarr;</a>
+            </div>
           </div>
       </div>
     </div>
@@ -216,7 +225,6 @@
       <a href="#top">Privacy policy</a>
       <a href="#top">Terms of service</a>
     </nav>
-    <p class="f-note">This page loads type from Google Fonts (fonts.googleapis.com, fonts.gstatic.com) and one drawing library from jsDelivr (cdn.jsdelivr.net), so opening it shows your address to those three. The hail map is drawn from this site and reaches nobody.</p>
   </div>
 </footer>
 
@@ -232,7 +240,7 @@
 <script src="home-hail-map.js"></script>
 <script src="home-hail-map-ui.js"></script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
-        data-selector="h1, h2, .lead, .eyebrow, .way-kicker, .way-title, .way-desc, .node h3, .node p, .wins b, .wins span, .chip, .steps li strong, .steps li span, .result, .go, .close p, footer small"
+        data-selector="h1, h2, .lead, .eyebrow, .way-kicker, .way-title, .way-desc, .node h3, .node p, .chip, .steps li strong, .steps li span, .go, .close p, footer small, .ed"
         data-key="arqu-copy-home-v3"
         data-migrate-nodes="61"
         data-what="the arqu open market page mockup"></script>

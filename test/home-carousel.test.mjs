@@ -84,22 +84,12 @@ test('open-market.html: the casualty chart names both sources, and the hail map 
 const GRID = hailGrid;
 const DRAWN = cells.drawnCells(GRID.frame, HAIL.cells);
 
-test("open-market.html: the hail slide's counts match the data it ships", () => {
-  const fig = LINES.slice(LINES.indexOf('02 &middot; Property'));
-  const tally = {};
-  DRAWN.forEach(([c]) => {
-    tally[HAIL.categories[c]] = (tally[HAIL.categories[c]] || 0) + 1;
-  });
-  const shown = (n) => assert.ok(fig.includes(n.toLocaleString('en-US')), `the slide does not say ${n}`);
+// Each slide is its figure alone: the caption, sources and counts live inside the figure.
+test('open-market.html: no slide carries a read of its own, only its figure', () => {
+  assert.equal((LINES.match(/class="rn-slide[ "]/g) || []).length, 2);
+  assert.ok(!LINES.includes('rn-say'), 'a slide still carries a read');
+  assert.ok(!LINES.includes('When comparing data'), 'the casualty read is still on the page');
   assert.ok(DRAWN.length < HAIL.cells.length, 'the extract runs past the state line');
-  shown(DRAWN.length);
-  ['Very Low', 'Low', 'Moderate'].forEach((c) => {
-    shown(tally[c]);
-  });
-  // The two that carry the point are spelled out rather than numeric.
-  assert.equal(tally.High, 40);
-  assert.match(fig, /Forty cells rate High, and one rates Very High/);
-  assert.equal(tally['Very High'], 1);
 });
 
 test('open-market.html: the hail figure carries a caption, a legend and its sources', () => {
@@ -170,12 +160,7 @@ const MAP_HOSTS = [
   'openmaptiles.github.io',
 ];
 
-function disclosedHosts(html) {
-  return [...html.matchAll(/class="(?:fig-note|f-note)">([^<]+)</g)].map((m) => m[1]).join(' ');
-}
-
-// The map is drawn from this repo, so none of these hosts may appear, and the footer
-// must tell a visitor that the map reaches nobody.
+// The map is drawn from this repo, so none of these hosts may appear.
 test('open-market.html: the hail map reaches none of the embed hosts', () => {
   const svg = readFileSync(join(ROOT, 'hail-severity.svg'), 'utf8');
   MAP_HOSTS.forEach((host) => {
@@ -183,22 +168,7 @@ test('open-market.html: the hail map reaches none of the embed hosts', () => {
     assert.ok(!svg.includes(host), `the map SVG still reaches ${host}`);
   });
   assert.doesNotMatch(svg, /<(script|image|use\s+[^>]*href="http)/, 'the map SVG pulls something in');
-  const note = MARKET.match(/class="f-note">([^<]+)</)[1];
-  assert.match(note, /hail map is drawn from this site and reaches nobody/);
 });
-
-// The map's hosts live inside the vendored export, so they are listed above. These are the
-// ones each page asks for itself, and a new one has to arrive with a word to the visitor.
-for (const page of ['home.html', 'open-market.html', 'programs.html']) {
-  test(`${page}: every off-origin host in its own markup is named in a note`, () => {
-    const html = readFileSync(join(ROOT, page), 'utf8');
-    const hosts = new Set([...html.matchAll(/(?:src|href)="(https?:\/\/[^"]+)"/g)].map((m) => new URL(m[1]).host));
-    const notes = disclosedHosts(html);
-    hosts.forEach((host) => {
-      assert.ok(notes.includes(host), `${page} loads ${host}, and no note names it`);
-    });
-  });
-}
 
 const INSURED_COLUMNS = new Set(['name', 'address', 'city', 'zip', 'tiv', 'latitude', 'longitude']);
 

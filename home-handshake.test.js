@@ -54,9 +54,9 @@ test('the dots keep circling while the section is in view', async (t) => {
   assert.notDeepEqual(await where(), first);
 });
 
-test('hovering makes the two forearms shake together about their shoulders', async (t) => {
+test('hovering makes the two figures high-five: both arms swing up about their shoulders', async (t) => {
   const { page } = await drawn(t);
-  // the automatic post-draw shake must finish first, so the sampled shear comes from the hover
+  // the automatic post-draw shake must finish first, so the sampled pose comes from the hover
   await page.waitForFunction(
     () =>
       [5, 11].every((i) =>
@@ -67,25 +67,37 @@ test('hovering makes the two forearms shake together about their shoulders', asy
   );
   const box = await (await page.$('#hs')).boundingBox();
   await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
-  // The shake is a sine, so a single sample can land on a zero crossing or before the
-  // first frame on a loaded machine; wait for a frame where both arms are sheared.
-  const arms = await page
+  // wait for the frame where both arms are raised high, then read where the two hands are
+  const pose = await page
     .waitForFunction(
       () => {
-        // a near-zero shear serialises in exponent form, so read whole numbers, exponent included
-        const shear = (i) =>
-          (document.getElementById('hs-p' + i).getAttribute('transform') || '')
-            .match(/-?\d*\.?\d+(?:e[-+]?\d+)?/gi)
-            ?.map(Number) ?? [];
-        const pair = [shear(5), shear(11)];
-        return pair.every((m) => m.length === 6 && Math.abs(m[1]) > 1e-3) ? pair : null;
+        const angle = (i) => {
+          const m = (document.getElementById('hs-p' + i).getAttribute('transform') || '').match(
+            /^rotate\((-?[\d.e+-]+) /,
+          );
+          return m ? Number(m[1]) : 0;
+        };
+        const [left, right] = [angle(5), angle(11)];
+        if (Math.abs(left) < 60 || Math.abs(right) < 60) return null;
+        const hand = (i) => document.getElementById('hs-p' + i).getBoundingClientRect();
+        const heads = [0, 6].map((i) => document.getElementById('hs-p' + i).getBoundingClientRect());
+        return {
+          left,
+          right,
+          handsTop: Math.min(hand(5).top, hand(11).top),
+          headsBottom: Math.max(...heads.map((h) => h.bottom)),
+        };
       },
       null,
       { timeout: 6000 },
     )
     .then((h) => h.jsonValue());
-  // matrix(1 k 0 1 0 f): a shear k with the shoulder held fixed; opposite signs keep the hands joined
-  assert.ok(arms[0][1] !== 0 && Math.sign(arms[0][1]) === -Math.sign(arms[1][1]), `shears ${arms[0][1]} ${arms[1][1]}`);
+  // left arm turns up (negative), right arm turns up the other way (positive)
+  assert.ok(pose.left < 0 && pose.right > 0, `angles ${pose.left} ${pose.right}`);
+  assert.ok(
+    pose.handsTop < pose.headsBottom,
+    `raised hands top ${pose.handsTop} sits below the heads ${pose.headsBottom}`,
+  );
 });
 
 test('under reduced motion the orbit dots are visible, not stuck at opacity 0', async (t) => {
@@ -104,4 +116,28 @@ test('under reduced motion the orbit dots are visible, not stuck at opacity 0', 
     )
     .then((h) => h.jsonValue());
   assert.ok(opacities.length > 0);
+});
+
+test('a hover that lands during the opening shake still gets its high-five once the shake ends', async (t) => {
+  const { page } = await openPage(t);
+  await scrollToSelector(page, '#human', 60);
+  // the opening shake shears the forearms; catch it mid-move
+  await page.waitForFunction(
+    () => /^matrix\(1 -?[\d.e-]*[1-9]/.test(document.getElementById('hs-p5').getAttribute('transform') || ''),
+    null,
+    { timeout: 15000, polling: 16 },
+  );
+  const box = await (await page.$('#hs')).boundingBox();
+  await page.mouse.move(box.x + box.width / 2, box.y + box.height / 2);
+  const raised = await page
+    .waitForFunction(
+      () => {
+        const m = (document.getElementById('hs-p5').getAttribute('transform') || '').match(/^rotate\((-?[\d.e+-]+) /);
+        return m && Number(m[1]) < -60 ? Number(m[1]) : null;
+      },
+      null,
+      { timeout: 6000 },
+    )
+    .then((h) => h.jsonValue());
+  assert.ok(raised < -60, `the left arm only reached ${raised}`);
 });

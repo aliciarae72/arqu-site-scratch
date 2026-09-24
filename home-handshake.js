@@ -3,7 +3,7 @@
    stroke by stroke, then shaking hands. Each filled path is revealed through a
    mask whose stroke traces that limb, so the real artwork appears as if drawn.
    Six dots circle the pair on a hand-drawn ground ring: the tools move, the
-   people stay put. Hover or tap and they shake again. */
+   people stay put. Hover or tap and they high-five. */
 (function () {
   var svg = document.getElementById('hs');
   if (!svg || !window.rough) return;
@@ -168,24 +168,59 @@
     }, delay + 600);
   }
 
+  /* the arm moves run one at a time; pose(k) writes both arm transforms for k from 0 to 1.
+     A move asked for while another runs is held, and the latest one asked for plays next. */
+  var moving = 0,
+    queued = null;
+  function animateArms(DUR, pose) {
+    if (RM || moving) return;
+    var t0 = performance.now();
+    moving = 1;
+    (function tick(now) {
+      var k = Math.min(1, (now - t0) / DUR);
+      pose(k);
+      if (k < 1) return requestAnimationFrame(tick);
+      moving = 0;
+      var next = queued;
+      queued = null;
+      if (next) next();
+    })(t0);
+  }
+  function whenFree(move) {
+    if (moving) queued = move;
+    else move();
+  }
+
   /* shake: shear each forearm about its own shoulder so the joined hands pump
      up and down together while the shoulders stay put */
-  var shaking = 0;
   function shake() {
-    if (RM || shaking) return;
-    var t0 = performance.now(),
-      DUR = 1150;
-    shaking = 1;
-    (function tick(now) {
-      var k = (now - t0) / DUR,
-        dy = k < 1 ? 11 * Math.sin(k * Math.PI * 6) * Math.sin(k * Math.PI) : 0;
+    animateArms(1150, function (k) {
+      var dy = k < 1 ? 11 * Math.sin(k * Math.PI * 6) * Math.sin(k * Math.PI) : 0;
       var kl = dy / 129,
         kr = dy / (215 - 344);
       paths[5].setAttribute('transform', 'matrix(1 ' + kl + ' 0 1 0 ' + -kl * 90 + ')');
       paths[11].setAttribute('transform', 'matrix(1 ' + kr + ' 0 1 0 ' + -kr * 344 + ')');
-      if (k < 1) requestAnimationFrame(tick);
-      else shaking = 0;
-    })(t0);
+    });
+  }
+
+  /* high-five: swing each whole arm up about its own shoulder until the hands
+     meet between the heads, slap, hold, and come back down */
+  var HIGH = 80;
+  function easeOut(x) {
+    return 1 - (1 - x) * (1 - x);
+  }
+  function liftAt(k) {
+    if (k < 0.25) return easeOut(k / 0.25);
+    if (k < 0.7) return 1;
+    return 1 - easeOut((k - 0.7) / 0.3);
+  }
+  function highFive() {
+    animateArms(1400, function (k) {
+      var slap = k > 0.22 && k < 0.4 ? 5 * Math.sin(((k - 0.22) / 0.18) * Math.PI) : 0,
+        a = liftAt(k) * HIGH - slap;
+      paths[5].setAttribute('transform', 'rotate(' + -a + ' 90 242)');
+      paths[11].setAttribute('transform', 'rotate(' + a + ' 344 242)');
+    });
   }
 
   var phase = 0,
@@ -225,19 +260,21 @@
       paths.forEach(function (p) {
         p.removeAttribute('mask');
       });
-      shake();
+      whenFree(shake);
     }, end + 100);
     decorate(end - 300);
   }
 
   svg.addEventListener('pointerenter', function () {
     pointer = 1;
-    shake();
+    whenFree(highFive);
   });
   svg.addEventListener('pointerleave', function () {
     pointer = 0;
   });
-  svg.addEventListener('click', shake);
+  svg.addEventListener('click', function () {
+    whenFree(highFive);
+  });
 
   var begun = false;
   new IntersectionObserver(

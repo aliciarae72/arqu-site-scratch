@@ -1,5 +1,5 @@
-/* ══ SECTOR ICONS — a crane, a building and a wind turbine over the three
-   open-market columns, drawn with the page's own pen (window.arquHand). Each
+/* ══ SECTOR ICONS — a crane, a building, a power-line pylon and a magnifier
+   over the four open-market columns, drawn with the page's own pen (window.arquHand). Each
    inks on when its column comes into view, and again whenever the flow is
    closed and reopened, in step with the columns' own reveal. Ink carries the
    drawing; one purple detail per icon carries the brand. */
@@ -77,38 +77,64 @@
       ],
     ],
     energy: [
-      ['line', 6, 57, 66, 57],
-      ['line', 31, 57, 34, 24],
-      ['line', 38, 57, 36, 24],
+      ['line', 4, 57, 68, 57],
+      ['line', 26, 57, 33, 6],
+      ['line', 46, 57, 39, 6],
+      ['line', 33, 6, 39, 6],
+      ['line', 16, 16, 56, 16],
+      ['line', 20, 27, 52, 27],
       [
-        'curve',
+        'linearPath',
         [
-          [35, 17],
-          [34.6, 9],
-          [35.6, 1],
+          [27, 52],
+          [44, 42],
+          [29, 34],
+          [42, 27],
+          [31, 20],
+          [40, 12],
         ],
       ],
       [
         'curve',
         [
-          [38, 22.5],
-          [45, 25],
-          [51, 30.5],
+          [16, 17],
+          [8, 23],
+          [0, 21],
         ],
       ],
       [
         'curve',
         [
-          [32, 22.5],
-          [25.5, 27],
-          [19, 29],
+          [20, 28],
+          [11, 34],
+          [2, 32],
         ],
       ],
-      ['line', 57, 57, 57.5, 40],
-      ['line', 57.5, 37.5, 57.5, 29],
-      ['line', 59, 39, 65, 42.5],
-      ['line', 56, 39, 50, 42.5],
-      ['circle', 35, 20.5, 6, true],
+      [
+        'curve',
+        [
+          [52, 28],
+          [61, 34],
+          [70, 32],
+        ],
+      ],
+      [
+        'curve',
+        [
+          [56, 17],
+          [64, 23],
+          [72, 21],
+        ],
+        true,
+      ],
+    ],
+    more: [
+      ['line', 4, 57, 68, 57],
+      ['rectangle', 8, 37, 18, 20],
+      ['rectangle', 26, 27, 16, 30],
+      ['rectangle', 42, 43, 14, 14],
+      ['circle', 50, 18, 18, true],
+      ['line', 56.5, 24.5, 66, 34],
     ],
   };
 
