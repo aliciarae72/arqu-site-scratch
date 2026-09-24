@@ -36,7 +36,7 @@ test('old home.html deep links land on the page that now holds their flow', asyn
   });
 });
 
-test('the hero mark sits above the copy, draws in once on load, then holds still', async (t) => {
+test('the hero mark sits above the copy as dots then one solid line, draws in once on load, then holds still', async (t) => {
   const { page, errors } = await openPage(t);
   const read = () =>
     page.evaluate(() => {
@@ -52,6 +52,7 @@ test('the hero mark sits above the copy, draws in once on load, then holds still
         aboveCopy:
           mark.getBoundingClientRect().bottom < document.querySelector('#intro .g-kicker').getBoundingClientRect().top,
         stroke: getComputedStyle(run).height,
+        solid: [getComputedStyle(run).backgroundImage, getComputedStyle(run).backgroundColor],
         reachesEdge: box.right >= document.documentElement.clientWidth,
         scrollsSideways: document.documentElement.scrollWidth > document.documentElement.clientWidth,
         runAnimations: names(run),
@@ -64,6 +65,7 @@ test('the hero mark sits above the copy, draws in once on load, then holds still
     dotsFirst: true,
     aboveCopy: true,
     stroke: '1px',
+    solid: ['none', 'rgb(140, 130, 250)'],
     reachesEdge: true,
     scrollsSideways: false,
     runAnimations: [['mo-draw', 1]],

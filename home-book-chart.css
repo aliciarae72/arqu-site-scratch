@@ -1,0 +1,28 @@
+/* The Programs chart: a scatter of a book's losses, drawn on the page itself, not in a card. */
+.book-chart{margin:0}
+.bz-head,.bz-foot{display:flex;align-items:center;gap:10px 18px;flex-wrap:wrap;
+  font:9.5px/1.4 var(--font-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+.bz-head{justify-content:space-between;margin-bottom:6px}
+.bz-head em{font-style:normal;color:var(--purple-deep)}
+.bz-stage{position:relative;aspect-ratio:5/4}
+.bz-svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
+.bz-plot{overflow:hidden}
+.bz-dot{fill:var(--purple);fill-opacity:.32;stroke:var(--purple-deep);stroke-opacity:.45;stroke-width:1;vector-effect:non-scaling-stroke}
+.bz-clean{fill:none;stroke:var(--ink-3);stroke-opacity:.5}
+.bz-focus{fill:var(--purple-deep);fill-opacity:.95;stroke:none}
+
+/* axes, ticks and labels are drawn in screen pixels, so they stay one size at any width */
+.bz-axis,.bz-tick{stroke:var(--ink-3);stroke-width:1}
+.bz-grid{stroke:var(--line);stroke-width:1}
+.bz-label,.bz-title,.bz-avg-label,.bz-focus-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;fill:var(--ink-3)}
+.bz-title{text-transform:uppercase;letter-spacing:.13em;font-size:9.5px}
+.bz-avg{stroke:var(--purple-deep);stroke-width:1.2;stroke-dasharray:5 5}
+.bz-avg-label,.bz-focus-label{fill:var(--purple-deep)}
+.bz-leader{stroke:var(--purple-deep);stroke-width:1}
+
+.bz-foot{margin-top:10px;padding-top:10px;border-top:1px solid var(--line)}
+.bz-key{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:7px;vertical-align:-1px;
+  background:rgba(140,130,250,.32);border:1px solid rgba(94,84,200,.45)}
+.bz-key--clean{background:transparent;border-color:var(--ink-3)}
+.bz-total{margin-left:auto;color:var(--ink-2)}
+.bz-total b{font-weight:400;color:var(--purple-deep)}

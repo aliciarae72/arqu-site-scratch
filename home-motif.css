@@ -1,6 +1,6 @@
-/* The landing mark, above the hero copy: three dots, then dashes that run past the
-   right edge of the page. It draws in once on load, then holds still. */
-.motif{--mo-dot:5px;--mo-gap:9px;--mo-dash:18px;--mo-space:10px;
+/* The landing mark, above the hero copy: three dots, then one solid line that runs past
+   the right edge of the page. It draws in once on load, then holds still. */
+.motif{--mo-dot:5px;--mo-gap:9px;
   display:flex;align-items:center;gap:var(--mo-gap);height:var(--mo-dot);margin:0 0 clamp(28px,3.6vw,44px);
   /* out to the viewport's right edge; main clips the overhang */
   width:calc(100% + (100vw - 100%) / 2);opacity:.7}
@@ -9,9 +9,7 @@
 .motif i:nth-child(1){animation-delay:.2s}
 .motif i:nth-child(2){animation-delay:.34s}
 .motif i:nth-child(3){animation-delay:.48s}
-.motif-run{flex:1;height:1px;margin-left:calc(var(--mo-space) - var(--mo-gap) + 3px);
-  background:repeating-linear-gradient(90deg,var(--purple) 0 var(--mo-dash),transparent var(--mo-dash) calc(var(--mo-dash) + var(--mo-space)));
-  animation:mo-draw 1.6s var(--ease) .7s both}
+.motif-run{flex:1;height:1px;margin-left:4px;background:var(--purple);animation:mo-draw 1.6s var(--ease) .7s both}
 @keyframes mo-dot{from{opacity:0}to{opacity:1}}
 @keyframes mo-draw{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
 @media (prefers-reduced-motion:reduce){.motif i,.motif-run{animation:none}}

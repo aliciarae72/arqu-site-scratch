@@ -17,27 +17,25 @@ const texts = (html, re) =>
     m[1].replace(/<[^>]+>/g, '').replace(/&(?:middot|gt|lt|amp);/g, (e) => ENTITIES[e]),
   );
 
-test('programs.html opens on the loss-zoom chart, labelled illustrative, with its key and Replay', () => {
-  const start = PROGRAMS.indexOf('<figure class="book-zoom');
-  assert.ok(start > 0, 'the hero has no book-zoom figure');
+test('programs.html opens on the loss scatter, labelled illustrative, with its key and no zoom controls', () => {
+  const start = PROGRAMS.indexOf('<figure class="book-chart');
+  assert.ok(start > 0, 'the hero has no book-chart figure');
   const fig = PROGRAMS.slice(start, PROGRAMS.indexOf('</figure>', start));
   assert.match(fig, /<span>Losses in a sample book<\/span><em>Illustrative<\/em>/);
-  for (const hook of [
-    'data-book-zoom',
-    'data-bz-stage',
-    'data-bz-svg',
-    'data-bz-ratio',
-    'data-bz-who',
-    'data-bz-note',
-    'data-bz-replay',
-  ]) {
+  for (const hook of ['data-book-chart', 'data-bz-stage', 'data-bz-svg', 'data-bz-ratio', 'data-bz-count']) {
     assert.ok(fig.includes(hook), `the figure has no ${hook}`);
   }
-  assert.deepEqual(texts(fig, /<\/i>([^<]+)<\/span>/g), ['One account; dot area is the loss', 'No loss']);
+  for (const gone of ['data-bz-replay', 'data-bz-note', 'data-bz-who', 'book-zoom', 'in view']) {
+    assert.ok(!PROGRAMS.includes(gone), `the zoom's ${gone} is still on the page`);
+  }
+  assert.deepEqual(texts(fig, /<\/i>([^<]+)<\/span>/g), [
+    'One account; dot area is the loss',
+    'No loss, jittered around 0%',
+  ]);
   assert.ok(!PROGRAMS.includes('class="dash'), 'the old dashboard is still on the page');
   assert.ok(
     PROGRAMS.includes(
-      '<script src="home-book-data.js"></script>\n<script src="home-book-axes.js"></script>\n<script src="home-book-zoom.js"></script>',
+      '<script src="home-book-data.js"></script>\n<script src="home-book-axes.js"></script>\n<script src="home-book-chart.js"></script>',
     ),
     'the chart scripts are missing or out of order',
   );

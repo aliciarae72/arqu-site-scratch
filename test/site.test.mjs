@@ -64,7 +64,7 @@ const LOAD_ORDER = {
     ],
   },
   'programs.html': {
-    css: [...CORE_CSS, 'home-pages.css', 'home-book-zoom.css'],
+    css: [...CORE_CSS, 'home-pages.css', 'home-book-chart.css'],
     js: [
       'home-interaction.js',
       'roughjs',
@@ -73,7 +73,7 @@ const LOAD_ORDER = {
       'home-ambient.js',
       'home-book-data.js',
       'home-book-axes.js',
-      'home-book-zoom.js',
+      'home-book-chart.js',
       'arqu-edit-layer.js',
     ],
   },
