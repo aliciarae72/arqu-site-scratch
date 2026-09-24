@@ -42,7 +42,6 @@ const LOAD_ORDER = {
       'roughjs',
       'home-hand.js',
       'home-hand-marks.js',
-      'home-handshake.js',
       'home-ambient.js',
       'arqu-edit-layer.js',
     ],
@@ -75,6 +74,42 @@ const LOAD_ORDER = {
       'arqu-edit-layer.js',
     ],
   },
+  'about.html': {
+    css: [...CORE_CSS, 'home-pages.css'],
+    js: [
+      'home-interaction.js',
+      'roughjs',
+      'home-hand.js',
+      'home-hand-marks.js',
+      'home-handshake.js',
+      'home-ambient.js',
+      'arqu-edit-layer.js',
+    ],
+  },
+  'construction.html': {
+    css: [...CORE_CSS, 'home-pages.css'],
+    js: [
+      'home-interaction.js',
+      'roughjs',
+      'home-hand.js',
+      'home-hand-marks.js',
+      'home-sector-icons.js',
+      'home-ambient.js',
+      'arqu-edit-layer.js',
+    ],
+  },
+  'energy.html': {
+    css: [...CORE_CSS, 'home-pages.css'],
+    js: [
+      'home-interaction.js',
+      'roughjs',
+      'home-hand.js',
+      'home-hand-marks.js',
+      'home-sector-icons.js',
+      'home-ambient.js',
+      'arqu-edit-layer.js',
+    ],
+  },
 };
 const read = (page) => readFileSync(join(ROOT, page), 'utf8');
 
@@ -100,17 +135,18 @@ for (const [page, want] of Object.entries(LOAD_ORDER)) {
   });
 }
 
-test('home.html is the handshake section, then exactly two card links', () => {
+test('home.html is the headline hero, then exactly two card links', () => {
   const html = read('home.html');
   const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
   assert.deepEqual(
     [...main.matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]),
-    ['human', 'ways', 'contact'],
+    ['intro', 'ways', 'contact'],
   );
-  ['Insurance still runs on a handshake.', 'id="hs"'].forEach((part) => {
-    assert.ok(main.includes(part), `the handshake section is missing ${part}`);
+  ['Innovate beyond <em>the ask.</em>', 'We are wholesale brokers and technologists.'].forEach((part) => {
+    assert.ok(main.includes(part), `the landing hero is missing ${part}`);
   });
-  assert.ok(!main.includes('The tools turn.'), 'the handshake section still carries the line Alicia cut');
+  assert.ok(!main.includes('The tools turn.'), 'the landing page still carries the line Alicia cut');
+  assert.ok(!main.includes('id="hs"'), 'the landing hero still carries a graphic');
   assert.deepEqual(
     [...main.matchAll(/<a class="way" id="([^"]+)" href="([^"]+)">/g)].map((m) => [m[1], m[2]]),
     [
@@ -127,7 +163,9 @@ test('every page configures the edit layer the same way', () => {
       .match(/<script id="arqu-edit-layer"[^>]*>/)[0]
       .replace(/ data-what="[^"]*"/, '');
   assert.equal(config('open-market.html'), config('home.html'));
-  assert.equal(config('programs.html'), config('home.html'));
+  ['programs.html', 'about.html', 'construction.html', 'energy.html'].forEach((page) => {
+    assert.equal(config(page), config('home.html'), page);
+  });
 });
 
 for (const [page, flow] of [

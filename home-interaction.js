@@ -9,7 +9,7 @@
         sits on the page, so the rail is a map of the scroll. ─────────────── */
   var SECTIONS = [
     ['page', 'Start'],
-    ['human', 'Human-centered'],
+    ['intro', 'Welcome'],
     ['ways', 'Ways to work'],
     ['contact', 'Get in touch'],
     ['careers', 'Careers'],

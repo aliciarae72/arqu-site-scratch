@@ -2,7 +2,7 @@ const { test } = require('node:test');
 const assert = require('node:assert/strict');
 const { openPage } = require('./page-harness');
 
-const PAGES = ['home.html', 'programs.html', 'open-market.html'];
+const PAGES = ['home.html', 'programs.html', 'open-market.html', 'about.html', 'construction.html', 'energy.html'];
 
 // Every box the editing bar overlaps, among the header button, the mockup flag and the logo.
 function barCollisions(page) {

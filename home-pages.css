@@ -101,3 +101,20 @@
 .audiences .how--quiet{background:transparent;box-shadow:none;border-style:dashed}
 .how--quiet .steps-stack li b{color:var(--line-2)}
 .how--quiet .steps-stack li strong{color:var(--ink-2)}
+
+.sector-hero{display:grid;place-items:center;aspect-ratio:6/5;max-height:420px;background:var(--surface);border:1px solid var(--line-2);border-radius:18px;
+  box-shadow:0 1px 2px rgba(34,31,32,.05),0 30px 60px -36px rgba(94,84,200,.45)}
+.sector-hero .sector-icon{width:62%;height:auto;margin:0}
+.hero-split .chips{margin-top:22px}
+.sector-head{margin-top:clamp(56px,7vw,88px)}
+.sector-cols{margin-top:0}
+.sector-cols .node h3{font-size:clamp(22px,2.2vw,28px);font-style:italic;color:var(--ink)}
+
+.team{list-style:none;margin:clamp(40px,5vw,64px) 0 0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(18px,2.4vw,32px)}
+.team--pair{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:6px}
+.person img{width:100%;height:auto;aspect-ratio:4/5;object-fit:cover;border-radius:14px;border:1px solid var(--line-2);background:var(--band);
+  filter:grayscale(1);transition:filter .5s var(--ease)}
+.person:hover img{filter:none}
+.person b{display:block;margin-top:14px;font:400 clamp(20px,1.9vw,24px)/1.1 var(--font-display);color:var(--ink)}
+.person span{display:block;margin-top:6px;font:9.5px/1.5 var(--font-mono);letter-spacing:.13em;text-transform:uppercase;color:var(--ink-3)}
+@media (max-width:860px){.team{grid-template-columns:repeat(2,minmax(0,1fr))}.sector-cols{grid-template-columns:1fr}}
