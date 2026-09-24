@@ -56,10 +56,10 @@ test('the first slide animates in once the slideshow is on screen', async (t) =>
   assert.equal(entered, true);
 });
 
-// Touch contacts dispatched on the slideshow's own text, away from the map that owns its gestures.
+// Touch contacts dispatched on the casualty chart, away from the map that owns its gestures.
 function touches(page, contacts) {
   return page.evaluate((list) => {
-    const target = document.querySelector('.rn-slide.is-on .rn-title');
+    const target = document.querySelector('.rn-slide.is-on .dots-chart');
     list.forEach(([type, pointerId, clientX]) =>
       target.dispatchEvent(
         new PointerEvent(type, { bubbles: true, pointerType: 'touch', pointerId, clientX, clientY: 300 }),

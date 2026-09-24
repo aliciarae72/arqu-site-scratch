@@ -31,6 +31,13 @@ for (const page of PAGES) {
         document.documentElement.clientWidth,
       ]);
       assert.equal(scroll, client, `${page} scrolls ${scroll - client}px sideways at ${width}`);
+      // main clips its overflow, so content cut off at the edge never shows up as scroll
+      const offEdge = await tab.evaluate(() =>
+        [...document.querySelectorAll('main h1, main h2, main h3, main p, main li, main figure')]
+          .filter((el) => el.getBoundingClientRect().width && el.getBoundingClientRect().right > innerWidth + 1)
+          .map((el) => el.textContent.trim().slice(0, 40)),
+      );
+      assert.deepEqual(offEdge, [], `${page} runs past the right edge at ${width}`);
       assert.deepEqual(errors, []);
     });
   }
@@ -49,15 +56,33 @@ test('open-market.html: in Edit copy mode the risk-narrative heading and lede ta
   assert.deepEqual(errors, []);
 });
 
-test('open-market.html: on every slide the read sits right above its visual', async (t) => {
-  const { page } = await openPage(t, { url: 'open-market.html' });
-  const gaps = await page.evaluate(() =>
-    [...document.querySelectorAll('.rn-slide')].map((s) => {
-      const read = s.querySelector('.rn-say').getBoundingClientRect();
-      return s.querySelector('.rn-vis').getBoundingClientRect().top - read.bottom;
+for (const width of [1440, 390]) {
+  test(`open-market.html at ${width}: every slide figure is one fixed height, with nothing cut off`, async (t) => {
+    const { page } = await openPage(t, { url: 'open-market.html', width });
+    const figures = await page.evaluate(() =>
+      [...document.querySelectorAll('.rn-vis--figure > figure')].map((f) => ({
+        height: Math.round(f.getBoundingClientRect().height),
+        clipped: f.scrollHeight > f.clientHeight + 1,
+      })),
+    );
+    const want = width === 1440 ? 600 : 520;
+    assert.deepEqual(figures, [
+      { height: want, clipped: false },
+      { height: want, clipped: false },
+    ]);
+  });
+}
+
+test('programs.html: "today" is the quieter panel, "inside a program" the raised card', async (t) => {
+  const { page } = await openPage(t, { url: 'programs.html' });
+  const panels = await page.evaluate(() =>
+    [...document.querySelectorAll('.audiences .how')].map((p) => {
+      const cs = getComputedStyle(p);
+      return { border: cs.borderTopStyle, raised: cs.boxShadow !== 'none' };
     }),
   );
-  gaps.forEach((gap, i) => {
-    assert.ok(gap >= 0 && gap < 40, `slide ${i + 1}: ${gap}px between its read and its visual`);
-  });
+  assert.deepEqual(panels, [
+    { border: 'dashed', raised: false },
+    { border: 'solid', raised: true },
+  ]);
 });

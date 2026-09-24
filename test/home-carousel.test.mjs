@@ -84,13 +84,11 @@ test('open-market.html: the casualty chart names both sources, and the hail map 
 const GRID = hailGrid;
 const DRAWN = cells.drawnCells(GRID.frame, HAIL.cells);
 
-// No risk narrative carried hail copy, so the slide keeps its kicker and lets the map
-// speak; the map's alt text still states the drawn count.
-test('open-market.html: the hail slide carries no read beyond its kicker', () => {
-  const at = LINES.indexOf('02 &middot; Property');
-  const say = LINES.slice(at, LINES.indexOf('<div class="rn-vis', at));
-  assert.ok(!say.includes('rn-title'), 'the hail slide still has a title');
-  assert.ok(!say.includes('lines-points'), 'the hail slide still has a read');
+// Each slide is its figure alone: the caption, sources and counts live inside the figure.
+test('open-market.html: no slide carries a read of its own, only its figure', () => {
+  assert.equal((LINES.match(/class="rn-slide[ "]/g) || []).length, 2);
+  assert.ok(!LINES.includes('rn-say'), 'a slide still carries a read');
+  assert.ok(!LINES.includes('When comparing data'), 'the casualty read is still on the page');
   assert.ok(DRAWN.length < HAIL.cells.length, 'the extract runs past the state line');
 });
 
