@@ -68,6 +68,7 @@ async function scrollToSelector(page, selector, offset = 80) {
 async function hoverOver(page, selector) {
   const target = page.locator(selector);
   const box = await target.boundingBox();
+  if (!box) throw new Error(`hoverOver: ${selector} has no box to hover; it is hidden or detached`);
   await target.hover({ position: { x: box.width / 2, y: box.height * 0.3 } });
 }
 
