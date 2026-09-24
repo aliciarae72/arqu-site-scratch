@@ -11,6 +11,7 @@
     ['page', 'Start'],
     ['intro', 'Welcome'],
     ['ways', 'Ways to work'],
+    ['values', 'Values'],
     ['contact', 'Get in touch'],
     ['careers', 'Careers'],
   ]
