@@ -26,8 +26,11 @@ test('hovering Open market lights the one market that fits the risk', async (t) 
   await scrollToSelector(page, '.way-grid', 160);
   const fill = () => page.evaluate(() => getComputedStyle(document.querySelector('rect.ca-hit')).fill);
   assert.notEqual(await fill(), 'rgb(94, 84, 200)');
-  await hoverOver(page, '#way-market');
-  assert.equal(await settle(fill, (f) => f === 'rgb(94, 84, 200)'), 'rgb(94, 84, 200)');
+  const hovered = async () => {
+    await hoverOver(page, '#way-market');
+    return fill();
+  };
+  assert.equal(await settle(hovered, (f) => f === 'rgb(94, 84, 200)'), 'rgb(94, 84, 200)');
 });
 
 test('hovering Programs moves the book toward the program', async (t) => {
@@ -36,8 +39,11 @@ test('hovering Programs moves the book toward the program', async (t) => {
   const shift = () =>
     page.evaluate(() => new DOMMatrix(getComputedStyle(document.querySelector('.ca-book rect')).transform).e);
   assert.equal(await shift(), 0);
-  await hoverOver(page, '#way-programs');
-  assert.ok((await settle(shift, (x) => x > 9)) > 9);
+  const hovered = async () => {
+    await hoverOver(page, '#way-programs');
+    return shift();
+  };
+  assert.ok((await settle(hovered, (x) => x > 9)) > 9);
 });
 
 test('the "or" sits in a clean drawn circle, with no sketched mark over it', async (t) => {
@@ -68,15 +74,28 @@ test('each card description runs the full width of its card', async (t) => {
   assert.deepEqual(gaps, [0, 0]);
 });
 
-test('the landing hero fills the first screen, the words beside the handshake', async (t) => {
+test('the landing hero fills the first screen with the headline alone, no graphic', async (t) => {
   const { page } = await openPage(t);
   const hero = await page.evaluate(() => {
-    const words = document.querySelector('.splash-copy').getBoundingClientRect();
-    const stage = document.querySelector('.globe-stage').getBoundingClientRect();
+    const intro = document.querySelector('#intro');
     const cards = document.querySelector('#ways').getBoundingClientRect();
-    return { beside: words.right <= stage.left, cardsBelowFold: cards.top >= window.innerHeight - 40 };
+    return {
+      headline: document.querySelector('#hero-title').textContent,
+      graphics: intro.querySelectorAll('svg, img, canvas').length,
+      alignedWithLogo:
+        Math.abs(
+          document.querySelector('#hero-title').getBoundingClientRect().left -
+            document.querySelector('.top .mark').getBoundingClientRect().left,
+        ) < 2,
+      cardsBelowFold: cards.top >= window.innerHeight - 40,
+    };
   });
-  assert.deepEqual(hero, { beside: true, cardsBelowFold: true });
+  assert.deepEqual(hero, {
+    headline: 'Innovate beyond the ask.',
+    graphics: 0,
+    alignedWithLogo: true,
+    cardsBelowFold: true,
+  });
 });
 
 test('on a phone the "or" sits centred between the stacked cards', async (t) => {

@@ -42,7 +42,6 @@ const LOAD_ORDER = {
       'roughjs',
       'home-hand.js',
       'home-hand-marks.js',
-      'home-handshake.js',
       'home-ambient.js',
       'arqu-edit-layer.js',
     ],
@@ -136,17 +135,18 @@ for (const [page, want] of Object.entries(LOAD_ORDER)) {
   });
 }
 
-test('home.html is the handshake section, then exactly two card links', () => {
+test('home.html is the headline hero, then exactly two card links', () => {
   const html = read('home.html');
   const main = html.slice(html.indexOf('<main'), html.indexOf('</main>'));
   assert.deepEqual(
     [...main.matchAll(/<section id="([^"]+)"/g)].map((m) => m[1]),
-    ['human', 'ways', 'contact'],
+    ['intro', 'ways', 'contact'],
   );
-  ['Insurance still runs on a handshake.', 'id="hs"'].forEach((part) => {
-    assert.ok(main.includes(part), `the handshake section is missing ${part}`);
+  ['Innovate beyond <em>the ask.</em>', 'We are wholesale brokers and technologists.'].forEach((part) => {
+    assert.ok(main.includes(part), `the landing hero is missing ${part}`);
   });
-  assert.ok(!main.includes('The tools turn.'), 'the handshake section still carries the line Alicia cut');
+  assert.ok(!main.includes('The tools turn.'), 'the landing page still carries the line Alicia cut');
+  assert.ok(!main.includes('id="hs"'), 'the landing hero still carries a graphic');
   assert.deepEqual(
     [...main.matchAll(/<a class="way" id="([^"]+)" href="([^"]+)">/g)].map((m) => [m[1], m[2]]),
     [

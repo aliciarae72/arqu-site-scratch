@@ -3,8 +3,8 @@ const assert = require('node:assert/strict');
 const { openPage, scrollToSelector } = require('./test/page-harness');
 
 async function drawn(t) {
-  const opened = await openPage(t);
-  await scrollToSelector(opened.page, '#human', 60);
+  const opened = await openPage(t, { url: 'about.html' });
+  await scrollToSelector(opened.page, '#hs', 120);
   await opened.page.waitForFunction(
     () => {
       const svg = document.getElementById('hs');
@@ -101,10 +101,10 @@ test('hovering makes the two figures high-five: both arms swing up about their s
 });
 
 test('under reduced motion the orbit dots are visible, not stuck at opacity 0', async (t) => {
-  const { page } = await openPage(t);
+  const { page } = await openPage(t, { url: 'about.html' });
   await page.emulateMedia({ reducedMotion: 'reduce' });
   await page.reload();
-  await scrollToSelector(page, '#human', 60);
+  await scrollToSelector(page, '#hs', 120);
   const opacities = await page
     .waitForFunction(
       () => {
@@ -119,8 +119,8 @@ test('under reduced motion the orbit dots are visible, not stuck at opacity 0', 
 });
 
 test('a hover that lands during the opening shake still gets its high-five once the shake ends', async (t) => {
-  const { page } = await openPage(t);
-  await scrollToSelector(page, '#human', 60);
+  const { page } = await openPage(t, { url: 'about.html' });
+  await scrollToSelector(page, '#hs', 120);
   // the opening shake shears the forearms; catch it mid-move
   await page.waitForFunction(
     () => /^matrix\(1 -?[\d.e-]*[1-9]/.test(document.getElementById('hs-p5').getAttribute('transform') || ''),
