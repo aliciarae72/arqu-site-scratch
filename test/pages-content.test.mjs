@@ -18,7 +18,8 @@ const texts = (html, re) =>
   );
 
 test('programs.html opens on a dashboard of what a book review imports', () => {
-  const dash = PROGRAMS.slice(PROGRAMS.indexOf('<figure class="dash'), PROGRAMS.indexOf('</figure>'));
+  const start = PROGRAMS.indexOf('<figure class="dash');
+  const dash = PROGRAMS.slice(start, PROGRAMS.indexOf('</figure>', start));
   assert.deepEqual(texts(dash, /<div class="dash-tile">([\s\S]*?)<\/div>/g), [
     '500SOVs imported',
     '729Loss runs imported',
