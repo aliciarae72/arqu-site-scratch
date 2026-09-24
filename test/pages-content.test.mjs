@@ -10,7 +10,12 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const read = (page) => readFileSync(join(ROOT, page), 'utf8');
 const PROGRAMS = read('programs.html');
 const MARKET = read('open-market.html');
-const texts = (html, re) => [...html.matchAll(re)].map((m) => m[1].replace(/<[^>]+>/g, '').replace(/&middot;/g, '·'));
+const ENTITIES = { '&middot;': '·', '&gt;': '>', '&lt;': '<', '&amp;': '&' };
+// The text of each match, tags stripped and the entities the pages use decoded.
+const texts = (html, re) =>
+  [...html.matchAll(re)].map((m) =>
+    m[1].replace(/<[^>]+>/g, '').replace(/&(?:middot|gt|lt|amp);/g, (e) => ENTITIES[e]),
+  );
 
 test('programs.html opens on a dashboard of what a book review imports', () => {
   const dash = PROGRAMS.slice(PROGRAMS.indexOf('<figure class="dash'), PROGRAMS.indexOf('</figure>'));
@@ -26,7 +31,7 @@ test('programs.html opens on a dashboard of what a book review imports', () => {
 test("programs.html carries the one-pager in the site's own layout", () => {
   assert.ok(PROGRAMS.includes('Your best book deserves a <em>program</em>, not another remarket.'));
   const figures = PROGRAMS.slice(PROGRAMS.indexOf('<div class="figures'), PROGRAMS.indexOf('<div class="audiences">'));
-  assert.deepEqual(texts(figures, /<h3>([^<]+)<\/h3>/g), ['$30B+', '&gt;30 days', 'One form']);
+  assert.deepEqual(texts(figures, /<h3>([^<]+)<\/h3>/g), ['$30B+', '>30 days', 'One form']);
   assert.deepEqual(texts(PROGRAMS, /<div class="how-head"><h3>([^<]+)<\/h3>/g), [
     'Your book today',
     'Inside an arqu program',

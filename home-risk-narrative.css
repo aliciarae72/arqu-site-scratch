@@ -1,6 +1,6 @@
 /* ---- risk narrative: the heading on the left, the slides on the right; each slide keeps its read with its visual ---- */
 .rn{padding-top:34px;margin-top:10px;display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:clamp(28px,4vw,64px);align-items:start}
-.rn-head{max-width:62ch;position:sticky;top:110px}
+.rn-head{max-width:62ch}
 .rn-head h3{font-family:var(--font-display);font-size:clamp(28px,4.4vw,46px);line-height:1.06;font-weight:400;font-style:normal;letter-spacing:-.02em;margin:8px 0 12px;max-width:18ch}
 .rn-lede{color:var(--ink-2);font-size:16px}
 /* pan-y keeps the page scrolling vertically while leaving the horizontal drag to the
@@ -68,7 +68,8 @@
 .rn-pip:hover{background:var(--ink-3)}
 .rn-pip[aria-selected="true"]{width:36px;background:var(--purple-deep)}
 .rn-count{margin-left:10px;font-family:var(--font-mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
-@media (max-width:980px){.rn{grid-template-columns:1fr}.rn-head{position:static}}
+@media (min-width:981px){.rn-head{position:sticky;top:110px}}
+@media (max-width:980px){.rn{grid-template-columns:1fr}}
 /* every slide's figure is one fixed height, so paging never moves the arrows */
 .rn{--vis-h:600px}
 .rn-vis--figure > figure{height:var(--vis-h);display:flex;flex-direction:column;overflow:hidden}

@@ -27,6 +27,7 @@
 .figures{display:grid;grid-template-columns:repeat(3,1fr);gap:0 clamp(28px,3vw,48px);margin-top:clamp(36px,4vw,52px)}
 .figures .node:nth-child(1){--mk-n:1}
 .figures .node:nth-child(2){--mk-n:2}
+.figures .node:nth-child(3){--mk-n:3}
 .figures .node h3{font-size:clamp(34px,4vw,50px);font-style:normal;color:var(--purple-deep);font-variant-numeric:lining-nums}
 
 .pg-build{margin-top:clamp(64px,8vw,104px)}
