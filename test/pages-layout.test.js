@@ -98,11 +98,10 @@ test('open-market.html: the hero bars grow in, then the highlight moves from yea
         (bar) => getComputedStyle(bar).backgroundColor === 'rgb(94, 84, 200)',
       ),
     );
-  const grown = await page.evaluate(() =>
-    [...document.querySelectorAll('.rh-col i')].every((bar) =>
-      bar.getAnimations().some((a) => a.animationName === 'rh-grow'),
-    ),
-  );
+  const grown = await page.evaluate(() => {
+    const bars = [...document.querySelectorAll('.rh-col i')];
+    return bars.length === 5 && bars.every((bar) => bar.getAnimations().some((a) => a.animationName === 'rh-grow'));
+  });
   assert.ok(grown, 'a hero bar does not grow in');
   const seen = new Set();
   const end = Date.now() + 6000;

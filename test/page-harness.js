@@ -47,9 +47,15 @@ async function openPage(t, { url = 'home.html', width = 1440, height = 900 } = {
   return { page, errors };
 }
 
+// The site scrolls smoothly, so a plain scrollTo returns mid-glide and keeps moving under
+// the next action. The jump is instant here, and the page has arrived when this returns.
 async function scrollToSelector(page, selector, offset = 80) {
   await page.evaluate(
-    ([sel, off]) => window.scrollTo(0, document.querySelector(sel).getBoundingClientRect().top + window.scrollY - off),
+    ([sel, off]) =>
+      window.scrollTo({
+        top: document.querySelector(sel).getBoundingClientRect().top + window.scrollY - off,
+        behavior: 'instant',
+      }),
     [selector, offset],
   );
 }

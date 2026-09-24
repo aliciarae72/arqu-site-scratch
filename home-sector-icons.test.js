@@ -24,7 +24,7 @@ test('the Open market page heads each column with a hand-drawn icon instead of t
   const { page, errors } = await openPage(t, { url: 'open-market.html' });
   await scrollToSelector(page, '#flow-market .branches', 140);
   const icon = { purple: 1, inked: true, aboveHeading: true, dotAndRule: false };
-  const allInked = (cols) => cols.every((c) => c.inked);
+  const allInked = (cols) => cols.every((c) => c.strokes > 0 && c.inked);
   assert.deepEqual(await settle(() => columns(page), allInked), [
     { ...icon, icon: 'construction', strokes: 9 },
     { ...icon, icon: 'realEstate', strokes: 12 },
