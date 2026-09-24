@@ -31,9 +31,10 @@ test('programs.html opens on a dashboard of what a book review imports', () => {
 // panels the Open market audiences use, counted steps, and a closing call.
 test("programs.html carries the one-pager in the site's own layout", () => {
   assert.ok(PROGRAMS.includes('Your best book deserves a <em>program</em>, not another remarket.'));
-  const figures = PROGRAMS.slice(PROGRAMS.indexOf('<div class="figures'), PROGRAMS.indexOf('<div class="audiences">'));
+  const figures = PROGRAMS.slice(PROGRAMS.indexOf('<div class="figures'), PROGRAMS.indexOf('<div class="book-data'));
   assert.deepEqual(texts(figures, /<h3>([^<]+)<\/h3>/g), ['$30B+', '>30 days', 'One form']);
   assert.deepEqual(texts(PROGRAMS, /<div class="how-head"><h3>([^<]+)<\/h3>/g), [
+    'Your book, read as one',
     'Your book today',
     'Inside an arqu program',
     'What we build around your book',
@@ -72,6 +73,35 @@ test('open-market.html: the risk-narrative heading is editable and the closing l
 test('open-market.html: the audience sections are named for their reader, with no handwritten label', () => {
   assert.deepEqual(texts(MARKET, /<div class="how-head">([\s\S]*?)<\/div>/g), ['For Retailers', 'For Underwriters']);
   assert.equal((MARKET.match(/class="steps steps-stack"/g) || []).length, 2);
+});
+
+test('open-market.html opens on an annotated narrative sheet, not a dashboard', () => {
+  assert.ok(MARKET.includes('<figure class="sheet'), 'the hero has no narrative sheet');
+  assert.ok(!MARKET.includes('class="dash'), 'the hero still carries the dashboard');
+  const notes = MARKET.slice(
+    MARKET.indexOf('<ul class="sheet-notes">'),
+    MARKET.indexOf('</ul>', MARKET.indexOf('<ul class="sheet-notes">')),
+  );
+  assert.deepEqual(texts(notes, /<li>([^<]+)<\/li>/g), [
+    'the story behind the SOV',
+    'loss history, in context',
+    'mitigation, up front',
+  ]);
+});
+
+test('programs.html reads a sample book four ways, labelled as illustrative, each bar drawn to its figure', () => {
+  const start = PROGRAMS.indexOf('<div class="book-data');
+  const data = PROGRAMS.slice(start, PROGRAMS.indexOf('<div class="audiences">', start));
+  assert.match(data, /Sample book &middot; illustrative figures/);
+  assert.deepEqual(
+    texts(data, /<figcaption>([^<]+)<\/figcaption>/g).map((c) => c.split(' · ')[0]),
+    ['TIV by class', 'Loss ratio by year', 'CAT exposure', 'Limits'],
+  );
+  const percentRows = [...data.matchAll(/--w:(\d+)%"><\/i><b>(\d+)%<\/b>/g)];
+  assert.equal(percentRows.length, 15);
+  percentRows.forEach(([, width, shown]) => {
+    assert.equal(width, shown, `a bar drawn at ${width}% says ${shown}%`);
+  });
 });
 
 test('no page carries the footer blurb', () => {

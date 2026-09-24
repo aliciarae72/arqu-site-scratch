@@ -38,10 +38,40 @@
 .pg-close{margin:clamp(72px,9vw,120px) auto 0;max-width:780px;text-align:center}
 .pg-close h2{font-size:clamp(28px,3.8vw,46px);line-height:1.1}
 
+/* open market splash: a narrative page with the underwriter's notes in the margin */
+.sheet{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center}
+.sheet-page{display:flex;flex-direction:column;gap:11px;background:var(--surface);border:1px solid var(--line-2);border-radius:14px;
+  padding:clamp(20px,2.4vw,30px);box-shadow:0 1px 2px rgba(34,31,32,.05),0 30px 60px -36px rgba(94,84,200,.45);transform:rotate(-1.2deg)}
+.sheet-kicker{font:9.5px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep)}
+.sheet-title{font-family:var(--font-display);font-style:italic;font-size:clamp(20px,2vw,26px);line-height:1.2;margin-bottom:4px}
+.sheet .ln{display:block;height:7px;border-radius:4px;background:var(--line)}
+.sheet .ln-short{width:62%}
+.sheet .ln-mark{background:var(--tint-2);box-shadow:inset 0 -2px 0 var(--purple)}
+.sheet-bars{display:flex;align-items:flex-end;gap:8px;height:64px;padding:6px 0 2px;border-bottom:1px solid var(--line)}
+.sheet-bars i{flex:1;height:var(--h);border-radius:4px 4px 1px 1px;background:var(--line-2)}
+.sheet-bars i:nth-child(3){background:var(--purple)}
+.sheet-notes{list-style:none;margin:0;padding:0;display:grid;gap:34px;font-family:var(--font-hand);font-size:22px;line-height:1.1;color:var(--purple-deep)}
+.sheet-notes li{position:relative;padding-left:26px;max-width:12ch}
+.sheet-notes li::before{content:"";position:absolute;left:0;top:.55em;width:18px;border-top:1.5px solid var(--purple)}
+
+/* the book-review data: four small bar lists that read the sample book as one */
+.book-data{margin-top:clamp(56px,7vw,88px)}
+.bd-note{font:9.5px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.bd-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(16px,2vw,24px)}
+.bd-panel{margin:0;background:var(--surface);border:1px solid var(--line-2);border-radius:14px;padding:clamp(18px,2vw,24px)}
+.bd-panel figcaption{font:10px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep);margin-bottom:14px}
+.bd-panel ul{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+.bd-panel li{display:grid;grid-template-columns:130px minmax(0,1fr) 52px;align-items:center;gap:10px;font-size:14px;color:var(--ink-2)}
+.bd-panel li i{height:8px;border-radius:4px;background:linear-gradient(var(--purple),var(--purple)) 0 0/var(--w) 100% no-repeat,var(--tint)}
+.bd-panel li b{font-weight:400;text-align:right;font-variant-numeric:lining-nums tabular-nums;color:var(--ink)}
+
 @media (max-width:1000px) and (min-width:861px){.steps-5{--steps-cols:2}}
 @media (max-width:860px){
   .hero-split{min-height:0}
   .figures{grid-template-columns:1fr}
+  .bd-grid{grid-template-columns:1fr}
+  .sheet{grid-template-columns:1fr}
+  .sheet-notes{grid-auto-flow:column;gap:14px;font-size:18px}
   .steps-5{--steps-cols:1}
 }
 
