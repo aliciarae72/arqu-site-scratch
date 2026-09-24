@@ -116,9 +116,10 @@ test('programs.html reads a sample book four ways, labelled as illustrative, eac
   });
 });
 
-test('open-market.html and programs.html both carry the values section, word for word', () => {
-  [MARKET, PROGRAMS].forEach((page) => {
-    const values = page.slice(page.indexOf('<section id="values"'), page.indexOf('<section id="contact"'));
+test('home, open market and programs each carry the values section, word for word', () => {
+  [read('home.html'), MARKET, PROGRAMS].forEach((page) => {
+    const start = page.indexOf('<section id="values"');
+    const values = page.slice(start, page.indexOf('</section>', start));
     assert.deepEqual(texts(values, /<p class="eyebrow">([^<]+)<\/p>/g), ['Our values']);
     assert.deepEqual(texts(values, /<h2 id="values-title">([^<]+)<\/h2>/g), ['Service is our product']);
     assert.deepEqual(texts(values, /<h3>([^<]+)<\/h3>/g), ['Expertise', 'Execution', 'Innovation']);

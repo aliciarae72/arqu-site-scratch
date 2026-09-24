@@ -202,3 +202,9 @@ footer small{display:block;font-family:var(--font-mono);font-size:10.5px;letter-
     radial-gradient(circle 2.1px at 2.5px 50%,var(--purple-deep) 95%,rgba(94,84,200,0) 100%) 20px 0/10px 100% no-repeat,
     linear-gradient(var(--line-2),var(--line-2)) 36px 50%/100% 1px no-repeat}
 
+.values{padding-bottom:clamp(80px,10vw,128px)}
+.values h2{font-size:clamp(46px,6vw,80px);line-height:1;letter-spacing:-.03em;margin-top:10px}
+.val-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:0 clamp(28px,4vw,72px);margin-top:clamp(36px,4vw,52px)}
+.val-grid .node h3{font-size:clamp(28px,2.8vw,36px);color:var(--ink)}
+.val-grid .node p{font-size:clamp(17px,1.5vw,19px);line-height:1.75}
+@media (max-width:860px){.val-grid{grid-template-columns:1fr}}
