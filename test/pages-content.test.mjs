@@ -17,7 +17,7 @@ const texts = (html, re) =>
     m[1].replace(/<[^>]+>/g, '').replace(/&(?:middot|gt|lt|amp);/g, (e) => ENTITIES[e]),
   );
 
-test('programs.html opens on the loss-zoom figure, labelled illustrative, with its key and Replay', () => {
+test('programs.html opens on the loss-zoom chart, labelled illustrative, with its key and Replay', () => {
   const start = PROGRAMS.indexOf('<figure class="book-zoom');
   assert.ok(start > 0, 'the hero has no book-zoom figure');
   const fig = PROGRAMS.slice(start, PROGRAMS.indexOf('</figure>', start));
@@ -33,9 +33,14 @@ test('programs.html opens on the loss-zoom figure, labelled illustrative, with i
   ]) {
     assert.ok(fig.includes(hook), `the figure has no ${hook}`);
   }
-  assert.deepEqual(texts(fig, /<\/i>([^<]+)<\/span>/g), ['Dot area is the loss', 'No loss']);
+  assert.deepEqual(texts(fig, /<\/i>([^<]+)<\/span>/g), ['One account; dot area is the loss', 'No loss']);
   assert.ok(!PROGRAMS.includes('class="dash'), 'the old dashboard is still on the page');
-  assert.ok(PROGRAMS.includes('<script src="home-book-zoom.js"></script>'));
+  assert.ok(
+    PROGRAMS.includes(
+      '<script src="home-book-data.js"></script>\n<script src="home-book-axes.js"></script>\n<script src="home-book-zoom.js"></script>',
+    ),
+    'the chart scripts are missing or out of order',
+  );
 });
 
 // The one-pager's substance, set in the site's own parts: dot-marked figures, the paired

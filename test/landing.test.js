@@ -36,7 +36,7 @@ test('old home.html deep links land on the page that now holds their flow', asyn
   });
 });
 
-test('the hero mark: three dots, then dashes that run past the right edge and keep moving', async (t) => {
+test('the hero mark sits above the copy, draws in once on load, then holds still', async (t) => {
   const { page, errors } = await openPage(t);
   const read = () =>
     page.evaluate(() => {
@@ -44,25 +44,30 @@ test('the hero mark: three dots, then dashes that run past the right edge and ke
       const run = mark.querySelector('.motif-run');
       const box = run.getBoundingClientRect();
       const dots = [...mark.querySelectorAll('i')].map((i) => i.getBoundingClientRect());
-      const names = (el) => el.getAnimations().map((a) => a.animationName);
+      const names = (el) => el.getAnimations().map((a) => [a.animationName, a.effect.getComputedTiming().iterations]);
       return {
         hidden: mark.getAttribute('aria-hidden'),
         dots: dots.length,
         dotsFirst: dots.every((d) => d.right < box.left),
+        aboveCopy:
+          mark.getBoundingClientRect().bottom < document.querySelector('#intro .g-kicker').getBoundingClientRect().top,
+        stroke: getComputedStyle(run).height,
         reachesEdge: box.right >= document.documentElement.clientWidth,
         scrollsSideways: document.documentElement.scrollWidth > document.documentElement.clientWidth,
         runAnimations: names(run),
         dotAnimations: names(mark.querySelector('i')),
       };
     });
-  assert.deepEqual(await settle(read, (m) => m.runAnimations.length === 2), {
+  assert.deepEqual(await settle(read, (m) => m.runAnimations.length === 1), {
     hidden: 'true',
     dots: 3,
     dotsFirst: true,
+    aboveCopy: true,
+    stroke: '1px',
     reachesEdge: true,
     scrollsSideways: false,
-    runAnimations: ['mo-draw', 'mo-march'],
-    dotAnimations: ['mo-dot', 'mo-pulse'],
+    runAnimations: [['mo-draw', 1]],
+    dotAnimations: [['mo-dot', 1]],
   });
   assert.deepEqual(errors, []);
 });

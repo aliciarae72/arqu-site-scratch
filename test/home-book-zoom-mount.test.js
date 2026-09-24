@@ -27,6 +27,9 @@ class Element {
   addEventListener(type, fn) {
     this.listeners[type] = fn;
   }
+  replaceChildren(...nodes) {
+    this.children = nodes;
+  }
 }
 
 function makePage({ reduced = false } = {}) {
@@ -41,7 +44,11 @@ function makePage({ reduced = false } = {}) {
   const frames = [];
   const observers = [];
   let now = 0;
+  const listeners = {};
   const win = {
+    addEventListener: (type, fn) => {
+      listeners[type] = fn;
+    },
     performance: { now: () => now },
     requestAnimationFrame: (fn) => frames.push(fn),
     matchMedia: (query) => ({ matches: reduced && query === '(prefers-reduced-motion: reduce)' }),
@@ -63,7 +70,7 @@ function makePage({ reduced = false } = {}) {
     now = at;
     for (const fn of frames.splice(0)) fn(at);
   };
-  return { doc, win, fig, parts, frames, observers, paint };
+  return { doc, win, fig, parts, frames, observers, paint, listeners };
 }
 
 const state = ({ fig, parts }) => ({
@@ -76,8 +83,19 @@ const state = ({ fig, parts }) => ({
 test('mount draws every account and labels the stage with the whole story', () => {
   const page = makePage();
   zoom.mount(page.doc, page.win);
-  assert.equal(page.parts.svg.children.length, 240);
-  assert.equal(page.parts.svg.children.filter((c) => /bz-focus/.test(c.getAttribute('class'))).length, 1);
+  const [axesLayer, plot] = page.parts.svg.children;
+  assert.deepEqual([axesLayer.getAttribute('class'), plot.getAttribute('class')], ['bz-axes', 'bz-plot']);
+  assert.equal(plot.children.length, 240);
+  assert.equal(plot.children.filter((c) => /bz-focus/.test(c.getAttribute('class'))).length, 1);
+  assert.equal(page.parts.svg.getAttribute('viewBox'), '0 0 500 400');
+  assert.deepEqual(
+    ['x', 'y', 'width', 'height'].map((k) => plot.getAttribute(k)),
+    ['50', '28', '436', '328'],
+  );
+  assert.ok(
+    axesLayer.children.some((c) => c.textContent === 'Premium →'),
+    'the axes are not drawn',
+  );
   assert.equal(page.parts.stage.getAttribute('aria-label'), zoom.describe(zoom.scene()));
 });
 
@@ -138,4 +156,14 @@ test('mount fails loudly when the figure is missing', () => {
     () => zoom.mount({ ...page.doc, querySelector: () => null }, page.win),
     /\[data-book-zoom\] is missing from the page/,
   );
+});
+
+test('a resize repaints the chart at the moment it was showing', () => {
+  const page = makePage({ reduced: true });
+  zoom.mount(page.doc, page.win);
+  const [axesLayer] = page.parts.svg.children;
+  axesLayer.children = [];
+  page.listeners.resize();
+  assert.equal(state(page).ratio, '27%');
+  assert.ok(axesLayer.children.length > 0, 'the resize did not redraw the axes');
 });

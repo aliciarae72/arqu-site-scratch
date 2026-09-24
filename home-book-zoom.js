@@ -1,100 +1,57 @@
-/* The Programs hero: a sample book as a dot chart, one dot per account, each dot's
-   area drawn to its incurred loss. The camera opens on the worst loss and pulls
-   back to the whole book, and the readout is the loss ratio of what is in frame. */
+/* The Programs hero: a sample book as an x/y dot chart, premium across and loss
+   ratio up, each dot's area drawn to its incurred loss. The camera opens on the
+   worst loss and pulls back to the whole book; the readout is the loss ratio of
+   what is in frame, and the axes relabel for whatever the camera shows. */
 (() => {
-  const SVG_NS = 'http://www.w3.org/2000/svg';
-  const ACCOUNTS = 240;
-  const SEED = 20260924;
-  const FOCUS_LOSS_RATIO = 0.87;
-  const FOCUS_PREMIUM = 1200000;
-  const LOSS_FREE_SHARE = 0.3;
-  /* one unit of radius per this many dollars of loss, square-rooted so area tracks dollars */
-  const RADIUS_PER_ROOT_DOLLAR = 0.04;
-  const LOSS_FREE_RADIUS = 2.2;
-  const GAP = 1.6;
-  const SPIRAL_PITCH = 1.2;
-  const ASPECT = 1.25;
+  const node = typeof module === 'object' && module.exports;
+  const data = node ? require('./home-book-data.js') : window.arquBookData;
+  const axes = node ? require('./home-book-axes.js') : window.arquBookAxes;
+  const { lossRatio, percent } = data;
+  /* radius in plot units per root dollar of loss, so area tracks dollars */
+  const RADIUS_PER_ROOT_DOLLAR = 0.042;
+  const LOSS_FREE_RADIUS = 3;
   const HOLD_MS = 1400;
   const ZOOM_MS = 3800;
-
-  /* mulberry32: a seeded generator, so the sample book is the same on every load */
-  function seededRandom(seed) {
-    let state = seed >>> 0;
-    return () => {
-      state = (state + 0x6d2b79f5) >>> 0;
-      let t = state;
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
-  }
-
-  /* The first account is the focus: the book's single worst loss. */
-  function buildBook(seed = SEED, count = ACCOUNTS) {
-    const random = seededRandom(seed);
-    const book = [{ premium: FOCUS_PREMIUM, loss: Math.round(FOCUS_PREMIUM * FOCUS_LOSS_RATIO), focus: true }];
-    for (let i = 1; i < count; i++) {
-      const premium = Math.round(40000 * Math.exp(random() * 2.3));
-      const hit = random() >= LOSS_FREE_SHARE;
-      const loss = hit ? Math.round(premium * random() * 0.75) : 0;
-      book.push({ premium, loss, focus: false });
-    }
-    return book;
-  }
-
-  function lossRatio(accounts) {
-    const premium = accounts.reduce((sum, a) => sum + a.premium, 0);
-    const loss = accounts.reduce((sum, a) => sum + a.loss, 0);
-    return premium ? loss / premium : 0;
-  }
+  const FALLBACK_SIZE = { width: 500, height: 400 };
+  /* room around the plot for the tick labels and axis titles, in screen pixels */
+  const MARGIN = { left: 50, right: 14, top: 28, bottom: 44 };
 
   function radiusOf(account) {
     return account.loss ? Math.sqrt(account.loss) * RADIUS_PER_ROOT_DOLLAR : LOSS_FREE_RADIUS;
   }
 
-  /* Largest first, each dot at the next point along a spiral out from the centre where
-     it touches nothing already placed. The search never turns back, so no small dot
-     tucks in beside the worst loss, and every step out takes in smaller losses. */
-  function packDots(book) {
-    const order = book.map((account, index) => ({ account, index, r: radiusOf(account) }));
-    order.sort((a, b) => b.r - a.r || a.index - b.index);
-    const placed = [];
-    let angle = 0;
-    for (const dot of order) {
-      for (;;) {
-        const distance = angle * SPIRAL_PITCH;
-        const x = Math.cos(angle) * distance;
-        const y = Math.sin(angle) * distance;
-        if (placed.every((p) => Math.hypot(p.x - x, p.y - y) >= p.r + dot.r + GAP)) {
-          placed.push({ ...dot, x, y });
-          break;
-        }
-        angle += 0.6 / Math.max(distance, 4);
-      }
-    }
-    return placed;
+  /* one dot per account, by premium and loss ratio; largest drawn first so no small dot hides, the focus last */
+  function placeDots(book) {
+    const dots = book.map((account, index) => ({
+      account,
+      index,
+      x: axes.plotX(account.premium),
+      y: axes.plotY(account.loss / account.premium),
+      r: radiusOf(account),
+    }));
+    return dots.sort((a, b) => Number(a.account.focus) - Number(b.account.focus) || b.r - a.r || a.index - b.index);
   }
 
-  /* the frame at ASPECT that holds a set of dots, with a margin */
-  function frameAround(dots, margin) {
+  /* the frame of this aspect that holds a set of dots, with a margin */
+  function frameAround(dots, margin, aspect) {
     const left = Math.min(...dots.map((d) => d.x - d.r));
     const right = Math.max(...dots.map((d) => d.x + d.r));
     const top = Math.min(...dots.map((d) => d.y - d.r));
     const bottom = Math.max(...dots.map((d) => d.y + d.r));
-    const height = Math.max(bottom - top, (right - left) / ASPECT) * margin;
-    return { cx: (left + right) / 2, cy: (top + bottom) / 2, width: height * ASPECT, height };
+    const height = Math.max(bottom - top, (right - left) / aspect) * margin;
+    return { cx: (left + right) / 2, cy: (top + bottom) / 2, width: height * aspect, height };
   }
 
-  /* Centre moves linearly, size geometrically, so each moment of the pull-back feels the same speed. */
-  function frameAt(progress, from, to) {
-    const scale = (to.height / from.height) ** progress;
-    const height = from.height * scale;
-    return {
-      cx: from.cx + (to.cx - from.cx) * progress,
-      cy: from.cy + (to.cy - from.cy) * progress,
-      width: height * ASPECT,
-      height,
-    };
+  /* Size changes geometrically, so each moment of the pull-back feels the same speed. The
+     anchor (the focus dot) glides linearly from its place in `from` to its place in `to`,
+     measured as a share of the frame, so it never leaves the frame on the way out. */
+  function frameAt(progress, from, to, anchor) {
+    const height = from.height * (to.height / from.height) ** progress;
+    const width = (height * from.width) / from.height;
+    const share = (frame, axis, size) => (anchor[axis] - frame[`c${axis}`]) / frame[size];
+    const sx = share(from, 'x', 'width') + (share(to, 'x', 'width') - share(from, 'x', 'width')) * progress;
+    const sy = share(from, 'y', 'height') + (share(to, 'y', 'height') - share(from, 'y', 'height')) * progress;
+    return { cx: anchor.x - sx * width, cy: anchor.y - sy * height, width, height };
   }
 
   function inFrame(dots, frame) {
@@ -114,27 +71,17 @@
     return easeInOut(Math.min(1, Math.max(0, (elapsed - HOLD_MS) / ZOOM_MS)));
   }
 
-  function percent(ratio) {
-    return `${Math.round(ratio * 100)}%`;
-  }
-
   function readout(visible, total) {
     const n = visible.length;
     const who = n === total ? `Whole book · ${n} accounts` : n === 1 ? 'One account' : `${n} accounts in view`;
     return { who, ratio: percent(lossRatio(visible.map((d) => d.account))) };
   }
 
-  function svgElement(doc, name, attrs) {
-    const el = doc.createElementNS(SVG_NS, name);
-    for (const key of Object.keys(attrs)) el.setAttribute(key, attrs[key]);
-    return el;
-  }
-
-  function drawDots(doc, svg, dots) {
+  function drawDots(doc, plot, dots) {
     for (const d of dots) {
       const kind = d.account.focus ? 'bz-dot bz-focus' : d.account.loss ? 'bz-dot' : 'bz-dot bz-clean';
-      svg.appendChild(
-        svgElement(doc, 'circle', { class: kind, cx: d.x.toFixed(2), cy: d.y.toFixed(2), r: d.r.toFixed(2) }),
+      plot.appendChild(
+        axes.svgElement(doc, 'circle', { class: kind, cx: d.x.toFixed(2), cy: d.y.toFixed(2), r: d.r.toFixed(2) }),
       );
     }
   }
@@ -145,17 +92,36 @@
     return [x, y, frame.width, frame.height].map((v) => v.toFixed(2)).join(' ');
   }
 
-  function scene(book = buildBook()) {
-    const dots = packDots(book);
+  /* the plot's box inside the figure's svg, leaving MARGIN for the axes */
+  function plotRect(size) {
+    return {
+      x: MARGIN.left,
+      y: MARGIN.top,
+      w: size.width - MARGIN.left - MARGIN.right,
+      h: size.height - MARGIN.top - MARGIN.bottom,
+    };
+  }
+
+  /* Start and end frames depend on the plot's aspect, so they are made per screen shape. */
+  function scene(book = data.buildBook()) {
+    const dots = placeDots(book);
     const focus = dots.find((d) => d.account.focus);
-    return { book, dots, start: frameAround([focus], 1.08), end: frameAround(dots, 1.04) };
+    const frames = new Map();
+    const framesFor = (aspect) => {
+      const key = aspect.toFixed(3);
+      if (!frames.has(key)) {
+        frames.set(key, { start: frameAround([focus], 1.5, aspect), end: frameAround(dots, 1.06, aspect) });
+      }
+      return frames.get(key);
+    };
+    return { book, dots, focus, framesFor, bookRatio: lossRatio(book) };
   }
 
   function describe(sc) {
     const focus = sc.book.find((a) => a.focus);
     return (
-      `Sample book of ${sc.book.length} accounts, one dot per account, each dot sized to its incurred loss. ` +
-      `The worst account's loss ratio is ${percent(lossRatio([focus]))}; the whole book's is ${percent(lossRatio(sc.book))}.`
+      `Sample book of ${sc.book.length} accounts, plotted by premium and loss ratio, each dot sized to its incurred loss. ` +
+      `The worst account's loss ratio is ${percent(lossRatio([focus]))}; the whole book's is ${percent(sc.bookRatio)}.`
     );
   }
 
@@ -181,68 +147,84 @@
     watch.observe(el);
   }
 
+  function sizeOf(svg) {
+    const box = svg.getBoundingClientRect ? svg.getBoundingClientRect() : FALLBACK_SIZE;
+    return box.width && box.height ? { width: box.width, height: box.height } : FALLBACK_SIZE;
+  }
+
+  /* Builds the chart inside the figure's svg; returns a painter for any moment of the zoom. */
+  function chart(doc, fig, sc) {
+    const svg = fig.querySelector('[data-bz-svg]');
+    const layer = svg.appendChild(axes.svgElement(doc, 'g', { class: 'bz-axes' }));
+    const plot = svg.appendChild(axes.svgElement(doc, 'svg', { class: 'bz-plot', preserveAspectRatio: 'none' }));
+    drawDots(doc, plot, sc.dots);
+    const parts = ['ratio', 'who', 'note'].map((k) => fig.querySelector(`[data-bz-${k}]`));
+    return (progress) => {
+      const size = sizeOf(svg);
+      const rect = plotRect(size);
+      const { start, end } = sc.framesFor(rect.w / rect.h);
+      const frame = frameAt(progress, start, end, sc.focus);
+      svg.setAttribute('viewBox', `0 0 ${size.width} ${size.height}`);
+      for (const [k, v] of Object.entries({ x: rect.x, y: rect.y, width: rect.w, height: rect.h }))
+        plot.setAttribute(k, v);
+      plot.setAttribute('viewBox', viewBox(frame));
+      axes.drawAxes(doc, layer, frame, rect, sc.bookRatio);
+      const read = readout(inFrame(sc.dots, frame), sc.book.length);
+      const phase = phaseOf(progress);
+      [parts[0].textContent, parts[1].textContent, parts[2].textContent] = [read.ratio, read.who, NOTES[phase]];
+      fig.setAttribute('data-phase', phase);
+    };
+  }
+
   /* Plays once when the figure first comes into view; Replay runs it again. */
   function mount(doc, win) {
     const fig = doc.querySelector('[data-book-zoom]');
     if (!fig) throw new Error('home-book-zoom: [data-book-zoom] is missing from the page');
-    const svg = fig.querySelector('[data-bz-svg]');
-    const ratio = fig.querySelector('[data-bz-ratio]');
-    const who = fig.querySelector('[data-bz-who]');
-    const note = fig.querySelector('[data-bz-note]');
     const replay = fig.querySelector('[data-bz-replay]');
     const sc = scene();
-    drawDots(doc, svg, sc.dots);
     fig.querySelector('[data-bz-stage]').setAttribute('aria-label', describe(sc));
-
-    function show(progress) {
-      const frame = frameAt(progress, sc.start, sc.end);
-      svg.setAttribute('viewBox', viewBox(frame));
-      const read = readout(inFrame(sc.dots, frame), sc.book.length);
-      ratio.textContent = read.ratio;
-      who.textContent = read.who;
-      const phase = phaseOf(progress);
-      fig.setAttribute('data-phase', phase);
-      note.textContent = NOTES[phase];
-    }
-
+    const show = chart(doc, fig, sc);
+    let shown = 0;
     let run = 0;
+    const paint = (progress) => {
+      shown = progress;
+      show(progress);
+    };
     function play() {
       const id = ++run;
       const began = win.performance.now();
       const tick = (now) => {
         if (id !== run) return;
         const progress = progressAt(now - began);
-        show(progress);
+        paint(progress);
         if (progress < 1) win.requestAnimationFrame(tick);
       };
       win.requestAnimationFrame(tick);
     }
-
+    win.addEventListener('resize', () => show(shown));
     if (win.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      show(1);
+      paint(1);
       replay.hidden = true;
       return;
     }
-    show(0);
+    paint(0);
     replay.addEventListener('click', play);
     onceHalfSeen(win, fig, play);
   }
 
   const api = {
-    buildBook,
-    lossRatio,
-    packDots,
+    placeDots,
     frameAround,
     frameAt,
     inFrame,
     progressAt,
     readout,
+    plotRect,
     scene,
     describe,
-    drawDots,
     viewBox,
     mount,
   };
-  if (typeof module === 'object' && module.exports) module.exports = api;
+  if (node) module.exports = api;
   else api.mount(document, window);
 })();

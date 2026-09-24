@@ -71,6 +71,8 @@ const LOAD_ORDER = {
       'home-hand.js',
       'home-hand-marks.js',
       'home-ambient.js',
+      'home-book-data.js',
+      'home-book-axes.js',
       'home-book-zoom.js',
       'arqu-edit-layer.js',
     ],

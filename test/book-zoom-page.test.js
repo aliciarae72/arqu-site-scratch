@@ -11,7 +11,9 @@ const readFigure = (page) =>
       ratio: fig.querySelector('[data-bz-ratio]').textContent,
       who: fig.querySelector('[data-bz-who]').textContent,
       dots: fig.querySelectorAll('circle').length,
-      width: fig.querySelector('[data-bz-svg]').viewBox.baseVal.width,
+      width: fig.querySelector('.bz-plot').viewBox.baseVal.width,
+      ticks: [...fig.querySelectorAll('.bz-label')].map((t) => t.textContent),
+      card: getComputedStyle(fig).borderTopStyle !== 'none' || getComputedStyle(fig).boxShadow !== 'none',
     };
   });
 
@@ -28,7 +30,17 @@ test('programs.html: the hero opens on one 87% loss and pulls back to the whole 
     },
     (now) => now.phase === 'book',
   );
-  assert.deepEqual(end, { phase: 'book', ratio: '27%', who: 'Whole book · 240 accounts', dots: 240, width: end.width });
+  assert.deepEqual(end, {
+    phase: 'book',
+    ratio: '27%',
+    who: 'Whole book · 240 accounts',
+    dots: 240,
+    width: end.width,
+    ticks: ['0%', '25%', '50%', '75%', '$50k', '$100k', '$200k', '$500k', '$1M'],
+    card: false,
+  });
+  assert.equal(first.card, false, 'the chart is still in a card');
+  assert.ok(first.ticks.includes('$1M'), `the close-up axes read ${first.ticks}`);
   assert.ok(end.width > first.width * 3, 'the camera did not pull back');
   assert.ok(seen.has('zoom'), 'it jumped to the end without zooming');
 

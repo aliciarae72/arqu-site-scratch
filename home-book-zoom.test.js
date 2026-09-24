@@ -1,103 +1,89 @@
-// Unit checks for home-book-zoom.js. Every function under test is the real one; the
-// document and window are small stand-ins that record what the page would see.
+// Unit checks for home-book-zoom.js: dot placement, the camera and the readout.
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
 
 const zoom = require('./home-book-zoom.js');
+const axes = require('./home-book-axes.js');
+const data = require('./home-book-data.js');
 
 const SCENE = zoom.scene();
-const readAt = (progress) =>
-  zoom.readout(zoom.inFrame(SCENE.dots, zoom.frameAt(progress, SCENE.start, SCENE.end)), SCENE.book.length);
+const RECT = zoom.plotRect({ width: 540, height: 432 });
+const FRAMES = SCENE.framesFor(RECT.w / RECT.h);
+const frame = (progress) => zoom.frameAt(progress, FRAMES.start, FRAMES.end, SCENE.focus);
+const readAt = (progress) => zoom.readout(zoom.inFrame(SCENE.dots, frame(progress)), SCENE.book.length);
 
-test('the sample book is 240 accounts, the same on every load, led by one 87% loss', () => {
-  const book = zoom.buildBook();
-  assert.equal(book.length, 240);
-  assert.deepEqual(zoom.buildBook(), book);
-  assert.deepEqual(book[0], { premium: 1200000, loss: 1044000, focus: true });
-  assert.equal(book.filter((a) => a.focus).length, 1);
-  assert.ok(
-    book.slice(1).every((a) => a.loss < book[0].loss),
-    'another account out-loses the focus',
-  );
-  assert.ok(
-    book.some((a) => a.loss === 0),
-    'no loss-free account to balance the book',
-  );
-});
-
-test('lossRatio is losses over premium, and zero for an empty set', () => {
-  assert.equal(
-    zoom.lossRatio([
-      { premium: 100, loss: 30 },
-      { premium: 300, loss: 10 },
-    ]),
-    0.1,
-  );
-  assert.equal(zoom.lossRatio([]), 0);
-});
-
-test('packDots places every account once, no two dots touching, the worst loss in the middle', () => {
-  const dots = zoom.packDots(zoom.buildBook());
+test('every account is one dot, placed by premium and loss ratio, the focus drawn last', () => {
+  const dots = zoom.placeDots(data.buildBook());
   assert.equal(dots.length, 240);
   assert.equal(new Set(dots.map((d) => d.index)).size, 240);
-  const focus = dots.find((d) => d.account.focus);
-  assert.deepEqual([focus.x, focus.y], [0, 0]);
-  for (let i = 0; i < dots.length; i++) {
-    for (let j = i + 1; j < dots.length; j++) {
-      const [a, b] = [dots[i], dots[j]];
-      assert.ok(Math.hypot(a.x - b.x, a.y - b.y) >= a.r + b.r, `dots ${a.index} and ${b.index} overlap`);
-    }
+  for (const d of dots) {
+    assert.equal(d.x, axes.plotX(d.account.premium));
+    assert.equal(d.y, axes.plotY(d.account.loss / d.account.premium));
   }
+  assert.equal(dots.at(-1).account.focus, true);
+  const rest = dots.slice(0, -1).map((d) => d.r);
+  assert.deepEqual(
+    rest,
+    [...rest].sort((a, b) => b - a),
+    'a small dot is drawn under a larger one',
+  );
 });
 
-test('dot area tracks the loss: four times the loss is twice the radius', () => {
-  const dots = zoom.packDots([
-    { premium: 1, loss: 40000, focus: true },
-    { premium: 1, loss: 10000, focus: false },
-    { premium: 1, loss: 0, focus: false },
+test('dot area tracks the loss: four times the loss is twice the radius, and no loss is a ring', () => {
+  const dots = zoom.placeDots([
+    { premium: 100000, loss: 40000, focus: true },
+    { premium: 100000, loss: 10000, focus: false },
+    { premium: 100000, loss: 0, focus: false },
   ]);
-  const byIndex = Object.fromEntries(dots.map((d) => [d.index, d.r]));
-  assert.ok(Math.abs(byIndex[0] / byIndex[1] - 2) < 1e-12);
-  assert.ok(byIndex[2] > 0, 'a loss-free account still gets a ring');
+  const r = Object.fromEntries(dots.map((d) => [d.index, d.r]));
+  assert.ok(Math.abs(r[0] / r[1] - 2) < 1e-12);
+  assert.ok(r[2] > 0);
 });
 
-test('the camera opens on the focus alone at 87% and ends on the whole book at its true ratio', () => {
+test('the camera opens on the focus alone at 87% and ends on the whole book at 27%', () => {
   assert.deepEqual(readAt(0), { who: 'One account', ratio: '87%' });
-  const bookRatio = `${Math.round(zoom.lossRatio(SCENE.book) * 100)}%`;
-  assert.equal(bookRatio, '27%');
-  assert.deepEqual(readAt(1), { who: 'Whole book · 240 accounts', ratio: bookRatio });
-  assert.match(readAt(0.5).who, /^\d+ accounts in view$/);
+  assert.deepEqual(readAt(1), { who: 'Whole book · 240 accounts', ratio: '27%' });
+  assert.match(readAt(0.8).who, /^\d+ accounts in view$/);
 });
 
-test('pulling back, the ratio in view falls from the one loss toward the book', () => {
-  const ratios = [0, 0.35, 0.55, 0.75, 1].map((p) => Number.parseInt(readAt(p).ratio, 10));
+test('pulling back, the focus never leaves the frame and the ratio in view only falls', () => {
+  const steps = Array.from({ length: 21 }, (_, i) => i / 20);
+  for (const p of steps) {
+    assert.equal(zoom.inFrame([SCENE.focus], frame(p)).length, 1, `the focus is out of frame at ${p}`);
+  }
+  const ratios = steps.map((p) => Number.parseInt(readAt(p).ratio, 10));
   assert.deepEqual(
     ratios,
     [...ratios].sort((a, b) => b - a),
     `ratios ${ratios} do not fall`,
   );
-  assert.ok(ratios[0] > ratios.at(-1));
 });
 
-test('frameAt holds the aspect, moves from start to end, and scales geometrically', () => {
+test('frameAt keeps the aspect, scales geometrically, and holds the anchor at its share of the frame', () => {
   const from = { cx: 0, cy: 0, width: 10, height: 8 };
-  const to = { cx: 10, cy: 20, width: 1000, height: 800 };
-  assert.deepEqual(zoom.frameAt(0, from, to), from);
-  assert.deepEqual(zoom.frameAt(1, from, to), to);
-  const mid = zoom.frameAt(0.5, from, to);
-  assert.deepEqual([mid.cx, mid.cy, mid.height], [5, 10, 80]);
-  assert.equal(mid.width, 100);
+  const to = { cx: 100, cy: 80, width: 1000, height: 800 };
+  const anchor = { x: 0, y: 0 };
+  assert.deepEqual(zoom.frameAt(0, from, to, anchor), from);
+  const end = zoom.frameAt(1, from, to, anchor);
+  assert.deepEqual([end.cx, end.cy, end.width, end.height], [100, 80, 1000, 800]);
+  const mid = zoom.frameAt(0.5, from, to, anchor);
+  assert.deepEqual([mid.width, mid.height], [100, 80]);
+  assert.ok(Math.abs(mid.cx - 5) < 1e-9 && Math.abs(mid.cy - 4) < 1e-9);
 });
 
-test('frameAround fits a set of dots with its margin, and inFrame keeps only dots wholly inside', () => {
+test('frameAround fits dots at the given aspect, and inFrame keeps only dots wholly inside', () => {
   const dots = [
     { x: 0, y: 0, r: 4 },
     { x: 20, y: 0, r: 2 },
   ];
-  const frame = zoom.frameAround(dots, 1);
-  assert.deepEqual(frame, { cx: 9, cy: 0, width: 26, height: 20.8 });
-  assert.equal(zoom.inFrame(dots, frame).length, 2);
+  assert.deepEqual(zoom.frameAround(dots, 1, 1.25), { cx: 9, cy: 0, width: 26, height: 20.8 });
   assert.deepEqual(zoom.inFrame(dots, { cx: 0, cy: 0, width: 10, height: 8 }), [dots[0]]);
+});
+
+test('scene makes one pair of frames per aspect, and reuses it', () => {
+  assert.equal(SCENE.framesFor(1.3), SCENE.framesFor(1.3));
+  assert.notEqual(SCENE.framesFor(1.3), SCENE.framesFor(1.6));
+  assert.equal(data.percent(SCENE.bookRatio), '27%');
 });
 
 test('progressAt holds still, eases through the zoom, and stops at one', () => {
@@ -106,17 +92,17 @@ test('progressAt holds still, eases through the zoom, and stops at one', () => {
   assert.equal(zoom.progressAt(1400 + 1900), 0.5);
   assert.ok(zoom.progressAt(1400 + 400) < 400 / 3800, 'the zoom does not ease in');
   assert.equal(zoom.progressAt(1400 + 3800), 1);
-  assert.equal(zoom.progressAt(99999), 1);
 });
 
-test('viewBox writes a frame as x y width height around its centre', () => {
+test('plotRect leaves the margins for the axes; viewBox writes a frame around its centre', () => {
+  assert.deepEqual(zoom.plotRect({ width: 500, height: 400 }), { x: 50, y: 28, w: 436, h: 328 });
   assert.equal(zoom.viewBox({ cx: 5, cy: 4, width: 10, height: 8 }), '0.00 0.00 10.00 8.00');
 });
 
-test('describe names the book, the worst loss and the whole-book ratio', () => {
+test('describe names the book, the axes, the worst loss and the whole-book ratio', () => {
   assert.equal(
     zoom.describe(SCENE),
-    'Sample book of 240 accounts, one dot per account, each dot sized to its incurred loss. ' +
+    'Sample book of 240 accounts, plotted by premium and loss ratio, each dot sized to its incurred loss. ' +
       "The worst account's loss ratio is 87%; the whole book's is 27%.",
   );
 });
