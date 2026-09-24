@@ -17,14 +17,25 @@ const texts = (html, re) =>
     m[1].replace(/<[^>]+>/g, '').replace(/&(?:middot|gt|lt|amp);/g, (e) => ENTITIES[e]),
   );
 
-test('programs.html opens on a dashboard of what a book review imports', () => {
-  const start = PROGRAMS.indexOf('<figure class="dash');
-  const dash = PROGRAMS.slice(start, PROGRAMS.indexOf('</figure>', start));
-  assert.deepEqual(texts(dash, /<div class="dash-tile">([\s\S]*?)<\/div>/g), [
-    '500SOVs imported',
-    '729Loss runs imported',
-  ]);
-  assert.doesNotMatch(dash, /\d+%<\/em>/, 'a progress row states a percentage nobody supplied');
+test('programs.html opens on the loss-zoom figure, labelled illustrative, with its key and Replay', () => {
+  const start = PROGRAMS.indexOf('<figure class="book-zoom');
+  assert.ok(start > 0, 'the hero has no book-zoom figure');
+  const fig = PROGRAMS.slice(start, PROGRAMS.indexOf('</figure>', start));
+  assert.match(fig, /<span>Losses in a sample book<\/span><em>Illustrative<\/em>/);
+  for (const hook of [
+    'data-book-zoom',
+    'data-bz-stage',
+    'data-bz-svg',
+    'data-bz-ratio',
+    'data-bz-who',
+    'data-bz-note',
+    'data-bz-replay',
+  ]) {
+    assert.ok(fig.includes(hook), `the figure has no ${hook}`);
+  }
+  assert.deepEqual(texts(fig, /<\/i>([^<]+)<\/span>/g), ['Dot area is the loss', 'No loss']);
+  assert.ok(!PROGRAMS.includes('class="dash'), 'the old dashboard is still on the page');
+  assert.ok(PROGRAMS.includes('<script src="home-book-zoom.js"></script>'));
 });
 
 // The one-pager's substance, set in the site's own parts: dot-marked figures, the paired
@@ -65,7 +76,7 @@ test('open-market.html heads four sectors, construction tagged environmental', (
 });
 
 test('open-market.html: the risk-narrative heading is editable and the closing line is cut', () => {
-  assert.ok(MARKET.includes('<h3 class="ed">Read the risk from the record, not the headline.</h3>'));
+  assert.ok(MARKET.includes('<h3 class="ed">The headline says no. The record says otherwise.</h3>'));
   assert.ok(MARKET.includes('<p class="rn-lede ed">'));
   assert.ok(!MARKET.includes('rn-foot'), 'the closing line under the slides is cut');
 });
@@ -73,6 +84,38 @@ test('open-market.html: the risk-narrative heading is editable and the closing l
 test('open-market.html: the audience sections are named for their reader, with no handwritten label', () => {
   assert.deepEqual(texts(MARKET, /<div class="how-head">([\s\S]*?)<\/div>/g), ['For Retailers', 'For Underwriters']);
   assert.equal((MARKET.match(/class="steps steps-stack"/g) || []).length, 2);
+});
+
+// Each slide says in words what its figure shows, and every number it names is on the figure.
+test('open-market.html: each risk-narrative slide carries a read whose figures come from its chart', () => {
+  const reads = texts(MARKET, /<p class="rn-read">([^<]+)<\/p>/g);
+  assert.equal(reads.length, 2);
+  for (const n of ['1,349', '3,324']) {
+    assert.ok(MARKET.includes(`<span class="dots-n">${n}</span>`) && reads[0].includes(n), `${n} is not on both`);
+  }
+  assert.match(reads[0], /one wildfire a pipeline directly caused/);
+  assert.match(reads[1], /11,026 grid cells rate very low/);
+  assert.match(MARKET, /alt="[^"]*11,026 grid cells rate Very Low/);
+});
+
+// The audience copy leads with outcomes and the bar we hold, not a broker's process outline.
+test('open-market.html: For Retailers and For Underwriters each open on a beyond-the-ask line', () => {
+  assert.deepEqual(texts(MARKET, /<p class="aud-lede">([^<]+)<\/p>/g), [
+    'Most wholesalers place what you send. We send it out better than it arrived.',
+    'Every submission meets the bar you would set yourself, and we build our own tools to clear it.',
+  ]);
+  const titles = texts(MARKET, /<li><b>0\d<\/b><strong>([^<]+)<\/strong>/g);
+  assert.deepEqual(titles, [
+    'More back than you sent',
+    'A yes where others hear no',
+    'Terms you can stand behind',
+    'Flow that fits your appetite',
+    'The file you would have built',
+    'Risks you are not seeing',
+  ]);
+  for (const gone of ['Send us the submission', 'We pre-underwrite it', 'We engage the right markets']) {
+    assert.ok(!MARKET.includes(gone), `the process step "${gone}" is still there`);
+  }
 });
 
 // Each row of a Programs book panel as [label, percent], so the hero can be held to the same book.
@@ -84,13 +127,13 @@ function panelRows(caption) {
 
 test("open-market.html's hero draws the Programs sample book: loss ratio by year and CAT exposure", () => {
   assert.ok(MARKET.includes('<figure class="risk-hero'), 'the hero has no risk visual');
-  ['class="sheet', 'class="dash'].forEach((gone) =>
-    assert.ok(!MARKET.includes(gone), `the hero still carries ${gone}`),
-  );
+  for (const gone of ['class="sheet', 'class="dash']) {
+    assert.ok(!MARKET.includes(gone), `the hero still carries ${gone}`);
+  }
   const years = [
     ...MARKET.matchAll(/<div class="rh-col" style="--v:(\d+);--k:\d"><b>(\d+)%<\/b><i><\/i><span>(\d{4})<\/span>/g),
   ];
-  years.forEach(([, v, shown]) => assert.equal(v, shown));
+  for (const [, v, shown] of years) assert.equal(v, shown);
   assert.deepEqual(
     years.map(([, , shown, year]) => [year, shown]),
     panelRows('Loss ratio by year'),

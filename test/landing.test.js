@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openPage, scrollToSelector } = require('./page-harness');
+const { openPage, scrollToSelector, settle } = require('./page-harness');
 
 for (const [card, page, flow] of [
   ['#way-market', 'open-market.html', '#flow-market'],
@@ -34,4 +34,35 @@ test('old home.html deep links land on the page that now holds their flow', asyn
     '#way-programs': 'programs.html',
     '#ways': 'home.html',
   });
+});
+
+test('the hero mark: three dots, then dashes that run past the right edge and keep moving', async (t) => {
+  const { page, errors } = await openPage(t);
+  const read = () =>
+    page.evaluate(() => {
+      const mark = document.querySelector('#intro .motif');
+      const run = mark.querySelector('.motif-run');
+      const box = run.getBoundingClientRect();
+      const dots = [...mark.querySelectorAll('i')].map((i) => i.getBoundingClientRect());
+      const names = (el) => el.getAnimations().map((a) => a.animationName);
+      return {
+        hidden: mark.getAttribute('aria-hidden'),
+        dots: dots.length,
+        dotsFirst: dots.every((d) => d.right < box.left),
+        reachesEdge: box.right >= document.documentElement.clientWidth,
+        scrollsSideways: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+        runAnimations: names(run),
+        dotAnimations: names(mark.querySelector('i')),
+      };
+    });
+  assert.deepEqual(await settle(read, (m) => m.runAnimations.length === 2), {
+    hidden: 'true',
+    dots: 3,
+    dotsFirst: true,
+    reachesEdge: true,
+    scrollsSideways: false,
+    runAnimations: ['mo-draw', 'mo-march'],
+    dotAnimations: ['mo-dot', 'mo-pulse'],
+  });
+  assert.deepEqual(errors, []);
 });

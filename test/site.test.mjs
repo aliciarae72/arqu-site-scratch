@@ -30,13 +30,13 @@ function assertLocalFilesExist(page, refs) {
 }
 
 test('serves the landing page and both ways in', () => {
-  ['home.html', 'open-market.html', 'programs.html'].forEach((page) => assert.ok(PAGES.includes(page), page));
+  for (const page of ['home.html', 'open-market.html', 'programs.html']) assert.ok(PAGES.includes(page), page);
 });
 
 const CORE_CSS = ['home.css', 'home-layers.css', 'home-spine.css', 'home-hand.css'];
 const LOAD_ORDER = {
   'home.html': {
-    css: CORE_CSS,
+    css: [...CORE_CSS, 'home-motif.css'],
     js: [
       'home-interaction.js',
       'roughjs',
@@ -64,13 +64,14 @@ const LOAD_ORDER = {
     ],
   },
   'programs.html': {
-    css: [...CORE_CSS, 'home-pages.css'],
+    css: [...CORE_CSS, 'home-pages.css', 'home-book-zoom.css'],
     js: [
       'home-interaction.js',
       'roughjs',
       'home-hand.js',
       'home-hand-marks.js',
       'home-ambient.js',
+      'home-book-zoom.js',
       'arqu-edit-layer.js',
     ],
   },

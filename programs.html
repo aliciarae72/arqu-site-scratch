@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>arqu — Programs</title>
 <meta name="description" content="arqu programs mockup: a whole book at once.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +14,7 @@
 <link rel="stylesheet" href="home-spine.css">
 <link rel="stylesheet" href="home-hand.css">
 <link rel="stylesheet" href="home-pages.css">
+<link rel="stylesheet" href="home-book-zoom.css">
 </head>
 <body>
 
@@ -47,15 +49,20 @@
           <h1 id="page-title">Programs</h1>
           <p class="lead">See how we build custom capacity for your book and find the economies of scale inside it.</p>
         </div>
-        <figure class="dash reveal" style="--i:1" aria-label="Illustration: a program dashboard after a book review">
-          <div class="dash-bar"><i></i><i></i><i></i><span>arqu &middot; book review</span></div>
-          <div class="dash-grid">
-            <div class="dash-tile"><b>500</b><span>SOVs imported</span></div>
-            <div class="dash-tile"><b>729</b><span>Loss runs imported</span></div>
+        <figure class="book-zoom reveal" style="--i:1" data-book-zoom>
+          <div class="bz-head"><span>Losses in a sample book</span><em>Illustrative</em></div>
+          <div class="bz-stage" data-bz-stage role="img" aria-label="Sample book: one dot per account, each dot sized to its incurred loss.">
+            <svg class="bz-svg" data-bz-svg viewBox="0 0 100 80" preserveAspectRatio="xMidYMid meet" aria-hidden="true"></svg>
           </div>
-          <div class="dash-row"><span>Segment aggregated</span><i style="--p:100%"></i><em>Done</em></div>
-          <div class="dash-row"><span>Pre-underwritten</span><i style="--p:70%"></i><em>Running</em></div>
-          <div class="dash-row"><span>Out to market</span><i style="--p:40%"></i><em>Next</em></div>
+          <div class="bz-under" aria-hidden="true">
+            <p class="bz-note" data-bz-note></p>
+            <div class="bz-read"><b data-bz-ratio></b><span>loss ratio in view</span><span data-bz-who></span></div>
+          </div>
+          <div class="bz-foot">
+            <span><i class="bz-key" aria-hidden="true"></i>Dot area is the loss</span>
+            <span><i class="bz-key bz-key--clean" aria-hidden="true"></i>No loss</span>
+            <button class="bz-replay" type="button" data-bz-replay aria-label="Replay the zoom">Replay</button>
+          </div>
         </figure>
       </div>
 
@@ -206,6 +213,7 @@
 <script src="home-hand.js"></script>
 <script src="home-hand-marks.js"></script>
 <script src="home-ambient.js"></script>
+<script src="home-book-zoom.js"></script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
         data-selector="h1, h2, .lead, .eyebrow, .way-kicker, .way-title, .way-desc, .node h3, .node p, .chip, .steps li strong, .steps li span, .go, .close p, footer small, .ed"
         data-key="arqu-copy-home-v3"

@@ -1,0 +1,21 @@
+/* The landing mark at hero scale: three dots, then dashes that run past the right
+   edge of the page. The dots arrive one at a time, the dashes draw out, then keep
+   moving: the ask is where we start, and the work runs on past it. */
+.motif{--mo-dot:12px;--mo-gap:14px;--mo-dash:30px;--mo-space:14px;--mo-period:calc(var(--mo-dash) + var(--mo-space));
+  display:flex;align-items:center;gap:var(--mo-gap);height:var(--mo-dot);margin:0 0 clamp(26px,3.4vw,40px);
+  /* out to the viewport's right edge; main clips the overhang */
+  width:calc(100% + (100vw - 100%) / 2)}
+.motif i{flex:none;width:var(--mo-dot);height:var(--mo-dot);border-radius:50%;background:var(--purple-deep);
+  animation:mo-dot .5s var(--ease) both,mo-pulse 3.6s ease-in-out 2.6s infinite}
+.motif i:nth-child(1){animation-delay:.35s,2.6s}
+.motif i:nth-child(2){animation-delay:.53s,2.9s}
+.motif i:nth-child(3){animation-delay:.71s,3.2s}
+.motif-run{flex:1;height:3px;margin-left:calc(var(--mo-space) - var(--mo-gap) + 4px);
+  background:repeating-linear-gradient(90deg,var(--purple) 0 var(--mo-dash),transparent var(--mo-dash) var(--mo-period));
+  animation:mo-draw 1.4s var(--ease) 1s both,mo-march 1.8s linear 1s infinite}
+@keyframes mo-dot{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+@keyframes mo-pulse{0%,70%,100%{opacity:1}35%{opacity:.4}}
+@keyframes mo-draw{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes mo-march{from{background-position-x:0}to{background-position-x:var(--mo-period)}}
+@media (max-width:860px){.motif{--mo-dot:9px;--mo-gap:10px;--mo-dash:22px;--mo-space:10px}}
+@media (prefers-reduced-motion:reduce){.motif i,.motif-run{animation:none}}
