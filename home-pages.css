@@ -38,20 +38,40 @@
 .pg-close{margin:clamp(72px,9vw,120px) auto 0;max-width:780px;text-align:center}
 .pg-close h2{font-size:clamp(28px,3.8vw,46px);line-height:1.1}
 
-.sheet{margin:0;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:18px;align-items:center}
-.sheet-page{display:flex;flex-direction:column;gap:11px;background:var(--surface);border:1px solid var(--line-2);border-radius:14px;
-  padding:clamp(20px,2.4vw,30px);box-shadow:0 1px 2px rgba(34,31,32,.05),0 30px 60px -36px rgba(94,84,200,.45);transform:rotate(-1.2deg)}
-.sheet-kicker{font:9.5px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--purple-deep)}
-.sheet-title{font-family:var(--font-display);font-style:italic;font-size:clamp(20px,2vw,26px);line-height:1.2;margin-bottom:4px}
-.sheet .ln{display:block;height:7px;border-radius:4px;background:var(--line)}
-.sheet .ln-short{width:62%}
-.sheet .ln-mark{background:var(--tint-2);box-shadow:inset 0 -2px 0 var(--purple)}
-.sheet-bars{display:flex;align-items:flex-end;gap:8px;height:64px;padding:6px 0 2px;border-bottom:1px solid var(--line)}
-.sheet-bars i{flex:1;height:var(--h);border-radius:4px 4px 1px 1px;background:var(--line-2)}
-.sheet-bars i:nth-child(3){background:var(--purple)}
-.sheet-notes{list-style:none;margin:0;padding:0;display:grid;gap:34px;font-family:var(--font-hand);font-size:22px;line-height:1.1;color:var(--purple-deep)}
-.sheet-notes li{position:relative;padding-left:26px;max-width:12ch}
-.sheet-notes li::before{content:"";position:absolute;left:0;top:.55em;width:18px;border-top:1.5px solid var(--purple)}
+/* the open market hero is the sample book in motion: loss ratios rise in, the average draws
+   across, the CAT bar fills peril by peril, then one year at a time takes the highlight */
+.risk-hero{margin:0;background:var(--surface);border:1px solid var(--line-2);border-radius:18px;padding:clamp(20px,2.4vw,30px);
+  box-shadow:0 1px 2px rgba(34,31,32,.05),0 30px 60px -36px rgba(94,84,200,.45)}
+.rh-head{display:flex;justify-content:space-between;gap:12px;font:9.5px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
+.rh-head em{font-style:normal;color:var(--purple-deep)}
+.rh-bars{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:clamp(10px,1.6vw,18px);height:190px;margin:18px 0 34px;border-bottom:1px solid var(--line-2)}
+.rh-col{position:relative;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
+.rh-col i{display:block;width:100%;height:calc(var(--v) / 80 * 100%);max-height:calc(100% - 22px);border-radius:6px 6px 2px 2px;background:var(--line-2);
+  transform-origin:50% 100%;animation:rh-grow .9s var(--spring) both,rh-pick 8s linear infinite;
+  animation-delay:calc(var(--k) * 120ms + 300ms),calc(var(--k) * 1.6s + 1.8s)}
+.rh-col b{font:400 clamp(15px,1.5vw,19px)/1 var(--font-display);font-style:italic;font-variant-numeric:lining-nums;color:var(--ink-3);
+  animation:rh-fade .5s var(--ease) both,rh-pick-text 8s linear infinite;animation-delay:calc(var(--k) * 120ms + 900ms),calc(var(--k) * 1.6s + 1.8s)}
+.rh-col span{position:absolute;bottom:-24px;font:9.5px/1 var(--font-mono);letter-spacing:.12em;color:var(--ink-3)}
+.rh-avg{position:absolute;left:0;right:0;bottom:calc(var(--v) / 80 * 100%);border-top:1.5px dashed var(--purple);
+  transform-origin:0 50%;animation:rh-draw 1.2s var(--ease) 1.2s both}
+.rh-avg em{position:absolute;right:0;top:-18px;font:9.5px/1 var(--font-mono);font-style:normal;letter-spacing:.12em;color:var(--purple-deep);background:var(--surface);padding-left:6px}
+.rh-cat{display:flex;height:16px;margin:14px 0 14px;border-radius:8px;overflow:hidden;background:var(--tint)}
+.rh-cat i{width:calc(var(--w) * 1%);transform-origin:0 50%;animation:rh-draw .6s var(--ease) both;animation-delay:calc(var(--k) * 180ms + 1.4s)}
+.rh-cat i:nth-child(1),.rh-key li:nth-child(1) i{background:#3f37a0}
+.rh-cat i:nth-child(2),.rh-key li:nth-child(2) i{background:var(--purple-deep)}
+.rh-cat i:nth-child(3),.rh-key li:nth-child(3) i{background:var(--purple)}
+.rh-cat i:nth-child(4),.rh-key li:nth-child(4) i{background:#b9b1f5}
+.rh-cat i:nth-child(5),.rh-key li:nth-child(5) i{background:var(--tint-2)}
+.rh-key{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px 16px;font:9.5px/1.5 var(--font-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.rh-key li{display:flex;align-items:center;gap:6px;animation:rh-fade .4s var(--ease) both;animation-delay:calc(var(--k) * 180ms + 1.6s)}
+.rh-key li i{width:9px;height:9px;border-radius:2px}
+.rh-key b{font-weight:400;color:var(--ink)}
+@keyframes rh-grow{from{transform:scaleY(0)}}
+@keyframes rh-draw{from{transform:scaleX(0)}}
+@keyframes rh-fade{from{opacity:0}}
+@keyframes rh-pick{0%,17%{background:var(--purple-deep)}20%,100%{background:var(--line-2)}}
+@keyframes rh-pick-text{0%,17%{color:var(--purple-deep)}20%,100%{color:var(--ink-3)}}
+@media (prefers-reduced-motion:reduce){.risk-hero *{animation:none!important}}
 
 .book-data{margin-top:clamp(56px,7vw,88px)}
 .bd-note{font:9.5px/1.4 var(--font-mono);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3)}
@@ -68,8 +88,6 @@
   .hero-split{min-height:0}
   .figures{grid-template-columns:1fr}
   .bd-grid{grid-template-columns:1fr}
-  .sheet{grid-template-columns:1fr}
-  .sheet-notes{grid-auto-flow:column;gap:14px;font-size:18px}
   .steps-5{--steps-cols:1}
 }
 

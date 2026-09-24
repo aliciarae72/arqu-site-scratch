@@ -75,18 +75,31 @@ test('open-market.html: the audience sections are named for their reader, with n
   assert.equal((MARKET.match(/class="steps steps-stack"/g) || []).length, 2);
 });
 
-test('open-market.html opens on an annotated narrative sheet, not a dashboard', () => {
-  assert.ok(MARKET.includes('<figure class="sheet'), 'the hero has no narrative sheet');
-  assert.ok(!MARKET.includes('class="dash'), 'the hero still carries the dashboard');
-  const notes = MARKET.slice(
-    MARKET.indexOf('<ul class="sheet-notes">'),
-    MARKET.indexOf('</ul>', MARKET.indexOf('<ul class="sheet-notes">')),
+// Each row of a Programs book panel as [label, percent], so the hero can be held to the same book.
+function panelRows(caption) {
+  const at = PROGRAMS.indexOf(`<figcaption>${caption}`);
+  const list = PROGRAMS.slice(at, PROGRAMS.indexOf('</ul>', at));
+  return [...list.matchAll(/<span>([^<]+)<\/span><i style="--w:\d+%"><\/i><b>(\d+)%<\/b>/g)].map((m) => [m[1], m[2]]);
+}
+
+test("open-market.html's hero draws the Programs sample book: loss ratio by year and CAT exposure", () => {
+  assert.ok(MARKET.includes('<figure class="risk-hero'), 'the hero has no risk visual');
+  ['class="sheet', 'class="dash'].forEach((gone) =>
+    assert.ok(!MARKET.includes(gone), `the hero still carries ${gone}`),
   );
-  assert.deepEqual(texts(notes, /<li>([^<]+)<\/li>/g), [
-    'the story behind the SOV',
-    'loss history, in context',
-    'mitigation, up front',
+  const years = [
+    ...MARKET.matchAll(/<div class="rh-col" style="--v:(\d+);--k:\d"><b>(\d+)%<\/b><i><\/i><span>(\d{4})<\/span>/g),
+  ];
+  years.forEach(([, v, shown]) => assert.equal(v, shown));
+  assert.deepEqual(
+    years.map(([, , shown, year]) => [year, shown]),
+    panelRows('Loss ratio by year'),
+  );
+  const perils = [...MARKET.matchAll(/<li style="--k:\d"><i><\/i>([^<]+) <b>(\d+)%<\/b><\/li>/g)].map((m) => [
+    m[1],
+    m[2],
   ]);
+  assert.deepEqual(perils, panelRows('CAT exposure'));
 });
 
 test('programs.html reads a sample book four ways, labelled as illustrative, each bar drawn to its figure', () => {

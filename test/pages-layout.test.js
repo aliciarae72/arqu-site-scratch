@@ -86,3 +86,28 @@ test('programs.html: "today" is the quieter panel, "inside a program" the raised
     { border: 'solid', raised: true },
   ]);
 });
+
+test('open-market.html: the hero bars grow in, then the highlight moves from year to year', async (t) => {
+  const { page, errors } = await openPage(t, { url: 'open-market.html' });
+  const lit = () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll('.rh-col i')].findIndex(
+        (bar) => getComputedStyle(bar).backgroundColor === 'rgb(94, 84, 200)',
+      ),
+    );
+  const grown = await page.evaluate(() =>
+    [...document.querySelectorAll('.rh-col i')].every((bar) =>
+      bar.getAnimations().some((a) => a.animationName === 'rh-grow'),
+    ),
+  );
+  assert.ok(grown, 'a hero bar does not grow in');
+  const seen = new Set();
+  const end = Date.now() + 6000;
+  while (Date.now() < end && seen.size < 2) {
+    const i = await lit();
+    if (i >= 0) seen.add(i);
+    await new Promise((r) => setTimeout(r, 150));
+  }
+  assert.ok(seen.size >= 2, `the highlight only ever lit bar ${[...seen]}`);
+  assert.deepEqual(errors, []);
+});
