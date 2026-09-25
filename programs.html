@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
 <title>arqu — Programs</title>
 <meta name="description" content="arqu programs mockup: a whole book at once.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,6 +14,7 @@
 <link rel="stylesheet" href="home-spine.css">
 <link rel="stylesheet" href="home-hand.css">
 <link rel="stylesheet" href="home-pages.css">
+<link rel="stylesheet" href="home-book-chart.css">
 </head>
 <body>
 
@@ -47,15 +49,16 @@
           <h1 id="page-title">Programs</h1>
           <p class="lead">See how we build custom capacity for your book and find the economies of scale inside it.</p>
         </div>
-        <figure class="dash reveal" style="--i:1" aria-label="Illustration: a program dashboard after a book review">
-          <div class="dash-bar"><i></i><i></i><i></i><span>arqu &middot; book review</span></div>
-          <div class="dash-grid">
-            <div class="dash-tile"><b>500</b><span>SOVs imported</span></div>
-            <div class="dash-tile"><b>729</b><span>Loss runs imported</span></div>
+        <figure class="book-chart reveal" style="--i:1" data-book-chart>
+          <div class="bz-head"><span>Losses in a sample book</span><em>Illustrative</em></div>
+          <div class="bz-stage" data-bz-stage role="img" aria-label="Scatter chart of a sample book: premium across, loss ratio up, each dot sized to its incurred loss.">
+            <svg class="bz-svg" data-bz-svg aria-hidden="true"></svg>
           </div>
-          <div class="dash-row"><span>Segment aggregated</span><i style="--p:100%"></i><em>Done</em></div>
-          <div class="dash-row"><span>Pre-underwritten</span><i style="--p:70%"></i><em>Running</em></div>
-          <div class="dash-row"><span>Out to market</span><i style="--p:40%"></i><em>Next</em></div>
+          <div class="bz-foot">
+            <span><i class="bz-key" aria-hidden="true"></i>One account; dot area is the loss</span>
+            <span><i class="bz-key bz-key--clean" aria-hidden="true"></i>No loss, jittered around 0%</span>
+            <span class="bz-total">Whole book <b data-bz-ratio></b> &middot; <span data-bz-count></span></span>
+          </div>
         </figure>
       </div>
 
@@ -227,6 +230,10 @@
 <script src="home-hand.js"></script>
 <script src="home-hand-marks.js"></script>
 <script src="home-ambient.js"></script>
+<script src="home-book-data.js"></script>
+<script src="home-book-axes.js"></script>
+<script src="home-book-camera.js"></script>
+<script src="home-book-chart.js"></script>
 <script id="arqu-edit-layer" src="arqu-edit-layer.js"
         data-selector="h1, h2, .lead, .eyebrow, .way-kicker, .way-title, .way-desc, .node h3, .node p, .chip, .steps li strong, .steps li span, .go, .close p, footer small, .ed"
         data-key="arqu-copy-home-v3"

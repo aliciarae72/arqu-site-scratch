@@ -1,6 +1,6 @@
 const { test } = require('node:test');
 const assert = require('node:assert/strict');
-const { openPage, scrollToSelector } = require('./page-harness');
+const { openPage, scrollToSelector, settle } = require('./page-harness');
 
 for (const [card, page, flow] of [
   ['#way-market', 'open-market.html', '#flow-market'],
@@ -34,4 +34,42 @@ test('old home.html deep links land on the page that now holds their flow', asyn
     '#way-programs': 'programs.html',
     '#ways': 'home.html',
   });
+});
+
+test('the hero mark sits above the copy as dots then one solid line, draws in once on load, then holds still', async (t) => {
+  const { page, errors } = await openPage(t);
+  const read = () =>
+    page.evaluate(() => {
+      const mark = document.querySelector('#intro .motif');
+      const run = mark.querySelector('.motif-run');
+      const box = run.getBoundingClientRect();
+      const dots = [...mark.querySelectorAll('i')].map((i) => i.getBoundingClientRect());
+      const names = (el) => el.getAnimations().map((a) => [a.animationName, a.effect.getComputedTiming().iterations]);
+      return {
+        hidden: mark.getAttribute('aria-hidden'),
+        dots: dots.length,
+        dotsFirst: dots.every((d) => d.right < box.left),
+        aboveCopy:
+          mark.getBoundingClientRect().bottom < document.querySelector('#intro .g-kicker').getBoundingClientRect().top,
+        stroke: getComputedStyle(run).height,
+        solid: [getComputedStyle(run).backgroundImage, getComputedStyle(run).backgroundColor],
+        reachesEdge: box.right >= document.documentElement.clientWidth,
+        scrollsSideways: document.documentElement.scrollWidth > document.documentElement.clientWidth,
+        runAnimations: names(run),
+        dotAnimations: names(mark.querySelector('i')),
+      };
+    });
+  assert.deepEqual(await settle(read, (m) => m.runAnimations.length === 1), {
+    hidden: 'true',
+    dots: 3,
+    dotsFirst: true,
+    aboveCopy: true,
+    stroke: '1px',
+    solid: ['none', 'rgb(140, 130, 250)'],
+    reachesEdge: true,
+    scrollsSideways: false,
+    runAnimations: [['mo-draw', 1]],
+    dotAnimations: [['mo-dot', 1]],
+  });
+  assert.deepEqual(errors, []);
 });
