@@ -9,7 +9,8 @@
 .bz-plot{overflow:hidden}
 .bz-dot{fill:var(--purple);fill-opacity:.32;stroke:var(--purple-deep);stroke-opacity:.45;stroke-width:1;vector-effect:non-scaling-stroke}
 .bz-clean{fill:none;stroke:var(--ink-3);stroke-opacity:.5}
-.bz-focus{fill:var(--purple-deep);fill-opacity:.95;stroke:none}
+/* the worst account is an outline, so it reads as one dot among many, not the subject */
+.bz-focus{fill:none;stroke:var(--purple-deep);stroke-opacity:.8;stroke-width:1.5}
 
 /* axes, ticks and labels are drawn in screen pixels, so they stay one size at any width */
 .bz-axis,.bz-tick{stroke:var(--ink-3);stroke-width:1}
