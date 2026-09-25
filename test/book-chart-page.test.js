@@ -72,3 +72,19 @@ test('programs.html: the focus label sits left of its dot, inside the chart', as
   });
   assert.deepEqual(placed, { leftOfDot: true, inside: true });
 });
+
+test('programs.html: the 87% account is an outline ring, and every other loss dot stays filled', async (t) => {
+  const { page } = await openPage(t, { url: 'programs.html' });
+  const paint = await page.evaluate(() => {
+    const style = (el) => {
+      const cs = getComputedStyle(el);
+      return { fill: cs.fill, stroked: cs.stroke !== 'none' && Number.parseFloat(cs.strokeWidth) > 0 };
+    };
+    const others = [...document.querySelectorAll('.bz-plot .bz-dot:not(.bz-focus):not(.bz-clean)')].map(style);
+    return {
+      focus: style(document.querySelector('.bz-focus')),
+      othersFilled: others.length > 0 && others.every((s) => s.fill !== 'none'),
+    };
+  });
+  assert.deepEqual(paint, { focus: { fill: 'none', stroked: true }, othersFilled: true });
+});
